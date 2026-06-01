@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Services – Bensoft Prints & Branding Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --accent: #e8420a;
+    --gold: #d4a017;
+    --mid: #5a5248;
+    --light: #ebe5d8;
+    --white: #fdfaf4;
+    --border: rgba(13,13,13,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem;
+    background: var(--ink);
+    border-bottom: 3px solid var(--accent);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--paper);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--light);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+  .nav-cta {
+    background: var(--accent) !important;
+    color: var(--white) !important;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.68rem !important;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    padding-top: 5rem;
+    background: var(--ink);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg, transparent, transparent 10px,
+      rgba(232,66,10,0.05) 10px, rgba(232,66,10,0.05) 11px
+    );
+  }
+  .page-header-inner {
+    position: relative; z-index: 2;
+    padding: 3.5rem 4rem 0;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    flex-wrap: wrap; gap: 2rem;
+  }
+  .page-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .page-eyebrow::before { content: ''; display: block; width: 28px; height: 2px; background: var(--accent); }
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+  }
+  .page-title span { color: var(--accent); }
+  .page-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.6);
+    font-weight: 300;
+    max-width: 340px;
+    padding-bottom: 3rem;
+    align-self: flex-end;
+  }
+
+  /* ── TABS ── */
+  .tabs-bar {
+    background: var(--ink);
+    padding: 0 4rem;
+    display: flex; gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-top: 1px solid rgba(245,240,232,0.08);
+  }
+  .tabs-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.45);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 1rem 1.4rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .tab-btn:hover { color: rgba(245,240,232,0.8); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── MAIN CONTENT ── */
+  main { padding: 4rem; }
+
+  /* ── ADMIN NOTICE ── */
+  .admin-notice {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 3rem;
+    border-left: 4px solid var(--gold);
+  }
+  .admin-notice-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .admin-notice-text { font-size: 0.82rem; line-height: 1.5; }
+  .admin-notice-text strong {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .admin-notice-close {
+    margin-left: auto;
+    background: none; border: none;
+    color: rgba(245,240,232,0.4);
+    font-size: 1.2rem; cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.2s;
+  }
+  .admin-notice-close:hover { color: var(--paper); }
+
+  /* ── CATEGORY SECTION ── */
+  .category-section { display: none; }
+  .category-section.active { display: block; }
+
+  .category-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+  }
+  .category-title-wrap {}
+  .category-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .category-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1;
+  }
+  .add-photos-btn {
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 1.6rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .add-photos-btn:hover { background: #c73509; }
+  .add-photos-btn input[type="file"] { display: none; }
+
+  /* ── PHOTO GRID ── */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* ── PHOTO SLOT ── */
+  .photo-slot {
+    aspect-ratio: 4/3;
+    border: 2px dashed var(--border);
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    group: true;
+  }
+  .photo-slot:hover { border-color: var(--accent); background: rgba(232,66,10,0.03); }
+  .photo-slot.has-image { border-style: solid; border-color: var(--border); cursor: default; }
+  .photo-slot.has-image:hover { border-color: var(--border); background: transparent; }
+
+  .slot-empty {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.6rem;
+    pointer-events: none;
+  }
+  .slot-empty-icon {
+    font-size: 2rem;
+    opacity: 0.25;
+  }
+  .slot-empty-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mid);
+    opacity: 0.6;
+  }
+  .slot-num {
+    position: absolute;
+    top: 0.6rem; left: 0.7rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--mid);
+    opacity: 0.2;
+    pointer-events: none;
+  }
+
+  .slot-image {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .photo-slot.has-image:hover .slot-image { transform: scale(1.04); }
+
+  .slot-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(13,13,13,0.75) 0%, transparent 55%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex; flex-direction: column;
+    justify-content: flex-end; align-items: flex-start;
+    padding: 1rem;
+    gap: 0.4rem;
+  }
+  .photo-slot.has-image:hover .slot-overlay { opacity: 1; }
+
+  .slot-caption {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    color: var(--paper);
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  .slot-actions {
+    display: flex; gap: 0.4rem;
+  }
+  .slot-action-btn {
+    background: rgba(245,240,232,0.15);
+    border: 1px solid rgba(245,240,232,0.25);
+    color: var(--paper);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .slot-action-btn:hover { background: rgba(245,240,232,0.3); }
+  .slot-action-btn.danger:hover { background: var(--accent); border-color: var(--accent); }
+
+  /* ── ADD MORE SLOT ── */
+  .add-more-slot {
+    aspect-ratio: 4/3;
+    border: 2px dashed rgba(232,66,10,0.35);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    background: rgba(232,66,10,0.03);
+    transition: all 0.2s;
+  }
+  .add-more-slot:hover { border-color: var(--accent); background: rgba(232,66,10,0.07); }
+  .add-more-slot-icon {
+    font-size: 2rem;
+    color: var(--accent);
+    opacity: 0.6;
+  }
+  .add-more-slot-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.7;
+  }
+
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(13,13,13,0.93);
+    z-index: 500;
+    align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    display: block;
+  }
+  .lightbox-close {
+    position: absolute; top: 1.5rem; right: 1.5rem;
+    background: none; border: none;
+    color: var(--paper); font-size: 2rem;
+    cursor: pointer; opacity: 0.7;
+    transition: opacity 0.2s;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.05em;
+  }
+  .lightbox-close:hover { opacity: 1; }
+  .lightbox-caption {
+    position: absolute; bottom: 2rem; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.5);
+  }
+
+  /* ── CAPTION EDIT MODAL ── */
+  .caption-modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(13,13,13,0.7);
+    z-index: 600;
+    align-items: center; justify-content: center;
+  }
+  .caption-modal.open { display: flex; }
+  .caption-modal-inner {
+    background: var(--white);
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    border-top: 4px solid var(--accent);
+  }
+  .caption-modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+  .caption-modal-input {
+    width: 100%;
+    border: 2px solid var(--border);
+    background: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.7rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1.2rem;
+    color: var(--ink);
+  }
+  .caption-modal-input:focus { border-color: var(--accent); }
+  .caption-modal-actions { display: flex; gap: 0.8rem; }
+  .caption-modal-save {
+    background: var(--accent); color: var(--white);
+    border: none; padding: 0.65rem 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .caption-modal-save:hover { background: #c73509; }
+  .caption-modal-cancel {
+    background: transparent; color: var(--ink);
+    border: 2px solid var(--border); padding: 0.65rem 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .caption-modal-cancel:hover { border-color: var(--ink); }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    background: var(--ink);
+    color: rgba(245,240,232,0.4);
+    padding: 1.5rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .page-footer a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--paper);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .page-footer a span { color: var(--accent); }
+  .page-footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .page-header-inner { padding: 2.5rem 1.5rem 0; }
+    .tabs-bar { padding: 0 1.5rem; }
+    main { padding: 2rem 1.5rem; }
+    .nav-links { display: none; }
+    .page-footer { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo"><span>B</span>ENSOFT</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html" class="active">Services</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><a href="tel:+254717620054" class="nav-cta">Call Us</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <div class="page-eyebrow">Bensoft Prints & Branding Solutions</div>
+      <h1 class="page-title">OUR <span>WORK</span><br>& SERVICES</h1>
+    </div>
+    <p class="page-subtitle">Browse our categories and see the quality of work we deliver — from custom apparel to digital services, right here in Kianyaga.</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-bar" id="tabsBar">
+    <button class="tab-btn active" data-tab="apparel">👕 Apparel</button>
+    <button class="tab-btn" data-tab="gifts">🎁 Branded Gifts</button>
+    <button class="tab-btn" data-tab="design">🎨 Graphic Design</button>
+    <button class="tab-btn" data-tab="print">🖨️ Print Services</button>
+    <button class="tab-btn" data-tab="cyber">💻 Cyber & Digital</button>
+    <button class="tab-btn" data-tab="other">🏷️ Other Work</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <!-- ADMIN NOTICE -->
+  <div class="admin-notice" id="adminNotice">
+    <span class="admin-notice-icon">📸</span>
+    <div class="admin-notice-text">
+      <strong>Photo Upload Mode</strong>
+      Click any empty slot or the "+ Add Photos" button to upload images from your device. Hover over uploaded photos to rename or remove them.
+    </div>
+    <button class="admin-notice-close" onclick="document.getElementById('adminNotice').style.display='none'">×</button>
+  </div>
+
+  <!-- ── APPAREL ── -->
+  <div class="category-section active" id="tab-apparel">
+    <div class="category-header">
+      <div class="category-title-wrap">
+        <div class="category-label">Category 01</div>
+        <h2 class="category-title">CUSTOM APPAREL</h2>
+      </div>
+      <label class="add-photos-btn">
+        <span>+ Add Photos</span>
+        <input type="file" accept="image/*" multiple onchange="handleBulkUpload(event, 'apparel')">
+      </label>
+    </div>
+    <div class="photo-grid" id="grid-apparel">
+      <!-- slots injected by JS -->
+    </div>
+  </div>
+
+  <!-- ── BRANDED GIFTS ── -->
+  <div class="category-section" id="tab-gifts">
+    <div class="category-header">
+      <div class="category-title-wrap">
+        <div class="category-label">Category 02</div>
+        <h2 class="category-title">BRANDED GIFTS</h2>
+      </div>
+      <label class="add-photos-btn">
+        <span>+ Add Photos</span>
+        <input type="file" accept="image/*" multiple onchange="handleBulkUpload(event, 'gifts')">
+      </label>
+    </div>
+    <div class="photo-grid" id="grid-gifts"></div>
+  </div>
+
+  <!-- ── GRAPHIC DESIGN ── -->
+  <div class="category-section" id="tab-design">
+    <div class="category-header">
+      <div class="category-title-wrap">
+        <div class="category-label">Category 03</div>
+        <h2 class="category-title">GRAPHIC DESIGN</h2>
+      </div>
+      <label class="add-photos-btn">
+        <span>+ Add Photos</span>
+        <input type="file" accept="image/*" multiple onchange="handleBulkUpload(event, 'design')">
+      </label>
+    </div>
+    <div class="photo-grid" id="grid-design"></div>
+  </div>
+
+  <!-- ── PRINT SERVICES ── -->
+  <div class="category-section" id="tab-print">
+    <div class="category-header">
+      <div class="category-title-wrap">
+        <div class="category-label">Category 04</div>
+        <h2 class="category-title">PRINT SERVICES</h2>
+      </div>
+      <label class="add-photos-btn">
+        <span>+ Add Photos</span>
+        <input type="file" accept="image/*" multiple onchange="handleBulkUpload(event, 'print')">
+      </label>
+    </div>
+    <div class="photo-grid" id="grid-print"></div>
+  </div>
+
+  <!-- ── CYBER & DIGITAL ── -->
+  <div class="category-section" id="tab-cyber">
+    <div class="category-header">
+      <div class="category-title-wrap">
+        <div class="category-label">Category 05</div>
+        <h2 class="category-title">CYBER & DIGITAL</h2>
+      </div>
+      <label class="add-photos-btn">
+        <span>+ Add Photos</span>
+        <input type="file" accept="image/*" multiple onchange="handleBulkUpload(event, 'cyber')">
+      </label>
+    </div>
+    <div class="photo-grid" id="grid-cyber"></div>
+  </div>
+
+  <!-- ── OTHER WORK ── -->
+  <div class="category-section" id="tab-other">
+    <div class="category-header">
+      <div class="category-title-wrap">
+        <div class="category-label">Category 06</div>
+        <h2 class="category-title">OTHER WORK</h2>
+      </div>
+      <label class="add-photos-btn">
+        <span>+ Add Photos</span>
+        <input type="file" accept="image/*" multiple onchange="handleBulkUpload(event, 'other')">
+      </label>
+    </div>
+    <div class="photo-grid" id="grid-other"></div>
+  </div>
+</main>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕ CLOSE</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<!-- CAPTION MODAL -->
+<div class="caption-modal" id="captionModal">
+  <div class="caption-modal-inner">
+    <div class="caption-modal-title">RENAME PHOTO</div>
+    <input type="text" class="caption-modal-input" id="captionInput" placeholder="e.g. Jersey printing for Kianyaga FC">
+    <div class="caption-modal-actions">
+      <button class="caption-modal-save" id="captionSaveBtn">Save Caption</button>
+      <button class="caption-modal-cancel" onclick="closeCaptionModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <a href="index.html"><span>B</span>ENSOFT PRINTS</a>
+  <p>KIANYAGA, KENYA  ·  +254 717 620054  ·  0115 530991</p>
+</div>
+
+<script>
+// ── STATE ──
+const state = {
+  apparel: [], gifts: [], design: [], print: [], cyber: [], other: []
+};
+
+const CATEGORIES = {
+  apparel: { label: 'Custom Apparel', slots: 8 },
+  gifts:   { label: 'Branded Gifts',  slots: 6 },
+  design:  { label: 'Graphic Design', slots: 8 },
+  print:   { label: 'Print Services', slots: 6 },
+  cyber:   { label: 'Cyber & Digital',slots: 4 },
+  other:   { label: 'Other Work',     slots: 6 }
+};
+
+// ── INIT ──
+Object.keys(CATEGORIES).forEach(cat => renderGrid(cat));
+
+// ── TABS ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── RENDER GRID ──
+function renderGrid(cat) {
+  const grid = document.getElementById('grid-' + cat);
+  const images = state[cat];
+  const minSlots = CATEGORIES[cat].slots;
+  const total = Math.max(minSlots, images.length + 2);
+  grid.innerHTML = '';
+
+  for (let i = 0; i < total; i++) {
+    if (i < images.length) {
+      grid.appendChild(makeFilledSlot(cat, i, images[i]));
+    } else if (i === images.length) {
+      grid.appendChild(makeAddMoreSlot(cat));
+    } else {
+      grid.appendChild(makeEmptySlot(cat, i + 1));
+    }
+  }
+}
+
+// ── EMPTY SLOT ──
+function makeEmptySlot(cat, num) {
+  const div = document.createElement('div');
+  div.className = 'photo-slot';
+  div.innerHTML = `
+    <span class="slot-num">${String(num).padStart(2, '0')}</span>
+    <div class="slot-empty">
+      <span class="slot-empty-icon">📷</span>
+      <span class="slot-empty-label">Click to upload</span>
+    </div>`;
+  div.addEventListener('click', () => triggerUpload(cat));
+  return div;
+}
+
+// ── FILLED SLOT ──
+function makeFilledSlot(cat, idx, item) {
+  const div = document.createElement('div');
+  div.className = 'photo-slot has-image';
+  div.innerHTML = `
+    <img class="slot-image" src="${item.src}" alt="${item.caption || ''}">
+    <div class="slot-overlay">
+      <span class="slot-caption">${item.caption || 'Tap to view'}</span>
+      <div class="slot-actions">
+        <button class="slot-action-btn" onclick="openLightbox('${cat}',${idx})">View</button>
+        <button class="slot-action-btn" onclick="openCaptionModal('${cat}',${idx})">Rename</button>
+        <button class="slot-action-btn danger" onclick="removePhoto('${cat}',${idx})">Remove</button>
+      </div>
+    </div>`;
+  return div;
+}
+
+// ── ADD MORE SLOT ──
+function makeAddMoreSlot(cat) {
+  const div = document.createElement('div');
+  div.className = 'add-more-slot';
+  div.innerHTML = `
+    <span class="add-more-slot-icon">＋</span>
+    <span class="add-more-slot-label">Add photo</span>`;
+  div.addEventListener('click', () => triggerUpload(cat));
+  return div;
+}
+
+// ── UPLOAD TRIGGER ──
+function triggerUpload(cat) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.multiple = true;
+  input.onchange = (e) => handleBulkUpload(e, cat);
+  input.click();
+}
+
+// ── BULK UPLOAD ──
+function handleBulkUpload(e, cat) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      state[cat].push({ src: ev.target.result, caption: file.name.replace(/\.[^/.]+$/, '') });
+      renderGrid(cat);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── REMOVE ──
+function removePhoto(cat, idx) {
+  if (confirm('Remove this photo?')) {
+    state[cat].splice(idx, 1);
+    renderGrid(cat);
+  }
+}
+
+// ── LIGHTBOX ──
+function openLightbox(cat, idx) {
+  const item = state[cat][idx];
+  document.getElementById('lightboxImg').src = item.src;
+  document.getElementById('lightboxCaption').textContent = item.caption || '';
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(e) {
+  if (!e || e.target === document.getElementById('lightbox') || e.target.closest('.lightbox-close')) {
+    document.getElementById('lightbox').classList.remove('open');
+    document.getElementById('lightboxImg').src = '';
+  }
+}
+
+// ── CAPTION MODAL ──
+let _captionTarget = null;
+function openCaptionModal(cat, idx) {
+  _captionTarget = { cat, idx };
+  document.getElementById('captionInput').value = state[cat][idx].caption || '';
+  document.getElementById('captionModal').classList.add('open');
+  setTimeout(() => document.getElementById('captionInput').focus(), 100);
+}
+function closeCaptionModal() {
+  document.getElementById('captionModal').classList.remove('open');
+  _captionTarget = null;
+}
+document.getElementById('captionSaveBtn').addEventListener('click', () => {
+  if (!_captionTarget) return;
+  const val = document.getElementById('captionInput').value.trim();
+  state[_captionTarget.cat][_captionTarget.idx].caption = val;
+  renderGrid(_captionTarget.cat);
+  closeCaptionModal();
+});
+document.getElementById('captionInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('captionSaveBtn').click();
+  if (e.key === 'Escape') closeCaptionModal();
+});
+
+// Prevent slot-action-btn clicks from propagating
+document.addEventListener('click', e => {
+  if (e.target.closest('.slot-actions')) e.stopPropagation();
+});
+</script>
+</body>
+</html>

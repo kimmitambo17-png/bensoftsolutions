@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bensoft Prints & Branding Solutions – Kianyaga, Kenya</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --accent: #e8420a;
+    --gold: #d4a017;
+    --mid: #5a5248;
+    --light: #ebe5d8;
+    --white: #fdfaf4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem;
+    background: var(--ink);
+    border-bottom: 3px solid var(--accent);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--paper);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--light);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--accent);
+    color: var(--white) !important;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.68rem !important;
+  }
+  .nav-cta:hover { background: #c73509; color: var(--white) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 4rem;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 5rem 3rem 5rem 4rem;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block;
+    width: 32px; height: 2px; background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 6vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    margin-bottom: 1.8rem;
+  }
+  .hero-title .accent-line { color: var(--accent); display: block; }
+  .hero-title .stroke-text {
+    -webkit-text-stroke: 2px var(--ink);
+    color: transparent;
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--mid);
+    max-width: 420px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.85rem 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 2px solid var(--ink);
+    transition: all 0.25s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    padding: 0.85rem 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 2px solid var(--ink);
+    transition: all 0.25s;
+    display: inline-block;
+  }
+  .btn-secondary:hover { background: var(--ink); color: var(--paper); }
+
+  .hero-right {
+    background: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-right::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 8px,
+      rgba(232,66,10,0.06) 8px,
+      rgba(232,66,10,0.06) 9px
+    );
+  }
+
+  .hero-graphic {
+    position: relative; z-index: 2;
+    text-align: center; padding: 3rem;
+  }
+
+  .hero-big-letter {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(8rem, 18vw, 16rem);
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(245,240,232,0.15);
+    line-height: 1;
+    display: block;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+
+  .hero-badge {
+    position: absolute;
+    bottom: 2.5rem; right: 2.5rem;
+    background: var(--accent);
+    color: var(--white);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    padding: 0.7rem 1.1rem;
+    transform: rotate(3deg);
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  /* ── TICKER ── */
+  .ticker {
+    background: var(--accent);
+    padding: 0.65rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    display: inline-block;
+    animation: ticker 28s linear infinite;
+  }
+  .ticker-track span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+    padding: 0 2.5rem;
+  }
+  .ticker-track span::before { content: '◆  '; }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 6rem 4rem; }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .section-label::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--accent); opacity: 0.35;
+    max-width: 80px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--white); }
+
+  .services-intro {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3rem; align-items: end;
+    margin-bottom: 4rem;
+  }
+
+  .services-desc {
+    font-size: 1rem; line-height: 1.75; color: var(--mid); font-weight: 300;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 2px solid var(--ink);
+  }
+
+  .service-card {
+    padding: 2rem 1.8rem;
+    border-right: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s;
+    cursor: default;
+  }
+  .service-card:nth-child(3n) { border-right: none; }
+  .service-card:nth-last-child(-n+3) { border-bottom: none; }
+  .service-card:hover { background: var(--ink); }
+  .service-card:hover .service-title,
+  .service-card:hover .service-items li { color: var(--paper); }
+  .service-card:hover .service-num { color: var(--accent); opacity: 1; }
+  .service-card:hover .service-icon { color: var(--accent); }
+
+  .service-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--ink);
+    opacity: 0.07;
+    position: absolute; top: 0.5rem; right: 1rem;
+    transition: all 0.25s;
+  }
+
+  .service-icon {
+    font-size: 1.6rem;
+    margin-bottom: 0.8rem;
+    display: block;
+    transition: color 0.25s;
+  }
+
+  .service-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.8rem;
+    transition: color 0.25s;
+  }
+
+  .service-items {
+    list-style: none;
+  }
+  .service-items li {
+    font-size: 0.82rem;
+    color: var(--mid);
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(90,82,72,0.12);
+    font-weight: 300;
+    transition: color 0.25s;
+  }
+  .service-items li:last-child { border-bottom: none; }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--ink);
+    color: var(--paper);
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  #about .section-label { color: var(--gold); }
+  #about .section-label::after { background: var(--gold); }
+  #about .section-title { color: var(--paper); }
+
+  .about-text {
+    font-size: 1rem; line-height: 1.8; color: rgba(245,240,232,0.7);
+    font-weight: 300; margin-bottom: 2rem;
+  }
+
+  .stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  }
+
+  .stat-box {
+    border: 1px solid rgba(245,240,232,0.15);
+    padding: 1.5rem;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--accent);
+    line-height: 1;
+    display: block;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.5);
+    margin-top: 0.3rem;
+  }
+
+  .about-visual {
+    position: relative;
+  }
+  .about-big-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 10vw, 9rem);
+    line-height: 0.9;
+    -webkit-text-stroke: 1px rgba(245,240,232,0.12);
+    color: transparent;
+    text-align: right;
+  }
+  .about-tagline {
+    position: absolute;
+    bottom: 0; left: 0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1.5;
+    max-width: 280px;
+  }
+
+  /* ── HOURS & CONTACT ── */
+  #contact {
+    background: var(--paper);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .hours-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+  }
+  .hours-table tr {
+    border-bottom: 1px solid rgba(13,13,13,0.1);
+  }
+  .hours-table td {
+    padding: 0.9rem 0;
+    font-size: 0.9rem;
+  }
+  .hours-table .day { font-weight: 500; }
+  .hours-table .time { color: var(--mid); font-family: 'Space Mono', monospace; font-size: 0.78rem; text-align: right; }
+  .hours-table .closed { color: var(--accent); font-family: 'Space Mono', monospace; font-size: 0.78rem; text-align: right; font-weight: 700; }
+  .hours-note {
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    color: var(--mid);
+    font-style: italic;
+  }
+
+  .contact-info { margin-top: 1.5rem; }
+
+  .contact-row {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid rgba(13,13,13,0.1);
+  }
+  .contact-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .contact-key {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+  }
+  .contact-val {
+    font-size: 0.9rem;
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .contact-val a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .contact-val a:hover { color: var(--accent); }
+
+  /* ── CTA STRIP ── */
+  .cta-strip {
+    background: var(--accent);
+    padding: 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem; flex-wrap: wrap;
+  }
+  .cta-strip-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    color: var(--white);
+    line-height: 1.05;
+  }
+  .cta-strip-text em {
+    font-style: normal;
+    -webkit-text-stroke: 1.5px var(--white);
+    color: transparent;
+  }
+  .btn-white {
+    background: var(--white);
+    color: var(--accent);
+    padding: 1rem 2.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 2px solid var(--white);
+    transition: all 0.25s;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+  .btn-white:hover { background: transparent; color: var(--white); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(245,240,232,0.5);
+    padding: 3rem 4rem 2rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 3rem;
+  }
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--paper);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.6rem;
+  }
+  .footer-brand span { color: var(--accent); }
+  .footer-tagline {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    font-weight: 300;
+    max-width: 260px;
+  }
+  .footer-heading {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--paper);
+    margin-bottom: 1rem;
+  }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 0.5rem; }
+  .footer-links a {
+    color: rgba(245,240,232,0.5);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 300;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-bottom {
+    background: var(--ink);
+    padding: 1.2rem 4rem;
+    border-top: 1px solid rgba(245,240,232,0.08);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-bottom p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(245,240,232,0.3);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-right { display: none; }
+    .hero-left { padding: 6rem 2rem 3rem; }
+    .services-intro { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .service-card:nth-child(2n) { border-right: none; }
+    .service-card:nth-child(3n) { border-right: 2px solid var(--ink); }
+    #about { grid-template-columns: 1fr; padding: 4rem 2rem; gap: 3rem; }
+    .about-visual { display: none; }
+    #contact { grid-template-columns: 1fr; padding: 4rem 2rem; gap: 3rem; }
+    section { padding: 4rem 2rem; }
+    footer { grid-template-columns: 1fr; padding: 3rem 2rem; }
+    .footer-bottom { padding: 1rem 2rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    .cta-strip { padding: 3rem 2rem; }
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span>B</span>ENSOFT</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="tel:+254717620054" class="nav-cta">Call Us</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Kianyaga, Kenya</div>
+    <h1 class="hero-title">
+      BENSOFT<br>
+      <span class="accent-line">PRINTS &</span>
+      <span class="stroke-text">BRANDING</span>
+    </h1>
+    <p class="hero-desc">Your complete branding partner — from custom merchandise and bold print designs to cyber services and digital solutions, all under one roof in Kianyaga.</p>
+    <div class="hero-actions">
+      <a href="services.html" class="btn-primary">Explore Services</a>
+      <a href="#contact" class="btn-secondary">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-graphic">
+      <span class="hero-big-letter">B</span>
+    </div>
+    <div class="hero-badge">PRINTS<br>& BRANDS<br>KIANYAGA</div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>T-Shirt Printing</span><span>Business Cards</span><span>Logo Design</span><span>Banners & Posters</span><span>Mugs & Pillows</span><span>Cyber Services</span><span>KRA Returns</span><span>Plastic IDs</span><span>Lanyards</span><span>Wedding Cards</span><span>Hoodies & Caps</span><span>DL Renewal</span>
+    <span>T-Shirt Printing</span><span>Business Cards</span><span>Logo Design</span><span>Banners & Posters</span><span>Mugs & Pillows</span><span>Cyber Services</span><span>KRA Returns</span><span>Plastic IDs</span><span>Lanyards</span><span>Wedding Cards</span><span>Hoodies & Caps</span><span>DL Renewal</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-intro fade-up">
+    <div>
+      <div class="section-label">What We Do</div>
+      <h2 class="section-title">OUR SERVICES</h2>
+    </div>
+    <p class="services-desc">From screen-printed jerseys to KRA tax returns — we've got the tools, skills, and passion to serve Kianyaga and beyond. Walk in, or call ahead.</p>
+  </div>
+
+  <div class="services-grid fade-up">
+    <!-- 1 -->
+    <div class="service-card">
+      <span class="service-num">01</span>
+      <span class="service-icon">👕</span>
+      <h3 class="service-title">Custom Apparel</h3>
+      <ul class="service-items">
+        <li>T-Shirt & Jersey Printing</li>
+        <li>Hoodies & Caps</li>
+        <li>Dust Coats & Reflectors</li>
+        <li>Wrist Bands</li>
+      </ul>
+    </div>
+    <!-- 2 -->
+    <div class="service-card">
+      <span class="service-num">02</span>
+      <span class="service-icon">🎁</span>
+      <h3 class="service-title">Branded Gifts</h3>
+      <ul class="service-items">
+        <li>Mugs & Pillows</li>
+        <li>Diaries</li>
+        <li>Umbrellas</li>
+        <li>Lanyards</li>
+      </ul>
+    </div>
+    <!-- 3 -->
+    <div class="service-card">
+      <span class="service-num">03</span>
+      <span class="service-icon">🎨</span>
+      <h3 class="service-title">Graphic Design</h3>
+      <ul class="service-items">
+        <li>Logo Creation</li>
+        <li>Business Cards</li>
+        <li>Wedding Cards</li>
+        <li>Stickers & Decals</li>
+      </ul>
+    </div>
+    <!-- 4 -->
+    <div class="service-card">
+      <span class="service-num">04</span>
+      <span class="service-icon">🖨️</span>
+      <h3 class="service-title">Print Services</h3>
+      <ul class="service-items">
+        <li>Posters & Banners</li>
+        <li>Photocopying & Lamination</li>
+        <li>Binding & Typing</li>
+        <li>Plastic IDs</li>
+      </ul>
+    </div>
+    <!-- 5 -->
+    <div class="service-card">
+      <span class="service-num">05</span>
+      <span class="service-icon">💻</span>
+      <h3 class="service-title">Cyber & Digital</h3>
+      <ul class="service-items">
+        <li>Internet / Cyber Café</li>
+        <li>KRA Returns</li>
+        <li>DL Renewal</li>
+        <li>Movie Downloads</li>
+      </ul>
+    </div>
+    <!-- 6 -->
+    <div class="service-card">
+      <span class="service-num">06</span>
+      <span class="service-icon">🏷️</span>
+      <h3 class="service-title">More Products</h3>
+      <ul class="service-items">
+        <li>Phone & Laptop Stickers</li>
+        <li>School/Event Branding</li>
+        <li>Corporate Merchandise</li>
+        <li>Custom Orders Welcome</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="fade-up">
+    <div class="section-label">Who We Are</div>
+    <h2 class="section-title">BRANDING IS OUR LANGUAGE</h2>
+    <p class="about-text">Bensoft Prints & Branding Solutions is Kianyaga's go-to destination for everything print, brand, and digital. Whether you're a school, business, event organiser, or individual, we combine quality craftsmanship with fast turnaround to bring your vision to life.</p>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <span class="stat-num">12+</span>
+        <span class="stat-label">Service Categories</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num">6</span>
+        <span class="stat-label">Days Open Weekly</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num">12h</span>
+        <span class="stat-label">Daily Operating Hours</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-num">1</span>
+        <span class="stat-label">Roof. Everything Here.</span>
+      </div>
+    </div>
+  </div>
+  <div class="about-visual fade-up">
+    <div class="about-big-text">PRINT<br>BRAND<br>CREATE</div>
+    <p class="about-tagline">"Where your brand finds its voice — in ink, fabric, and pixel."</p>
+  </div>
+</section>
+
+<!-- CONTACT & HOURS -->
+<section id="contact">
+  <div class="fade-up">
+    <div class="section-label">Find Us</div>
+    <h2 class="section-title">HOURS & LOCATION</h2>
+    <table class="hours-table">
+      <tr><td class="day">Monday</td><td class="time">8:00 AM – 8:00 PM</td></tr>
+      <tr><td class="day">Tuesday</td><td class="time">8:00 AM – 8:00 PM</td></tr>
+      <tr><td class="day">Wednesday</td><td class="time">8:00 AM – 8:00 PM</td></tr>
+      <tr><td class="day">Thursday</td><td class="time">8:00 AM – 8:00 PM</td></tr>
+      <tr><td class="day">Friday</td><td class="time">8:00 AM – 8:00 PM</td></tr>
+      <tr><td class="day">Saturday</td><td class="closed">Closed</td></tr>
+      <tr><td class="day">Sunday</td><td class="time">8:00 AM – 8:00 PM</td></tr>
+    </table>
+    <p class="hours-note">* Hours may vary on public holidays (e.g. Madaraka Day).</p>
+  </div>
+  <div class="fade-up">
+    <div class="section-label">Get In Touch</div>
+    <h2 class="section-title">CONTACT US</h2>
+    <div class="contact-info">
+      <div class="contact-row">
+        <span class="contact-icon">📞</span>
+        <div>
+          <div class="contact-key">Phone</div>
+          <div class="contact-val">
+            <a href="tel:+254717620054">+254 717 620054</a><br>
+            <a href="tel:0115530991">0115 530991</a>
+          </div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">📍</span>
+        <div>
+          <div class="contact-key">Location</div>
+          <div class="contact-val">Kianyaga, Kenya</div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">🌐</span>
+        <div>
+          <div class="contact-key">Website</div>
+          <div class="contact-val"><a href="http://www.bensoftsolutions.co.ke/" target="_blank" rel="noopener">www.bensoftsolutions.co.ke</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<div class="cta-strip fade-up">
+  <div class="cta-strip-text">READY TO<br><em>BRAND</em> YOUR IDEA?</div>
+  <a href="tel:+254717620054" class="btn-white">Call +254 717 620054</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand"><span>B</span>ENSOFT PRINTS</div>
+    <p class="footer-tagline">Branding Agency · Printing Services · Cyber Café<br>Kianyaga, Kenya</p>
+  </div>
+  <div>
+    <div class="footer-heading">Services</div>
+    <ul class="footer-links">
+      <li><a href="#services">Custom Apparel</a></li>
+      <li><a href="#services">Graphic Design</a></li>
+      <li><a href="#services">Print Services</a></li>
+      <li><a href="#services">Cyber & Digital</a></li>
+      <li><a href="#services">Branded Gifts</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-heading">Info</div>
+    <ul class="footer-links">
+      <li><a href="#about">About Us</a></li>
+      <li><a href="#contact">Opening Hours</a></li>
+      <li><a href="tel:+254717620054">+254 717 620054</a></li>
+      <li><a href="tel:0115530991">0115 530991</a></li>
+      <li><a href="http://www.bensoftsolutions.co.ke/" target="_blank">Official Website</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2025 Bensoft Prints & Branding Solutions. Kianyaga, Kenya.</p>
+  <p>PRINTS · BRANDS · CYBER · DESIGN</p>
+</div>
+
+<script>
+  // Fade-up on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Smooth nav highlight
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>
