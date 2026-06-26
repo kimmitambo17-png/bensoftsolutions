@@ -437,15 +437,17 @@
                 </div>
             </div>
 
-            <!-- PROMINENT ADD TO CART BUTTON -->
+            <!-- ADD TO CART -->
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--panel-border);">
-                <button type="button" class="action-dispatch-btn" onclick="addToCart()" style="font-size: 1.2rem; padding: 18px;">Add to Cart →</button>
+                <button type="button" onclick="addToCart()" style="width:100%;padding:18px;background:#e8420a;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;border:none;border-radius:8px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='#c03508'" onmouseout="this.style.background='#e8420a'">Add to Cart &#8594;</button>
+                <p style="font-family:'Space Mono',monospace;font-size:.65rem;color:#666;text-align:center;margin-top:.8rem;letter-spacing:1px;">KSh 400 per jersey &middot; Payment via M-Pesa Paybill 522533</p>
             </div>
 
         </form>
     </div>
 </div>
 
+<script src="cart.js"></script>
 <script>
     // Comprehensive Matrix: Verified 2025/2026 Club Kit Colorways
     const catalogLeagueRosters = {
@@ -691,6 +693,5 @@
         BensoftCart.add(item);
     }
 </script>
-<script src="cart.js"></script>
 </body>
 </html>
