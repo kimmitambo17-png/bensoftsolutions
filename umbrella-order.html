@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Branded Umbrellas — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--ink);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--mid);
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    nav a.back-link:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--ink);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      color: var(--cream);
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .hero p {
+      color: #aaa;
+      font-size: .9rem;
+      margin-top: .7rem;
+    }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 750px) {
+      .page-wrap { grid-template-columns: 1fr; }
+    }
+
+    /* ── PREVIEW PANEL ── */
+    .preview-panel {
+      position: sticky;
+      top: 80px;
+    }
+    .preview-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: .8rem;
+    }
+    #umb-preview-wrap {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 360px;
+    }
+    #umb-svg {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      display: block;
+    }
+    .capture-btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: .75rem;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    /* ── FORM PANEL ── */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+
+    .step-block {
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .step-header {
+      background: var(--ink);
+      padding: .7rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      color: var(--accent);
+      min-width: 28px;
+    }
+    .step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--cream);
+      letter-spacing: 1px;
+    }
+    .step-body { padding: 1.2rem; background: white; }
+
+    /* Colour swatches */
+    .colour-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+    }
+    .colour-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: border-color .15s, transform .15s;
+    }
+    .colour-swatch:hover { transform: scale(1.12); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .colour-swatch[data-hex="#ffffff"] { border: 3px solid var(--border); }
+    .selected-colour-name {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--mid);
+      margin-top: .6rem;
+    }
+
+    /* Panel colour strip */
+    .panel-strip {
+      display: flex;
+      gap: .35rem;
+      margin-top: .8rem;
+      flex-wrap: wrap;
+    }
+    .panel-strip-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 3px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all .15s;
+    }
+    .panel-strip-swatch:hover { transform: scale(1.1); }
+    .panel-strip-swatch.active { border-color: var(--accent); }
+    .panel-strip-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      color: var(--mid);
+      margin-top: .4rem;
+    }
+
+    /* Toggle buttons */
+    .toggle-group {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+    .toggle-btn {
+      padding: .5rem 1.1rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all .2s;
+    }
+    .toggle-btn.active {
+      background: var(--ink);
+      color: var(--cream);
+      border-color: var(--ink);
+    }
+
+    /* Text inputs */
+    label.field-label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: .4rem;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: .65rem .85rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      color: var(--ink);
+      border-radius: 2px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .char-counter {
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      color: var(--mid);
+      text-align: right;
+      margin-top: .3rem;
+    }
+    .char-counter.warn { color: var(--accent); }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Upload */
+    .upload-area {
+      border: 2px dashed var(--border);
+      background: var(--cream);
+      padding: 1.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s;
+      border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem;
+      color: var(--accent);
+      margin-top: .5rem;
+    }
+
+    /* Quantity */
+    .qty-stepper {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      width: fit-content;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 40px; height: 40px;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background .15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display {
+      width: 56px; height: 40px;
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: .95rem; font-weight: 700;
+      border: none; background: white; color: var(--ink);
+    }
+    .unit-price {
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem; color: var(--mid); margin-top: .5rem;
+    }
+    .total-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem; color: var(--accent); margin-top: .3rem;
+    }
+
+    .notes-hint { font-size: .8rem; color: var(--mid); margin-top: .4rem; }
+
+    /* Order btn */
+    .order-btn {
+      width: 100%; padding: 1rem;
+      background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer;
+      transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* ── MPESA MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(13,13,13,.75);
+      z-index: 200; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white;
+      border-top: 4px solid var(--accent);
+      max-width: 440px; width: 90%; padding: 2rem; position: relative;
+    }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li {
+      counter-increment: mpesa;
+      padding: .55rem 0 .55rem 2.4rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .88rem; position: relative;
+    }
+    .mpesa-steps li::before {
+      content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 22px; height: 22px; background: var(--ink); color: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .65rem;
+      display: flex; align-items: center; justify-content: center; border-radius: 50%;
+    }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn {
+      width: 100%; padding: .85rem; background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .confirm-btn:hover { background: var(--accent-dark); }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="branded-gifts.html">← Branded Gifts</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Branded Gifts · Custom Order</div>
+  <h1>Branded Umbrellas</h1>
+  <p>High-quality promotional & corporate umbrellas — custom colours, logos & prints.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page-wrap">
+
+  <!-- LEFT: PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="umb-preview-wrap">
+      <svg id="umb-svg" viewBox="0 0 340 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Canopy clip -->
+          <clipPath id="canopyClip">
+            <ellipse cx="170" cy="148" rx="138" ry="128"/>
+          </clipPath>
+          <!-- Subtle gradient overlay for depth -->
+          <radialGradient id="canopyShade" cx="40%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0.14"/>
+          </radialGradient>
+        </defs>
+
+        <!-- ── CANOPY PANELS (8 panels) ── -->
+        <!-- Panel 1 -->
+        <path id="p1" d="M170 20 Q120 80 100 148 Q135 120 170 115 Z" fill="#1a3a5c"/>
+        <!-- Panel 2 -->
+        <path id="p2" d="M170 20 Q220 80 240 148 Q205 120 170 115 Z" fill="#e8420a"/>
+        <!-- Panel 3 -->
+        <path id="p3" d="M100 148 Q80 200 95 240 Q130 190 170 175 Q135 170 100 148 Z" fill="#1a3a5c"/>
+        <!-- Panel 4 -->
+        <path id="p4" d="M240 148 Q260 200 245 240 Q210 190 170 175 Q205 170 240 148 Z" fill="#e8420a"/>
+        <!-- Panel 5 -->
+        <path id="p5" d="M95 240 Q115 270 145 278 Q150 230 170 220 Q140 215 95 240 Z" fill="#1a3a5c"/>
+        <!-- Panel 6 -->
+        <path id="p6" d="M245 240 Q225 270 195 278 Q190 230 170 220 Q200 215 245 240 Z" fill="#e8420a"/>
+        <!-- Panel 7 -->
+        <path id="p7" d="M145 278 Q155 285 170 286 Q170 260 170 240 Q160 250 145 278 Z" fill="#1a3a5c"/>
+        <!-- Panel 8 -->
+        <path id="p8" d="M195 278 Q185 285 170 286 Q170 260 170 240 Q180 250 195 278 Z" fill="#e8420a"/>
+
+        <!-- Canopy shade overlay -->
+        <ellipse cx="170" cy="148" rx="138" ry="128" fill="url(#canopyShade)" pointer-events="none"/>
+
+        <!-- Panel ribs (spokes) -->
+        <g stroke="#00000022" stroke-width="1" fill="none">
+          <line x1="170" y1="115" x2="170" y2="20"/>
+          <line x1="170" y1="115" x2="100" y2="148"/>
+          <line x1="170" y1="115" x2="240" y2="148"/>
+          <line x1="170" y1="115" x2="95" y2="240"/>
+          <line x1="170" y1="115" x2="245" y2="240"/>
+          <line x1="170" y1="115" x2="145" y2="278"/>
+          <line x1="170" y1="115" x2="195" y2="278"/>
+          <line x1="170" y1="115" x2="170" y2="286"/>
+        </g>
+
+        <!-- Canopy edge scallop border -->
+        <ellipse cx="170" cy="148" rx="138" ry="128" fill="none" stroke="#00000033" stroke-width="2"/>
+
+        <!-- Tip top -->
+        <circle cx="170" cy="19" r="5" fill="#888" stroke="#555" stroke-width="1"/>
+
+        <!-- Centre ferrule -->
+        <circle cx="170" cy="115" r="7" fill="#c8c8c8" stroke="#999" stroke-width="1.5"/>
+
+        <!-- Shaft -->
+        <rect x="167" y="115" width="6" height="210" rx="3" fill="#888" stroke="#666" stroke-width="1"/>
+
+        <!-- Handle -->
+        <path d="M173 325 Q173 355 148 360 Q130 362 128 345 Q128 335 140 335" fill="none" stroke="#5a3a1a" stroke-width="9" stroke-linecap="round"/>
+        <path d="M173 325 Q173 355 148 360 Q130 362 128 345 Q128 335 140 335" fill="none" stroke="#7a5a3a" stroke-width="5" stroke-linecap="round"/>
+
+        <!-- Logo upload zone (centred on lower canopy) -->
+        <image id="preview-logo"
+               x="130" y="140"
+               width="80" height="60"
+               preserveAspectRatio="xMidYMid meet"
+               clip-path="url(#canopyClip)"
+               style="display:none;"/>
+
+        <!-- Brand text on canopy -->
+        <text id="preview-line1"
+              x="170" y="158"
+              text-anchor="middle"
+              font-family="'DM Sans', sans-serif"
+              font-size="14" font-weight="700"
+              fill="#ffffff"
+              clip-path="url(#canopyClip)"></text>
+        <text id="preview-line2"
+              x="170" y="176"
+              text-anchor="middle"
+              font-family="'DM Sans', sans-serif"
+              font-size="10"
+              fill="#ffffffcc"
+              clip-path="url(#canopyClip)"></text>
+
+      </svg>
+    </div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: PRIMARY CANOPY COLOUR -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Primary Panel Colour</span>
+      </div>
+      <div class="step-body">
+        <p style="font-size:.82rem;color:var(--mid);margin-bottom:.8rem;">Alternating panels use this colour. The secondary colour is set below.</p>
+        <div class="colour-grid" id="colour-grid-primary"></div>
+        <div class="selected-colour-name" id="primary-colour-name">Navy Blue (selected)</div>
+        <input type="hidden" name="primary_colour" id="primary-colour-input" value="Navy Blue"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: SECONDARY PANEL COLOUR -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Secondary Panel Colour</span>
+      </div>
+      <div class="step-body">
+        <p style="font-size:.82rem;color:var(--mid);margin-bottom:.8rem;">Choose a single-colour umbrella by picking the same colour as above, or mix for a two-tone look.</p>
+        <div class="colour-grid" id="colour-grid-secondary"></div>
+        <div class="selected-colour-name" id="secondary-colour-name">Orange-Red (selected)</div>
+        <input type="hidden" name="secondary_colour" id="secondary-colour-input" value="Orange-Red"/>
+      </div>
+    </div>
+
+    <!-- STEP 3: UMBRELLA TYPE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Umbrella Type & Size</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Umbrella Type</label>
+            <select name="umbrella_type" id="umbrella-type" onchange="updatePrice()">
+              <option value="compact-auto">Compact Auto-Open</option>
+              <option value="compact-manual">Compact Manual</option>
+              <option value="standard-straight">Standard Straight (23")</option>
+              <option value="golf-umbrella">Golf Umbrella (30")</option>
+              <option value="windproof">Windproof / Double-Canopy</option>
+              <option value="folding-3">3-Fold Pocket Umbrella</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Handle Style</label>
+            <select name="handle_style" id="handle-style">
+              <option value="hook-wood">Hook — Wooden</option>
+              <option value="hook-rubber">Hook — Rubber Grip</option>
+              <option value="straight-rubber">Straight — Rubber Grip</option>
+              <option value="pistol-grip">Pistol Grip</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Panel Print Coverage</label>
+          <div class="toggle-group" id="coverage-group">
+            <button type="button" class="toggle-btn active" data-val="one-panel" onclick="setCoverage(this)">1 Panel (logo only)</button>
+            <button type="button" class="toggle-btn" data-val="all-panels" onclick="setCoverage(this)">All Panels (full wrap)</button>
+            <button type="button" class="toggle-btn" data-val="alternating" onclick="setCoverage(this)">Alternating Panels</button>
+          </div>
+          <input type="hidden" name="print_coverage" id="coverage-input" value="one-panel"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: BRANDING TEXT -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Branding Text</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Company / Brand Name</label>
+          <input type="text" id="line1" name="brand_name" placeholder="e.g. Acme Solutions" maxlength="22" oninput="updatePreview()"/>
+          <div class="char-counter" id="line1-counter">0 / 22</div>
+        </div>
+        <div>
+          <label class="field-label">Tagline (optional)</label>
+          <input type="text" id="line2" name="tagline" placeholder="e.g. Building Tomorrow" maxlength="30" oninput="updatePreview()"/>
+          <div class="char-counter" id="line2-counter">0 / 30</div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Text Font</label>
+            <select name="font_style" id="font-style" onchange="updatePreview()">
+              <option value="sans">Clean Sans</option>
+              <option value="serif">Elegant Serif</option>
+              <option value="script">Script</option>
+              <option value="bold">Bold Block</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Text Colour</label>
+            <select name="text_colour" id="text-colour" onchange="updatePreview()">
+              <option value="#ffffff">White</option>
+              <option value="#0d0d0d">Black</option>
+              <option value="#f1c40f">Gold</option>
+              <option value="#e8420a">Orange-Red</option>
+              <option value="#c0392b">Red</option>
+              <option value="#1a3a5c">Navy Blue</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: LOGO UPLOAD -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Logo Upload</span>
+      </div>
+      <div class="step-body">
+        <div class="upload-area" onclick="document.getElementById('logo-upload').click()">
+          <input type="file" id="logo-upload" name="logo" accept="image/*" onchange="handleUpload(event)"/>
+          <div class="upload-icon">🖼️</div>
+          <p><strong>Click to upload</strong> your logo or artwork</p>
+          <p>PNG with transparent background recommended · min 500×500px</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Quantity</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qty-display" name="quantity" value="1" min="1" max="1000" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 1,200</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">1,200</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="1200"/>
+      </div>
+    </div>
+
+    <!-- STEP 7: YOUR DETAILS -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <span class="step-title">Your Details & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Colour preferences, sleeve/carry bag, branded sleeve, deadline, delivery or pickup…"></textarea>
+          <p class="notes-hint">☂️ Bulk corporate orders available. Branded carry sleeves can be added on request.</p>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+
+  </form>
+
+<script>
+  /* ─── COLOUR DATA ─── */
+  const COLOURS = [
+    { name: 'Navy Blue',    hex: '#1a3a5c' },
+    { name: 'Black',        hex: '#1a1a1a' },
+    { name: 'Orange-Red',   hex: '#e8420a' },
+    { name: 'Red',          hex: '#c0392b' },
+    { name: 'Forest Green', hex: '#2d6a4f' },
+    { name: 'Royal Blue',   hex: '#1f4e9e' },
+    { name: 'Sky Blue',     hex: '#5ba4cf' },
+    { name: 'Yellow',       hex: '#f1c40f' },
+    { name: 'Purple',       hex: '#6c3483' },
+    { name: 'White',        hex: '#f0f0f0' },
+    { name: 'Grey',         hex: '#7f8c8d' },
+    { name: 'Maroon',       hex: '#7b241c' },
+  ];
+
+  /* Primary swatches — default Navy Blue (index 0) */
+  let primaryHex = COLOURS[0].hex;
+  let secondaryHex = COLOURS[2].hex; // Orange-Red
+
+  function buildSwatchGrid(containerId, defaultIndex, onSelect) {
+    const grid = document.getElementById(containerId);
+    COLOURS.forEach((c, i) => {
+      const sw = document.createElement('div');
+      sw.className = 'colour-swatch' + (i === defaultIndex ? ' active' : '');
+      sw.style.background = c.hex;
+      sw.title = c.name;
+      sw.dataset.hex = c.hex;
+      sw.onclick = () => {
+        grid.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
+        sw.classList.add('active');
+        onSelect(c);
+      };
+      grid.appendChild(sw);
+    });
+  }
+
+  buildSwatchGrid('colour-grid-primary', 0, (c) => {
+    primaryHex = c.hex;
+    document.getElementById('primary-colour-name').textContent = c.name + ' (selected)';
+    document.getElementById('primary-colour-input').value = c.name;
+    applyPanelColours();
+  });
+
+  buildSwatchGrid('colour-grid-secondary', 2, (c) => {
+    secondaryHex = c.hex;
+    document.getElementById('secondary-colour-name').textContent = c.name + ' (selected)';
+    document.getElementById('secondary-colour-input').value = c.name;
+    applyPanelColours();
+  });
+
+  function applyPanelColours() {
+    // Odd panels = primary, even panels = secondary
+    ['p1','p3','p5','p7'].forEach(id => document.getElementById(id).setAttribute('fill', primaryHex));
+    ['p2','p4','p6','p8'].forEach(id => document.getElementById(id).setAttribute('fill', secondaryHex));
+  }
+
+  /* ─── TEXT PREVIEW ─── */
+  const FONT_MAP = {
+    sans:   "'DM Sans', sans-serif",
+    serif:  "Georgia, serif",
+    script: "cursive",
+    bold:   "'Bebas Neue', sans-serif"
+  };
+
+  function updatePreview() {
+    const l1    = document.getElementById('line1').value;
+    const l2    = document.getElementById('line2').value;
+    const font  = FONT_MAP[document.getElementById('font-style').value];
+    const color = document.getElementById('text-colour').value;
+
+    const pl1 = document.getElementById('preview-line1');
+    const pl2 = document.getElementById('preview-line2');
+    const hasLogo = document.getElementById('preview-logo').style.display !== 'none';
+
+    pl1.setAttribute('y', hasLogo ? '170' : '158');
+    pl2.setAttribute('y', hasLogo ? '186' : '176');
+
+    pl1.textContent = l1;
+    pl1.setAttribute('font-family', font);
+    pl1.setAttribute('fill', color);
+
+    pl2.textContent = l2;
+    pl2.setAttribute('font-family', font);
+    pl2.setAttribute('fill', color);
+
+    const c1 = document.getElementById('line1-counter');
+    c1.textContent = `${l1.length} / 22`;
+    c1.className = 'char-counter' + (l1.length > 18 ? ' warn' : '');
+
+    const c2 = document.getElementById('line2-counter');
+    c2.textContent = `${l2.length} / 30`;
+    c2.className = 'char-counter' + (l2.length > 24 ? ' warn' : '');
+  }
+
+  /* ─── LOGO UPLOAD ─── */
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '✓ ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const imgEl = document.getElementById('preview-logo');
+      imgEl.setAttribute('href', ev.target.result);
+      imgEl.style.display = 'block';
+      updatePreview();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ─── COVERAGE TOGGLE ─── */
+  function setCoverage(el) {
+    document.querySelectorAll('#coverage-group .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('coverage-input').value = el.dataset.val;
+    updatePrice();
+  }
+
+  /* ─── PRICING ─── */
+  const BASE_PRICES = {
+    'compact-auto':     1200,
+    'compact-manual':    950,
+    'standard-straight': 1400,
+    'golf-umbrella':     2200,
+    'windproof':         2600,
+    'folding-3':         1100,
+  };
+  const COVERAGE_ADD = {
+    'one-panel':   0,
+    'all-panels':  400,
+    'alternating': 200,
+  };
+
+  let qty = 1;
+
+  function updatePrice() {
+    const type     = document.getElementById('umbrella-type').value;
+    const coverage = document.getElementById('coverage-input').value;
+    const unit     = BASE_PRICES[type] + COVERAGE_ADD[coverage];
+    const total    = unit * qty;
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(1, qty + delta);
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+  /* ─── CAPTURE ─── */
+  function capturePreview() {
+    html2canvas(document.getElementById('umb-preview-wrap'), { backgroundColor: '#ffffff', scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-umbrella-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  /* ─── FORM SUBMIT ─── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    updatePrice();
+    document.getElementById('mpesa-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('mpesa-modal').classList.remove('open');
+  }
+
+  async function confirmPayment() {
+    closeModal();
+    const form = document.getElementById('order-form');
+    const data = new FormData(form);
+    try {
+      await fetch('https://formspree.io/f/xrevgjve', {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' }
+      });
+    } catch (_) {}
+    // Init
+  applyPanelColours();
+  updatePrice();
+
+  function addToCart() {
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+    
+    const umbrellaType = formData.get('umbrella_type');
+    const handleStyle = formData.get('handle_style');
+    const coverage = formData.get('print_coverage');
+    const primaryColour = formData.get('primary_colour');
+    const secondaryColour = formData.get('secondary_colour');
+    const fontStyle = formData.get('font_style');
+    const textColour = formData.get('text_colour');
+    
+    const typeLabels = {
+      'compact-auto': 'Compact Auto-Open',
+      'compact-manual': 'Compact Manual',
+      'standard-straight': 'Standard Straight (23")',
+      'golf-umbrella': 'Golf Umbrella (30")',
+      'windproof': 'Windproof / Double-Canopy',
+      'folding-3': '3-Fold Pocket Umbrella'
+    };
+    const handleLabels = {
+      'hook-wood': 'Hook — Wooden',
+      'hook-rubber': 'Hook — Rubber Grip',
+      'straight-rubber': 'Straight — Rubber Grip',
+      'pistol-grip': 'Pistol Grip'
+    };
+    const coverageLabels = {
+      'one-panel': '1 Panel (logo only)',
+      'all-panels': 'All Panels (full wrap)',
+      'alternating': 'Alternating Panels'
+    };
+    
+    const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+    
+    const item = {
+      productName: 'Branded Umbrella',
+      variant: typeLabels[umbrellaType] || umbrellaType,
+      colour: `${primaryColour} / ${secondaryColour}`,
+      material: handleLabels[handleStyle] || handleStyle,
+      details: `Coverage: ${coverageLabels[coverage] || coverage}, Font: ${fontStyle}, Text: ${textColour}. ${formData.get('notes') || ''}`,
+      quantity: qty,
+      unitPrice: unitPrice
+    };
+    
+    BensoftCart.add(item);
+  }
+</script>
+</body>
+</html>

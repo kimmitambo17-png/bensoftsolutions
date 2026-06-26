@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Mug Order — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--ink);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--mid);
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    nav a.back-link:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--ink);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      color: var(--cream);
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .hero p {
+      color: #aaa;
+      font-size: .9rem;
+      margin-top: .7rem;
+    }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 750px) {
+      .page-wrap { grid-template-columns: 1fr; }
+    }
+
+    /* ── PREVIEW PANEL ── */
+    .preview-panel {
+      position: sticky;
+      top: 80px;
+    }
+    .preview-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: .8rem;
+    }
+    #mug-preview-wrap {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+    }
+    #mug-svg {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+      display: block;
+    }
+
+    .capture-btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: .75rem;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    /* ── FORM PANEL ── */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+
+    .step-block {
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .step-header {
+      background: var(--ink);
+      padding: .7rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      color: var(--accent);
+      min-width: 28px;
+    }
+    .step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--cream);
+      letter-spacing: 1px;
+    }
+    .step-body { padding: 1.2rem; background: white; }
+
+    /* Colours */
+    .colour-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+    }
+    .colour-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: border-color .15s, transform .15s;
+      position: relative;
+    }
+    .colour-swatch:hover { transform: scale(1.12); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .colour-swatch[data-color="#ffffff"] { border: 3px solid var(--border); }
+    .selected-colour-name {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--mid);
+      margin-top: .6rem;
+    }
+
+    /* Text inputs */
+    label.field-label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: .4rem;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: .65rem .85rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      color: var(--ink);
+      border-radius: 2px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .char-counter {
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      color: var(--mid);
+      text-align: right;
+      margin-top: .3rem;
+    }
+    .char-counter.warn { color: var(--accent); }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Print position */
+    .position-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .5rem;
+    }
+    .pos-btn {
+      padding: .5rem .4rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .8rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+      border-radius: 2px;
+    }
+    .pos-btn.active {
+      background: var(--ink);
+      color: var(--cream);
+      border-color: var(--ink);
+    }
+
+    /* Upload */
+    .upload-area {
+      border: 2px dashed var(--border);
+      background: var(--cream);
+      padding: 1.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s;
+      border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem;
+      color: var(--accent);
+      margin-top: .5rem;
+    }
+
+    /* Quantity */
+    .qty-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      width: fit-content;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display {
+      width: 56px;
+      height: 40px;
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: .95rem;
+      font-weight: 700;
+      border: none;
+      background: white;
+      color: var(--ink);
+    }
+    .unit-price {
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+      color: var(--mid);
+      margin-top: .5rem;
+    }
+    .total-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: var(--accent);
+      margin-top: .3rem;
+    }
+
+    /* Notes */
+    .notes-hint {
+      font-size: .8rem;
+      color: var(--mid);
+      margin-top: .4rem;
+    }
+
+    /* Order btn */
+    .order-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 2px;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+      border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* ── MPESA MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13,13,13,.75);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white;
+      border-top: 4px solid var(--accent);
+      max-width: 440px;
+      width: 90%;
+      padding: 2rem;
+      position: relative;
+    }
+    .modal h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      margin-bottom: .3rem;
+    }
+    .modal .mpesa-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--mid);
+      margin-bottom: 1.2rem;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--mid);
+    }
+    .mpesa-amount {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      color: var(--accent);
+      margin: .5rem 0 1rem;
+    }
+    .mpesa-steps {
+      list-style: none;
+      counter-reset: mpesa;
+      margin-bottom: 1.3rem;
+    }
+    .mpesa-steps li {
+      counter-increment: mpesa;
+      padding: .55rem 0 .55rem 2.4rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .88rem;
+      position: relative;
+    }
+    .mpesa-steps li::before {
+      content: counter(mpesa);
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .mpesa-number {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .confirm-btn {
+      width: 100%;
+      padding: .85rem;
+      background: var(--accent);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+      border-radius: 2px;
+    }
+    .confirm-btn:hover { background: var(--accent-dark); }
+
+    /* Success */
+    #success-msg {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+    }
+    #success-msg .tick { font-size: 3rem; margin-bottom: .5rem; }
+    #success-msg h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      margin-bottom: .4rem;
+    }
+    #success-msg p { font-size: .88rem; color: var(--mid); }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="branded-gifts.html">← Branded Gifts</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Branded Gifts · Custom Order</div>
+  <h1>Custom Mugs</h1>
+  <p>Personalised ceramic mugs — names, logos, photos & more.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page-wrap">
+
+  <!-- LEFT: PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="mug-preview-wrap">
+      <svg id="mug-svg" viewBox="0 0 340 280" xmlns="http://www.w3.org/2000/svg">
+        <!-- Mug body -->
+        <rect id="mug-body" x="40" y="40" width="220" height="185" rx="12" ry="12" fill="#ffffff" stroke="#ccc" stroke-width="2"/>
+        <!-- Mug rim highlight -->
+        <rect x="40" y="40" width="220" height="16" rx="12" ry="12" fill="#e8e8e8" stroke="#ccc" stroke-width="1.5"/>
+        <!-- Mug handle -->
+        <path d="M260 90 Q310 90 310 140 Q310 190 260 190" fill="none" stroke="#ccc" stroke-width="14" stroke-linecap="round"/>
+        <path d="M260 90 Q302 90 302 140 Q302 190 260 190" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+        <!-- Design zone -->
+        <clipPath id="mugClip">
+          <rect x="50" y="62" width="200" height="155" rx="6"/>
+        </clipPath>
+        <!-- Uploaded image (hidden by default) -->
+        <image id="preview-image" x="80" y="68" width="80" height="80" preserveAspectRatio="xMidYMid meet" clip-path="url(#mugClip)" style="display:none;"/>
+        <!-- Text line 1 -->
+        <text id="preview-line1" x="150" y="135" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="18" font-weight="600" fill="#0d0d0d" clip-path="url(#mugClip)"></text>
+        <!-- Text line 2 -->
+        <text id="preview-line2" x="150" y="158" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="13" fill="#555" clip-path="url(#mugClip)"></text>
+        <!-- Mug base -->
+        <ellipse cx="150" cy="225" rx="110" ry="10" fill="#d0ccc0" opacity="0.5"/>
+        <!-- Steam -->
+        <g id="steam" opacity="0.4">
+          <path d="M110 28 Q115 18 110 8" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"/>
+          <path d="M150 25 Q155 12 150 2" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"/>
+          <path d="M190 28 Q195 18 190 8" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: MUG COLOUR -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Mug Colour</span>
+      </div>
+      <div class="step-body">
+        <div class="colour-grid" id="colour-grid"></div>
+        <div class="selected-colour-name" id="colour-name-display">White (selected)</div>
+        <input type="hidden" name="mug_colour" id="mug-colour-input" value="White"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: PERSONALISATION TEXT -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Personalisation Text</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Main Text / Name</label>
+          <input type="text" id="line1" name="line1" placeholder="e.g. Happy Birthday, John" maxlength="25" oninput="updatePreview()"/>
+          <div class="char-counter" id="line1-counter">0 / 25</div>
+        </div>
+        <div>
+          <label class="field-label">Sub-text / Tagline (optional)</label>
+          <input type="text" id="line2" name="line2" placeholder="e.g. Best Dad Ever" maxlength="35" oninput="updatePreview()"/>
+          <div class="char-counter" id="line2-counter">0 / 35</div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Text Font Style</label>
+            <select name="font_style" id="font-style" onchange="updatePreview()">
+              <option value="sans">Clean Sans</option>
+              <option value="serif">Elegant Serif</option>
+              <option value="script">Script / Handwritten</option>
+              <option value="bold">Bold Block</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Text Colour</label>
+            <select name="text_colour" id="text-colour" onchange="updatePreview()">
+              <option value="#0d0d0d">Black</option>
+              <option value="#ffffff">White</option>
+              <option value="#e8420a">Orange-Red</option>
+              <option value="#1a5276">Navy Blue</option>
+              <option value="#c0392b">Red</option>
+              <option value="#27ae60">Green</option>
+              <option value="#f39c12">Gold</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: LOGO / PHOTO UPLOAD -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Logo or Photo Upload</span>
+      </div>
+      <div class="step-body">
+        <div class="upload-area" onclick="document.getElementById('logo-upload').click()">
+          <input type="file" id="logo-upload" name="logo" accept="image/*" onchange="handleUpload(event)"/>
+          <div class="upload-icon">🖼️</div>
+          <p><strong>Click to upload</strong> your logo or photo</p>
+          <p>PNG, JPG, SVG — recommended 500×500px</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+        <div style="margin-top:.9rem;">
+          <label class="field-label">Image Position on Mug</label>
+          <div class="position-grid" id="position-grid">
+            <button type="button" class="pos-btn active" data-pos="center-full" onclick="setPosition(this)">Centre Full</button>
+            <button type="button" class="pos-btn" data-pos="top-left" onclick="setPosition(this)">Top Left</button>
+            <button type="button" class="pos-btn" data-pos="top-centre" onclick="setPosition(this)">Top Centre</button>
+            <button type="button" class="pos-btn" data-pos="bottom-left" onclick="setPosition(this)">Bottom Left</button>
+            <button type="button" class="pos-btn" data-pos="bottom-centre" onclick="setPosition(this)">Bottom Centre</button>
+            <button type="button" class="pos-btn" data-pos="wrap-around" onclick="setPosition(this)">Wrap-Around</button>
+          </div>
+        </div>
+        <input type="hidden" name="image_position" id="image-position-input" value="center-full"/>
+      </div>
+    </div>
+
+    <!-- STEP 4: MUG TYPE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Mug Type & Size</span>
+      </div>
+      <div class="step-body">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Mug Type</label>
+            <select name="mug_type" id="mug-type" onchange="updatePrice()">
+              <option value="ceramic-standard">Ceramic Standard (325ml)</option>
+              <option value="ceramic-large">Ceramic Large (450ml)</option>
+              <option value="magic-colour">Magic Colour-Change</option>
+              <option value="travel-mug">Travel Mug (350ml)</option>
+              <option value="enamel">Enamel Mug</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Finishing</label>
+            <select name="finishing" id="finishing" onchange="updatePrice()">
+              <option value="matte">Matte</option>
+              <option value="glossy">Glossy</option>
+              <option value="metallic-sheen">Metallic Sheen</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Quantity</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qty-display" name="quantity" value="1" min="1" max="500" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 650</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">650</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="650"/>
+      </div>
+    </div>
+
+    <!-- STEP 6: CONTACT & NOTES -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Your Details & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Any extra details — specific colours, placement notes, deadline, gift wrapping…"></textarea>
+          <p class="notes-hint">📦 Delivery or pickup? Let us know here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER BUTTON -->
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+
+  </form>
+</div>
+
+<script>
+  /* ─── COLOUR SWATCHES ─── */
+  const COLOURS = [
+    { name: 'White',        hex: '#ffffff', body: '#f0f0f0', handle: '#ddd' },
+    { name: 'Cream',        hex: '#f5f0e8', body: '#ede8de', handle: '#d4cfc7' },
+    { name: 'Black',        hex: '#1a1a1a', body: '#1a1a1a', handle: '#333' },
+    { name: 'Navy Blue',    hex: '#1a3a5c', body: '#1a3a5c', handle: '#254e7a' },
+    { name: 'Sky Blue',     hex: '#5ba4cf', body: '#5ba4cf', handle: '#4a8fb5' },
+    { name: 'Forest Green', hex: '#2d6a4f', body: '#2d6a4f', handle: '#3a8564' },
+    { name: 'Red',          hex: '#c0392b', body: '#c0392b', handle: '#a93226' },
+    { name: 'Orange-Red',   hex: '#e8420a', body: '#e8420a', handle: '#c9380a' },
+    { name: 'Yellow',       hex: '#f1c40f', body: '#f1c40f', handle: '#d4ac0d' },
+    { name: 'Pink',         hex: '#e91e8c', body: '#e91e8c', handle: '#c8187a' },
+    { name: 'Purple',       hex: '#6c3483', body: '#6c3483', handle: '#5b2c6f' },
+    { name: 'Grey',         hex: '#95a5a6', body: '#95a5a6', handle: '#7f8c8d' },
+  ];
+
+  let selectedColour = COLOURS[0];
+
+  const grid = document.getElementById('colour-grid');
+  COLOURS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'colour-swatch' + (i === 0 ? ' active' : '');
+    sw.style.background = c.hex;
+    sw.title = c.name;
+    sw.dataset.index = i;
+    sw.onclick = () => selectColour(i, sw);
+    grid.appendChild(sw);
+  });
+
+  function selectColour(i, el) {
+    document.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    selectedColour = COLOURS[i];
+    document.getElementById('colour-name-display').textContent = selectedColour.name + ' (selected)';
+    document.getElementById('mug-colour-input').value = selectedColour.name;
+    document.getElementById('mug-body').setAttribute('fill', selectedColour.body);
+    document.querySelector('#mug-svg path:first-of-type').setAttribute('stroke', selectedColour.handle);
+  }
+
+  /* ─── TEXT PREVIEW ─── */
+  const FONT_MAP = {
+    sans: "'DM Sans', sans-serif",
+    serif: "Georgia, serif",
+    script: "cursive",
+    bold: "'Bebas Neue', sans-serif"
+  };
+
+  function updatePreview() {
+    const l1 = document.getElementById('line1').value;
+    const l2 = document.getElementById('line2').value;
+    const font = FONT_MAP[document.getElementById('font-style').value];
+    const color = document.getElementById('text-colour').value;
+
+    const pl1 = document.getElementById('preview-line1');
+    const pl2 = document.getElementById('preview-line2');
+    const imgEl = document.getElementById('preview-image');
+
+    // Adjust vertical position based on whether image is showing
+    const hasImage = imgEl.style.display !== 'none';
+    pl1.setAttribute('y', hasImage ? '175' : '135');
+    pl2.setAttribute('y', hasImage ? '195' : '158');
+
+    pl1.textContent = l1;
+    pl1.setAttribute('font-family', font);
+    pl1.setAttribute('fill', color);
+
+    pl2.textContent = l2;
+    pl2.setAttribute('font-family', font);
+    pl2.setAttribute('fill', color);
+
+    // Counters
+    const c1 = document.getElementById('line1-counter');
+    c1.textContent = `${l1.length} / 25`;
+    c1.className = 'char-counter' + (l1.length > 20 ? ' warn' : '');
+
+    const c2 = document.getElementById('line2-counter');
+    c2.textContent = `${l2.length} / 35`;
+    c2.className = 'char-counter' + (l2.length > 28 ? ' warn' : '');
+  }
+
+  /* ─── IMAGE UPLOAD ─── */
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '✓ ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const imgEl = document.getElementById('preview-image');
+      imgEl.setAttribute('href', ev.target.result);
+      imgEl.style.display = 'block';
+      applyImagePosition(document.querySelector('.pos-btn.active')?.dataset.pos || 'center-full');
+      updatePreview();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ─── IMAGE POSITION ─── */
+  function setPosition(el) {
+    document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('image-position-input').value = el.dataset.pos;
+    applyImagePosition(el.dataset.pos);
+  }
+
+  function applyImagePosition(pos) {
+    const imgEl = document.getElementById('preview-image');
+    if (imgEl.style.display === 'none') return;
+    const positions = {
+      'center-full':   { x: 90, y: 68, w: 120, h: 120 },
+      'top-left':      { x: 55, y: 68, w: 70, h: 70 },
+      'top-centre':    { x: 115, y: 68, w: 70, h: 70 },
+      'bottom-left':   { x: 55, y: 150, w: 70, h: 60 },
+      'bottom-centre': { x: 115, y: 155, w: 70, h: 55 },
+      'wrap-around':   { x: 50, y: 62, w: 200, h: 155 },
+    };
+    const p = positions[pos] || positions['center-full'];
+    imgEl.setAttribute('x', p.x);
+    imgEl.setAttribute('y', p.y);
+    imgEl.setAttribute('width', p.w);
+    imgEl.setAttribute('height', p.h);
+  }
+
+  /* ─── PRICING ─── */
+  const PRICES = {
+    'ceramic-standard': 650,
+    'ceramic-large': 750,
+    'magic-colour': 950,
+    'travel-mug': 1100,
+    'enamel': 850,
+  };
+  const FINISHING_ADD = { 'matte': 0, 'glossy': 50, 'metallic-sheen': 100 };
+
+  let qty = 1;
+
+  function updatePrice() {
+    const type = document.getElementById('mug-type').value;
+    const fin = document.getElementById('finishing').value;
+    const unit = PRICES[type] + FINISHING_ADD[fin];
+    const total = unit * qty;
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(1, qty + delta);
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+  /* ─── CAPTURE PREVIEW ─── */
+  function capturePreview() {
+    html2canvas(document.getElementById('mug-preview-wrap'), { backgroundColor: '#ffffff', scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-mug-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  /* ─── FORM SUBMIT ─── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    updatePrice();
+    document.getElementById('mpesa-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('mpesa-modal').classList.remove('open');
+  }
+
+  async function confirmPayment() {
+    closeModal();
+    const form = document.getElementById('order-form');
+    const data = new FormData(form);
+    try {
+      await fetch('https://formspree.io/f/xrevgjve', {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' }
+      });
+    } catch (_) {}
+    document.getElementById('success-overlay').classList.add('open');
+  }
+
+    // Init
+    updatePrice();
+
+    function addToCart() {
+        const form = document.getElementById('order-form');
+        const formData = new FormData(form);
+        
+        const mugType = formData.get('mug_type');
+        const finishing = formData.get('finishing');
+        const mugColour = formData.get('mug_colour');
+        const fontStyle = formData.get('font_style');
+        const textColour = formData.get('text_colour');
+        const imagePosition = formData.get('image_position');
+        
+        const typeLabels = {
+            'ceramic-standard': 'Ceramic Standard (325ml)',
+            'ceramic-large': 'Ceramic Large (450ml)',
+            'magic-colour': 'Magic Colour-Change',
+            'travel-mug': 'Travel Mug (350ml)',
+            'enamel': 'Enamel Mug'
+        };
+        const finishLabels = { 'matte': 'Matte', 'glossy': 'Glossy', 'metallic-sheen': 'Metallic Sheen' };
+        
+        const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+        
+        const item = {
+            productName: 'Custom Mug',
+            variant: typeLabels[mugType] || mugType,
+            colour: mugColour,
+            material: finishLabels[finishing] || finishing,
+            details: `Font: ${fontStyle}, Text: ${textColour}, Image: ${imagePosition}. ${formData.get('notes') || ''}`,
+            quantity: qty,
+            unitPrice: unitPrice
+        };
+        
+        BensoftCart.add(item);
+    }
+</script>
+</body>
+</html>

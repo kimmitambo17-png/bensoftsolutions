@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business Card Order — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    /* NAV */
+    nav { background: var(--ink); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+    /* LAYOUT */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    /* PREVIEW PANEL */
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+    #card-preview-wrap { background: #e9e4da; border: 2px solid var(--border); border-radius: 4px; padding: 2.5rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.4rem; min-height: 380px; }
+
+    /* The business card itself */
+    .biz-card {
+      width: 100%; max-width: 320px;
+      aspect-ratio: 1.75/1;
+      border-radius: 6px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.12);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s;
+      padding: 1.1rem 1.2rem;
+    }
+    .biz-card.shape-rounded { border-radius: 14px; }
+    .biz-card.shape-square { aspect-ratio: 1/1; max-width: 240px; }
+
+    .card-accent-bar {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 8px;
+      background: var(--accent); transition: background 0.3s;
+    }
+
+    .card-top {
+      display: flex; align-items: center; gap: .6rem;
+      margin-bottom: auto;
+    }
+    .card-logo-mark {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: .9rem; color: white;
+      transition: background 0.3s;
+    }
+    .card-biz-name { font-family: 'Bebas Neue', sans-serif; font-size: .95rem; letter-spacing: .03em; line-height: 1.1; }
+
+    .card-person {
+      margin-top: .8rem;
+    }
+    .card-person-name { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.05rem; line-height: 1.2; }
+    .card-person-title { font-family: 'Space Mono', monospace; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; opacity: .7; margin-top: .15rem; }
+
+    .card-contacts {
+      margin-top: .7rem; display: flex; flex-direction: column; gap: .18rem;
+    }
+    .card-contact-line { font-size: .62rem; display: flex; align-items: center; gap: .35rem; opacity: .85; }
+
+    /* view toggle */
+    .view-toggle { display: flex; gap: 0; border: 1.5px solid var(--border); width: fit-content; overflow: hidden; border-radius: 2px; }
+    .view-btn { padding: .4rem .9rem; font-family: 'Space Mono', monospace; font-size: .65rem; letter-spacing: 1px; text-transform: uppercase; border: none; background: var(--cream); color: var(--mid); cursor: pointer; transition: all .2s; }
+    .view-btn.active { background: var(--ink); color: var(--cream); }
+
+    .capture-btn { margin-top: .3rem; width: 100%; padding: .75rem; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; border: none; cursor: pointer; transition: background .2s; }
+    .capture-btn:hover { background: #222; }
+
+    /* FORM */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], input[type="tel"], input[type="email"], textarea, select {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .92rem; color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+    input::placeholder, textarea::placeholder { color: rgba(90,82,72,0.4); }
+
+    .char-counter { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--mid); text-align: right; margin-top: .3rem; }
+    .char-counter.warn { color: var(--accent); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* colour swatches */
+    .colour-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .colour-swatch { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border-color .15s, transform .15s; }
+    .colour-swatch:hover { transform: scale(1.1); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .colour-swatch[data-hex="#ffffff"] { border: 3px solid var(--border); }
+    .selected-colour-name { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-top: .6rem; }
+
+    /* toggle buttons */
+    .toggle-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .toggle-btn { padding: .5rem 1rem; border: 1.5px solid var(--border); background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .83rem; cursor: pointer; border-radius: 2px; transition: all .2s; line-height: 1.3; }
+    .toggle-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    /* layout style cards */
+    .layout-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .6rem; }
+    .layout-card { border: 1.5px solid var(--border); border-radius: 2px; padding: .6rem .4rem; text-align: center; cursor: pointer; transition: all .2s; }
+    .layout-card.active { border-color: var(--accent); background: rgba(232,66,10,0.05); }
+    .layout-card .lc-icon { font-size: 1.3rem; display: block; margin-bottom: .3rem; }
+    .layout-card .lc-label { font-family: 'Space Mono', monospace; font-size: .58rem; letter-spacing: .05em; text-transform: uppercase; color: var(--mid); }
+
+    /* upload */
+    .upload-area { border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem; text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px; }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    .info-box { background: var(--cream); border-left: 3px solid var(--accent); padding: .65rem 1rem; font-size: .82rem; color: #555; margin-bottom: .9rem; border-radius: 0 2px 2px 0; }
+    .info-box strong { color: var(--ink); }
+
+    /* quantity */
+    .qty-stepper { display: flex; align-items: center; border: 1.5px solid var(--border); width: fit-content; border-radius: 2px; overflow: hidden; }
+    .qty-btn { width: 40px; height: 40px; background: var(--ink); color: var(--cream); border: none; font-size: 1.2rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display { width: 70px; height: 40px; text-align: center; font-family: 'Space Mono', monospace; font-size: .9rem; font-weight: 700; border: none; background: white; color: var(--ink); }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+    .moq-note { font-size: .78rem; color: var(--mid); margin-top: .4rem; }
+
+    .order-btn { width: 100%; padding: 1rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* MPESA MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+
+    @media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } .layout-grid { grid-template-columns: repeat(2,1fr); } }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="graphic-design.html">← Graphic Design</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Graphic Design · Custom Order</div>
+  <h1>Business Cards</h1>
+  <p>Professional business card design and printing — standard, square, or premium laminated finishes.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page-wrap">
+
+  <!-- LEFT: PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="card-preview-wrap">
+
+      <div class="view-toggle">
+        <button type="button" class="view-btn active" onclick="setSide('front', this)">Front</button>
+        <button type="button" class="view-btn" onclick="setSide('back', this)">Back</button>
+      </div>
+
+      <!-- FRONT -->
+      <div class="biz-card" id="card-front" style="background:#ffffff; color:#0d0d0d;">
+        <div class="card-accent-bar" id="accent-bar-front"></div>
+        <div class="card-top">
+          <div class="card-logo-mark" id="logo-mark-front">B</div>
+          <div class="card-biz-name" id="biz-name-preview-front">YOUR BUSINESS</div>
+        </div>
+        <div class="card-person">
+          <div class="card-person-name" id="person-name-preview">Full Name</div>
+          <div class="card-person-title" id="person-title-preview">Job Title</div>
+        </div>
+        <div class="card-contacts">
+          <div class="card-contact-line"><span>📞</span><span id="phone-preview">0712 345 678</span></div>
+          <div class="card-contact-line"><span>✉️</span><span id="email-preview">you@email.com</span></div>
+          <div class="card-contact-line"><span>📍</span><span id="address-preview">Kianyaga, Kenya</span></div>
+        </div>
+      </div>
+
+      <!-- BACK -->
+      <div class="biz-card" id="card-back" style="background:#0d0d0d; color:#f5f0e8; display:none; align-items:center; justify-content:center; text-align:center;">
+        <div class="card-accent-bar" id="accent-bar-back"></div>
+        <div>
+          <div class="card-logo-mark" id="logo-mark-back" style="margin: 0 auto .6rem;">B</div>
+          <div class="card-biz-name" id="biz-name-preview-back" style="font-size:1.1rem;">YOUR BUSINESS</div>
+          <div style="font-family:'Space Mono',monospace; font-size:.55rem; letter-spacing:.1em; opacity:.5; margin-top:.4rem;" id="tagline-preview">your tagline here</div>
+        </div>
+      </div>
+
+      <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: YOUR INFO ON THE CARD -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Business & Personal Info</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Business / Company Name</label>
+          <input type="text" id="biz-name" name="business_name" placeholder="e.g. Bensoft Prints" maxlength="28" oninput="updatePreview()"/>
+          <div class="char-counter" id="biz-name-counter">0 / 28</div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name *</label>
+            <input type="text" id="person-name" name="full_name" placeholder="e.g. John Mwangi" maxlength="26" required oninput="updatePreview()"/>
+          </div>
+          <div>
+            <label class="field-label">Job Title</label>
+            <input type="text" id="person-title" name="job_title" placeholder="e.g. Sales Manager" maxlength="24" oninput="updatePreview()"/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Tagline / Slogan (for back of card)</label>
+          <input type="text" id="tagline" name="tagline" placeholder="e.g. Prints · Branding · Cyber Services" maxlength="40" oninput="updatePreview()"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: CONTACT DETAILS -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Contact Details on Card</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" id="card-phone" name="card_phone" placeholder="0712 345 678" oninput="updatePreview()"/>
+          </div>
+          <div>
+            <label class="field-label">Email Address</label>
+            <input type="text" id="card-email" name="card_email" placeholder="you@email.com" oninput="updatePreview()"/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Address / Location</label>
+          <input type="text" id="card-address" name="card_address" placeholder="e.g. Kianyaga, Kenya" oninput="updatePreview()"/>
+        </div>
+        <div>
+          <label class="field-label">Website / Social Handle (optional)</label>
+          <input type="text" name="card_website" placeholder="e.g. www.yourbusiness.co.ke"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: COLOUR & STYLE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Colour & Style</span>
+      </div>
+      <div class="step-body">
+        <label class="field-label" style="margin-bottom:.5rem;">Card Background Colour</label>
+        <div class="colour-grid" id="colour-grid"></div>
+        <div class="selected-colour-name" id="colour-name-display">White (selected)</div>
+        <input type="hidden" name="card_colour" id="card-colour-input" value="White"/>
+
+        <div style="margin-top:1.1rem;">
+          <label class="field-label">Layout Style</label>
+          <div class="layout-grid" id="layout-grid">
+            <div class="layout-card active" data-layout="classic" onclick="setLayout(this)">
+              <span class="lc-icon">▥</span><span class="lc-label">Classic</span>
+            </div>
+            <div class="layout-card" data-layout="centered" onclick="setLayout(this)">
+              <span class="lc-icon">◫</span><span class="lc-label">Centered</span>
+            </div>
+            <div class="layout-card" data-layout="minimal" onclick="setLayout(this)">
+              <span class="lc-icon">▭</span><span class="lc-label">Minimal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: CARD TYPE & FINISH -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Card Type & Finish</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Card Shape</label>
+            <select name="card_shape" id="card-shape" onchange="updatePrice(); updateShape();">
+              <option value="standard">Standard Rectangle (90×54mm)</option>
+              <option value="rounded">Rounded Corners</option>
+              <option value="square">Square Card</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Finish</label>
+            <select name="finish" id="finish" onchange="updatePrice()">
+              <option value="matte-lamination">Matte Lamination</option>
+              <option value="glossy-lamination">Glossy Lamination</option>
+              <option value="spot-uv">Spot UV (premium)</option>
+              <option value="plain-no-lamination">Plain (No Lamination)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Paper / Card Stock</label>
+          <select name="card_stock" id="card-stock" onchange="updatePrice()">
+            <option value="300gsm">300gsm Standard Card</option>
+            <option value="350gsm">350gsm Premium Card</option>
+            <option value="plastic-pvc">Plastic PVC Card (waterproof)</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Print Sides</label>
+          <div class="toggle-group" id="sides-group">
+            <button type="button" class="toggle-btn" data-val="single" onclick="setToggle('sides-group','sides-input',this); updatePrice()">Front Only</button>
+            <button type="button" class="toggle-btn active" data-val="double" onclick="setToggle('sides-group','sides-input',this); updatePrice()">Front & Back</button>
+          </div>
+          <input type="hidden" name="print_sides" id="sides-input" value="double"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: LOGO UPLOAD -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Logo Upload (Optional)</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">Have a logo already? Upload it and we'll place it on your card. No logo yet? Check out our <strong>Logo Design</strong> service first, or leave this blank and we'll use your business name in text.</div>
+        <div class="upload-area" onclick="document.getElementById('logo-upload').click()">
+          <input type="file" id="logo-upload" name="logo" accept="image/*,.pdf,.ai,.eps" onchange="handleUpload(event)"/>
+          <div class="upload-icon">🖼️</div>
+          <p><strong>Click to upload</strong> your logo</p>
+          <p>PNG, JPG, PDF, AI, EPS — transparent background preferred</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Quantity</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qty-display" name="quantity" value="100" min="50" max="5000" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <p class="moq-note">Minimum order: <strong>50 pcs</strong>. Bulk discounts apply at 200, 500 & 1000+ pcs.</p>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 10</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">1,000</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="1000"/>
+      </div>
+    </div>
+
+    <!-- STEP 7: YOUR DETAILS & NOTES -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <span class="step-title">Your Contact & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Your Full Name (for order)</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Your Phone Number</label>
+            <input type="tel" id="cust-phone" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Your Email (optional — we'll send proofs here)</label>
+          <input type="email" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Anything else — exact colour codes, multiple people on one order, deadline, delivery or pickup…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER BUTTON -->
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+
+  </form>
+</div>
+
+<script>
+  /* ─── COLOURS ─── */
+  const COLOURS = [
+    { name: 'White',        bg: '#ffffff', text: '#0d0d0d' },
+    { name: 'Cream',        bg: '#f5f0e8', text: '#0d0d0d' },
+    { name: 'Black',        bg: '#0d0d0d', text: '#f5f0e8' },
+    { name: 'Navy Blue',    bg: '#1a3a5c', text: '#f5f0e8' },
+    { name: 'Forest Green', bg: '#1e4d38', text: '#f5f0e8' },
+    { name: 'Maroon',       bg: '#55101c', text: '#f5f0e8' },
+    { name: 'Charcoal',     bg: '#2a2a2a', text: '#f5f0e8' },
+    { name: 'Orange-Red',   bg: '#e8420a', text: '#ffffff' },
+  ];
+
+  let selectedColour = COLOURS[0];
+
+  const grid = document.getElementById('colour-grid');
+  COLOURS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'colour-swatch' + (i === 0 ? ' active' : '');
+    sw.style.background = c.bg;
+    sw.title = c.name;
+    sw.onclick = () => selectColour(c, sw);
+    grid.appendChild(sw);
+  });
+
+  function selectColour(c, el) {
+    document.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    selectedColour = c;
+    document.getElementById('colour-name-display').textContent = c.name + ' (selected)';
+    document.getElementById('card-colour-input').value = c.name;
+    applyCardColours();
+  }
+
+  function applyCardColours() {
+    document.getElementById('card-front').style.background = selectedColour.bg;
+    document.getElementById('card-front').style.color = selectedColour.text;
+    document.getElementById('card-back').style.background = selectedColour.text === '#ffffff' ? '#0d0d0d' : selectedColour.bg;
+    document.getElementById('card-back').style.color = selectedColour.text === '#ffffff' ? '#f5f0e8' : selectedColour.text;
+  }
+
+  /* ─── LAYOUT ─── */
+  function setLayout(el) {
+    document.querySelectorAll('.layout-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    const layout = el.dataset.layout;
+    const front = document.getElementById('card-front');
+    if (layout === 'centered') {
+      front.style.textAlign = 'center';
+      front.style.alignItems = 'center';
+    } else {
+      front.style.textAlign = 'left';
+      front.style.alignItems = 'stretch';
+    }
+  }
+
+  /* ─── SHAPE ─── */
+  function updateShape() {
+    const shape = document.getElementById('card-shape').value;
+    const front = document.getElementById('card-front');
+    const back = document.getElementById('card-back');
+    [front, back].forEach(c => {
+      c.classList.remove('shape-rounded', 'shape-square');
+      if (shape === 'rounded') c.classList.add('shape-rounded');
+      if (shape === 'square') c.classList.add('shape-square');
+    });
+  }
+
+  /* ─── SIDE TOGGLE (front/back preview) ─── */
+  function setSide(side, el) {
+    document.querySelectorAll('.view-toggle .view-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('card-front').style.display = side === 'front' ? 'flex' : 'none';
+    document.getElementById('card-back').style.display = side === 'back' ? 'flex' : 'none';
+  }
+
+  /* ─── GENERIC TOGGLE ─── */
+  function setToggle(groupId, inputId, el) {
+    document.querySelectorAll('#' + groupId + ' .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(inputId).value = el.dataset.val;
+  }
+
+  /* ─── LIVE PREVIEW TEXT ─── */
+  function updatePreview() {
+    const bizName = document.getElementById('biz-name').value.trim() || 'YOUR BUSINESS';
+    const personName = document.getElementById('person-name').value.trim() || 'Full Name';
+    const personTitle = document.getElementById('person-title').value.trim() || 'Job Title';
+    const tagline = document.getElementById('tagline').value.trim() || 'your tagline here';
+    const phone = document.getElementById('card-phone').value.trim() || '0712 345 678';
+    const email = document.getElementById('card-email').value.trim() || 'you@email.com';
+    const address = document.getElementById('card-address').value.trim() || 'Kianyaga, Kenya';
+
+    document.getElementById('biz-name-preview-front').textContent = bizName.toUpperCase();
+    document.getElementById('biz-name-preview-back').textContent = bizName.toUpperCase();
+    document.getElementById('person-name-preview').textContent = personName;
+    document.getElementById('person-title-preview').textContent = personTitle;
+    document.getElementById('tagline-preview').textContent = tagline;
+    document.getElementById('phone-preview').textContent = phone;
+    document.getElementById('email-preview').textContent = email;
+    document.getElementById('address-preview').textContent = address;
+
+    const initial = bizName.trim()[0] ? bizName.trim()[0].toUpperCase() : 'B';
+    document.getElementById('logo-mark-front').textContent = initial;
+    document.getElementById('logo-mark-back').textContent = initial;
+
+    const c1 = document.getElementById('biz-name-counter');
+    c1.textContent = `${document.getElementById('biz-name').value.length} / 28`;
+    c1.className = 'char-counter' + (document.getElementById('biz-name').value.length > 22 ? ' warn' : '');
+  }
+
+  /* ─── FILE UPLOAD ─── */
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '✓ ' + file.name;
+  }
+
+  /* ─── PRICING ─── */
+  const BASE_PRICE_PER_UNIT = {
+    '300gsm': 10,
+    '350gsm': 14,
+    'plastic-pvc': 35,
+  };
+  const FINISH_ADD = {
+    'matte-lamination': 0,
+    'glossy-lamination': 0,
+    'spot-uv': 8,
+    'plain-no-lamination': -3,
+  };
+  const SIDES_ADD = { 'single': -2, 'double': 0 };
+
+  function bulkFactor(q) {
+    if (q >= 1000) return 0.65;
+    if (q >= 500) return 0.78;
+    if (q >= 200) return 0.9;
+    return 1;
+  }
+
+  let qty = 100;
+
+  function updatePrice() {
+    const stock = document.getElementById('card-stock').value;
+    const finish = document.getElementById('finish').value;
+    const sides = document.getElementById('sides-input').value;
+
+    const baseUnit = (BASE_PRICE_PER_UNIT[stock] || 10) + (FINISH_ADD[finish] || 0) + (SIDES_ADD[sides] || 0);
+    const unit = Math.max(Math.round(baseUnit * bulkFactor(qty)), 4);
+    const total = unit * qty;
+
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(50, qty + (delta > 0 ? 50 : -50));
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+  /* ─── CAPTURE ─── */
+  function capturePreview() {
+    const visibleCard = document.getElementById('card-front').style.display !== 'none'
+      ? document.getElementById('card-front') : document.getElementById('card-back');
+    html2canvas(visibleCard, { backgroundColor: null, scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-business-card-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  // Init
+  applyCardColours();
+  updatePreview();
+  updatePrice();
+
+  function addToCart() {
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+    
+    const bizName = formData.get('business_name');
+    const fullName = formData.get('full_name');
+    const jobTitle = formData.get('job_title');
+    const tagline = formData.get('tagline');
+    const phone = formData.get('card_phone');
+    const email = formData.get('card_email');
+    const address = formData.get('card_address');
+    const website = formData.get('card_website');
+    const cardColour = formData.get('card_colour');
+    const layout = formData.get('card_shape');
+    const finish = formData.get('finish');
+    const stock = formData.get('card_stock');
+    const sides = formData.get('print_sides');
+    
+    const stockLabels = { '300gsm': '300gsm Standard', '350gsm': '350gsm Premium', 'plastic-pvc': 'Plastic PVC' };
+    const finishLabels = { 'matte-lamination': 'Matte Lamination', 'glossy-lamination': 'Glossy Lamination', 'spot-uv': 'Spot UV', 'plain-no-lamination': 'Plain (No Lamination)' };
+    const shapeLabels = { 'standard': 'Standard Rectangle', 'rounded': 'Rounded Corners', 'square': 'Square Card' };
+    const sidesLabels = { 'single': 'Front Only', 'double': 'Front & Back' };
+    
+    const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+    
+    const item = {
+      productName: 'Business Cards',
+      variant: `${sidesLabels[sides] || sides}, ${shapeLabels[layout] || layout}`,
+      colour: cardColour,
+      material: `${stockLabels[stock] || stock}, ${finishLabels[finish] || finish}`,
+      details: `Name: ${fullName || 'N/A'}, Title: ${jobTitle || 'N/A'}, Biz: ${bizName || 'N/A'}, Phone: ${phone || 'N/A'}, Email: ${email || 'N/A'}, Address: ${address || 'N/A'}, Web: ${website || 'N/A'}, Tagline: ${tagline || 'N/A'}. ${formData.get('notes') || ''}`,
+      quantity: qty,
+      unitPrice: unitPrice
+    };
+    
+    BensoftCart.add(item);
+  }
+</script>
+</body>
+</html>

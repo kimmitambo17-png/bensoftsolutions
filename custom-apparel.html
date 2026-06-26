@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Apparel | Bensoft Prints & Branding Solutions</title>
+    
+    <style>
+        /* --- Custom Apparel Hub Styles --- */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fdfdfd;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .apparel-header {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #f8f9fa; 
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .back-home-btn {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 15px;
+            transition: color 0.2s ease;
+        }
+
+        .back-home-btn:hover {
+            color: #007bff; 
+        }
+
+        .apparel-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #222;
+        }
+
+        .apparel-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        /* Grid Layout */
+        .apparel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 10px 0;
+        }
+
+        /* Product Cards */
+        .product-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .product-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .product-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-card p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 20px;
+            flex-grow: 1; 
+        }
+
+        /* Action Buttons */
+        .select-btn {
+            display: inline-block;
+            background-color: #007bff; 
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .select-btn:hover {
+            background-color: #0056b3; 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Simple Navigation Back to Home -->
+    <header class="apparel-header">
+        <div class="container">
+            <a href="index.html" class="back-home-btn">&larr; Back to Home</a>
+            <h1>Custom Apparel & Branding</h1>
+            <p>Select a product below to start customizing your order</p>
+        </div>
+    </header>
+
+    <!-- Products Grid Section -->
+    <main class="container">
+        <section class="apparel-grid">
+            
+            <!-- T-Shirt -->
+            <!-- T-Shirt Card inside custom-apparel.html -->
+            <div class="product-card">
+                <div class="product-icon">👕</div>
+                <h3>T-Shirts</h3>
+                <p>Screen print, embroidery, or heat press vinyl logos.</p>
+                <a href="tshirt-order.html" class="select-btn">Customize T-Shirt</a>
+            </div>
+
+            <!-- Polo Shirts -->
+            <div class="product-card">
+                <div class="product-icon">👕</div>
+                <h3>Polo Shirts</h3>
+                <p>Smart casual corporate and promotional polo branding.</p>
+                <a href="poloshirts-order.html" class="select-btn">Customize Polo</a>
+            </div>
+
+            <!-- Jerseys -->
+            <div class="product-card">
+                <div class="product-icon">🎽</div>
+                <h3>Jerseys</h3>
+                <p>Custom sports kit printing, numbers, and team names.</p>
+                <a href="jersey-order.html" class="select-btn">Customize Jersey</a>
+            </div>
+
+            <!-- Hoodies -->
+            <div class="product-card">
+                <div class="product-icon">🧥</div>
+                <h3>Hoodies</h3>
+                <p>Cozy, premium quality branded hoodies and sweatshirts.</p>
+                <a href="hoodie-order.html" class="select-btn">Customize Hoodie</a>
+            </div>
+
+            <!-- Caps -->
+            <div class="product-card">
+                <div class="product-icon">🧢</div>
+                <h3>Caps</h3>
+                <p>Embroidered or printed caps for events and branding.</p>
+                <a href="caps-order.html" class="select-btn">Customize Caps</a>
+            </div>
+
+            <!-- Dust Coat -->
+            <div class="product-card">
+                <div class="product-icon">🥼</div>
+                <h3>Dust Coats</h3>
+                <p>Professional workwear and industrial staff branding.</p>
+                <a href="dustcoat-order.html" class="select-btn">Customize Dust Coat</a>
+            </div>
+
+            <!-- Reflectors -->
+            <div class="product-card">
+                <div class="product-icon">🦺</div>
+                <h3>Reflector Vests</h3>
+                <p>High-visibility safety vests with custom company logos.</p>
+                <a href="reflector-order.html" class="select-btn">Customize Reflectors</a>
+            </div>
+
+            <!-- Wrist-bands -->
+            <div class="product-card">
+                <div class="product-icon">⌚</div>
+                <h3>Wrist-bands</h3>
+                <p>Branded silicone or fabric wristbands for events.</p>
+                <a href="wristband-order.html" class="select-btn">Customize Wrist-band</a>
+            </div>
+
+        </section>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Notebooks & Diaries — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--ink);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--mid);
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    nav a.back-link:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--ink);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      color: var(--cream);
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .hero p {
+      color: #aaa;
+      font-size: .9rem;
+      margin-top: .7rem;
+    }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 750px) {
+      .page-wrap { grid-template-columns: 1fr; }
+    }
+
+    /* ── PREVIEW PANEL ── */
+    .preview-panel {
+      position: sticky;
+      top: 80px;
+    }
+    .preview-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: .8rem;
+    }
+    #nb-preview-wrap {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 340px;
+    }
+    #nb-svg {
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      display: block;
+    }
+    .capture-btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: .75rem;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    /* ── FORM PANEL ── */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+
+    .step-block {
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .step-header {
+      background: var(--ink);
+      padding: .7rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      color: var(--accent);
+      min-width: 28px;
+    }
+    .step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--cream);
+      letter-spacing: 1px;
+    }
+    .step-body { padding: 1.2rem; background: white; }
+
+    /* Cover colour swatches */
+    .colour-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+    }
+    .colour-swatch {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: border-color .15s, transform .15s;
+    }
+    .colour-swatch:hover { transform: scale(1.12); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .colour-swatch[data-hex="#ffffff"] { border: 3px solid var(--border); }
+    .selected-colour-name {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--mid);
+      margin-top: .6rem;
+    }
+
+    /* Toggle buttons (hardcover / softcover) */
+    .toggle-group {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+    .toggle-btn {
+      padding: .5rem 1.1rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all .2s;
+    }
+    .toggle-btn.active {
+      background: var(--ink);
+      color: var(--cream);
+      border-color: var(--ink);
+    }
+
+    /* Text inputs */
+    label.field-label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: .4rem;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: .65rem .85rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      color: var(--ink);
+      border-radius: 2px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .char-counter {
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      color: var(--mid);
+      text-align: right;
+      margin-top: .3rem;
+    }
+    .char-counter.warn { color: var(--accent); }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Upload */
+    .upload-area {
+      border: 2px dashed var(--border);
+      background: var(--cream);
+      padding: 1.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s;
+      border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem;
+      color: var(--accent);
+      margin-top: .5rem;
+    }
+
+    /* Quantity */
+    .qty-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      width: fit-content;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display {
+      width: 56px;
+      height: 40px;
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: .95rem;
+      font-weight: 700;
+      border: none;
+      background: white;
+      color: var(--ink);
+    }
+    .unit-price {
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+      color: var(--mid);
+      margin-top: .5rem;
+    }
+    .total-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: var(--accent);
+      margin-top: .3rem;
+    }
+
+    /* Notes */
+    .notes-hint {
+      font-size: .8rem;
+      color: var(--mid);
+      margin-top: .4rem;
+    }
+
+    /* Order btn */
+    .order-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 2px;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+      border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* ── MPESA MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13,13,13,.75);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white;
+      border-top: 4px solid var(--accent);
+      max-width: 440px;
+      width: 90%;
+      padding: 2rem;
+      position: relative;
+    }
+    .modal h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      margin-bottom: .3rem;
+    }
+    .modal .mpesa-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--mid);
+      margin-bottom: 1.2rem;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--mid);
+    }
+    .mpesa-amount {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      color: var(--accent);
+      margin: .5rem 0 1rem;
+    }
+    .mpesa-steps {
+      list-style: none;
+      counter-reset: mpesa;
+      margin-bottom: 1.3rem;
+    }
+    .mpesa-steps li {
+      counter-increment: mpesa;
+      padding: .55rem 0 .55rem 2.4rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .88rem;
+      position: relative;
+    }
+    .mpesa-steps li::before {
+      content: counter(mpesa);
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .mpesa-number {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .confirm-btn {
+      width: 100%;
+      padding: .85rem;
+      background: var(--accent);
+      color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+      border-radius: 2px;
+    }
+    .confirm-btn:hover { background: var(--accent-dark); }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="branded-gifts.html">← Branded Gifts</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Branded Gifts · Custom Order</div>
+  <h1>Notebooks & Diaries</h1>
+  <p>Premium branded notebooks and executive diaries — logos, names & custom covers.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page-wrap">
+
+  <!-- LEFT: PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="nb-preview-wrap">
+      <svg id="nb-svg" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Book shadow -->
+        <rect x="68" y="35" width="178" height="298" rx="4" fill="#bbb" opacity="0.3"/>
+
+        <!-- Book cover -->
+        <rect id="nb-cover" x="55" y="28" width="178" height="298" rx="4" fill="#1a3a5c" stroke="#111" stroke-width="1.5"/>
+
+        <!-- Spine -->
+        <rect id="nb-spine" x="55" y="28" width="18" height="298" rx="3" fill="#0d2a46"/>
+        <!-- Spine lines -->
+        <line x1="62" y1="50" x2="62" y2="310" stroke="#fff" stroke-width="0.5" opacity="0.2"/>
+
+        <!-- Binding rings (3) -->
+        <g id="nb-rings" fill="none" stroke="#c8c8c8" stroke-width="2">
+          <ellipse cx="73" cy="100" rx="7" ry="10"/>
+          <ellipse cx="73" cy="177" rx="7" ry="10"/>
+          <ellipse cx="73" cy="254" rx="7" ry="10"/>
+        </g>
+
+        <!-- Design area clip -->
+        <clipPath id="coverClip">
+          <rect x="78" y="38" width="148" height="278" rx="3"/>
+        </clipPath>
+
+        <!-- Uploaded logo -->
+        <image id="preview-logo" x="112" y="55" width="80" height="80"
+               preserveAspectRatio="xMidYMid meet"
+               clip-path="url(#coverClip)"
+               style="display:none;"/>
+
+        <!-- Cover title line 1 -->
+        <text id="preview-line1" x="152" y="170"
+              text-anchor="middle"
+              font-family="'DM Sans', sans-serif"
+              font-size="16" font-weight="700"
+              fill="#ffffff"
+              clip-path="url(#coverClip)"></text>
+
+        <!-- Cover title line 2 -->
+        <text id="preview-line2" x="152" y="193"
+              text-anchor="middle"
+              font-family="'DM Sans', sans-serif"
+              font-size="11"
+              fill="#cccccc"
+              clip-path="url(#coverClip)"></text>
+
+        <!-- Year / edition label at bottom -->
+        <text id="preview-line3" x="152" y="295"
+              text-anchor="middle"
+              font-family="'Space Mono', monospace"
+              font-size="9"
+              fill="#aaaaaa"
+              clip-path="url(#coverClip)"></text>
+
+        <!-- Decorative corner accent -->
+        <rect id="nb-accent-bar" x="78" y="28" width="148" height="5" fill="#e8420a" rx="1"/>
+        <rect id="nb-accent-bar-b" x="78" y="301" width="148" height="5" fill="#e8420a" rx="1"/>
+
+        <!-- Pages peek (right side) -->
+        <rect x="231" y="32" width="6" height="290" rx="1" fill="#f0ede6" stroke="#ddd" stroke-width="0.5"/>
+        <rect x="236" y="35" width="4" height="284" rx="1" fill="#e8e4dc"/>
+
+        <!-- Ribbon bookmark -->
+        <rect id="nb-ribbon" x="210" y="26" width="5" height="50" fill="#e8420a" rx="1"/>
+        <polygon id="nb-ribbon-tip" points="210,76 215,76 212.5,84" fill="#e8420a"/>
+
+      </svg>
+    </div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: COVER COLOUR -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Cover Colour</span>
+      </div>
+      <div class="step-body">
+        <div class="colour-grid" id="colour-grid"></div>
+        <div class="selected-colour-name" id="colour-name-display">Navy Blue (selected)</div>
+        <input type="hidden" name="cover_colour" id="cover-colour-input" value="Navy Blue"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: NOTEBOOK TYPE & SIZE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Type & Size</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Notebook Type</label>
+            <select name="notebook_type" id="notebook-type" onchange="updatePrice()">
+              <option value="softcover-a5">Softcover A5</option>
+              <option value="softcover-a4">Softcover A4</option>
+              <option value="hardcover-a5">Hardcover A5</option>
+              <option value="hardcover-a4">Hardcover A4</option>
+              <option value="executive-diary">Executive Diary (A5)</option>
+              <option value="desk-diary">Desk Diary (A4)</option>
+              <option value="pocket-notebook">Pocket Notebook (A6)</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Cover Finish</label>
+            <select name="cover_finish" id="cover-finish" onchange="updatePrice()">
+              <option value="matte-laminate">Matte Laminate</option>
+              <option value="glossy-laminate">Glossy Laminate</option>
+              <option value="soft-touch">Soft-Touch Velvet</option>
+              <option value="leatherette">Leatherette</option>
+              <option value="gold-foil">Gold Foil Emboss (+special)</option>
+              <option value="silver-foil">Silver Foil Emboss (+special)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Inner Pages</label>
+            <select name="inner_pages" id="inner-pages">
+              <option value="ruled">Ruled / Lined</option>
+              <option value="blank">Blank / Plain</option>
+              <option value="dotted">Dotted Grid</option>
+              <option value="squared">Squared Grid</option>
+              <option value="dated-diary">Dated Diary Layout</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Page Count</label>
+            <select name="page_count" id="page-count" onchange="updatePrice()">
+              <option value="80">80 Pages</option>
+              <option value="120">120 Pages</option>
+              <option value="200">200 Pages</option>
+              <option value="300">300 Pages (Diary)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: COVER TEXT -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Cover Text</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Title / Company Name</label>
+          <input type="text" id="line1" name="cover_title" placeholder="e.g. Acme Corp · Property of…" maxlength="30" oninput="updatePreview()"/>
+          <div class="char-counter" id="line1-counter">0 / 30</div>
+        </div>
+        <div>
+          <label class="field-label">Subtitle / Tagline (optional)</label>
+          <input type="text" id="line2" name="cover_subtitle" placeholder="e.g. Annual Planner 2025" maxlength="40" oninput="updatePreview()"/>
+          <div class="char-counter" id="line2-counter">0 / 40</div>
+        </div>
+        <div>
+          <label class="field-label">Bottom Label (year / edition / name)</label>
+          <input type="text" id="line3" name="cover_label" placeholder="e.g. 2025 · Confidential" maxlength="30" oninput="updatePreview()"/>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Text Font Style</label>
+            <select name="font_style" id="font-style" onchange="updatePreview()">
+              <option value="sans">Clean Sans</option>
+              <option value="serif">Elegant Serif</option>
+              <option value="script">Script / Handwritten</option>
+              <option value="bold">Bold Block</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Text Colour</label>
+            <select name="text_colour" id="text-colour" onchange="updatePreview()">
+              <option value="#ffffff">White</option>
+              <option value="#0d0d0d">Black</option>
+              <option value="#f1c40f">Gold</option>
+              <option value="#e8e8e8">Silver / Light Grey</option>
+              <option value="#e8420a">Orange-Red</option>
+              <option value="#c0392b">Red</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: LOGO / ARTWORK UPLOAD -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Logo or Artwork Upload</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="upload-area" onclick="document.getElementById('logo-upload').click()">
+          <input type="file" id="logo-upload" name="logo" accept="image/*" onchange="handleUpload(event)"/>
+          <div class="upload-icon">🖼️</div>
+          <p><strong>Click to upload</strong> your logo or artwork</p>
+          <p>PNG, JPG, SVG — recommended 500×500px transparent PNG</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+        <div>
+          <label class="field-label">Logo Position on Cover</label>
+          <div class="toggle-group" id="logo-position-group">
+            <button type="button" class="toggle-btn active" data-pos="top-centre" onclick="setLogoPos(this)">Top Centre</button>
+            <button type="button" class="toggle-btn" data-pos="centre" onclick="setLogoPos(this)">Centre</button>
+            <button type="button" class="toggle-btn" data-pos="top-left" onclick="setLogoPos(this)">Top Left</button>
+            <button type="button" class="toggle-btn" data-pos="bottom-right" onclick="setLogoPos(this)">Bottom Right</button>
+          </div>
+          <input type="hidden" name="logo_position" id="logo-position-input" value="top-centre"/>
+        </div>
+        <div>
+          <label class="field-label">Spine Printing</label>
+          <div class="toggle-group" id="spine-group">
+            <button type="button" class="toggle-btn active" data-val="yes" onclick="setSpine(this)">Print Spine</button>
+            <button type="button" class="toggle-btn" data-val="no" onclick="setSpine(this)">No Spine Print</button>
+          </div>
+          <input type="hidden" name="spine_print" id="spine-input" value="yes"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Quantity</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qty-display" name="quantity" value="1" min="1" max="1000" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 450</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">450</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="450"/>
+      </div>
+    </div>
+
+    <!-- STEP 6: YOUR DETAILS -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Your Details & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Any specific details — individual names per notebook, page personalisation, ribbon colour, deadline, delivery or pickup…"></textarea>
+          <p class="notes-hint">📦 Bulk corporate orders welcome. Let us know if you need individual names printed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER BUTTON -->
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+
+  </form>
+
+<script>
+  /* ─── COVER COLOUR SWATCHES ─── */
+  const COLOURS = [
+    { name: 'Navy Blue',    hex: '#1a3a5c', spine: '#0d2a46' },
+    { name: 'Black',        hex: '#1a1a1a', spine: '#0d0d0d' },
+    { name: 'Forest Green', hex: '#2d6a4f', spine: '#1e4d38' },
+    { name: 'Burgundy',     hex: '#6e1423', spine: '#55101c' },
+    { name: 'Charcoal',     hex: '#3d3d3d', spine: '#2a2a2a' },
+    { name: 'Royal Blue',   hex: '#1f4e9e', spine: '#163a7a' },
+    { name: 'Teal',         hex: '#1a7070', spine: '#125454' },
+    { name: 'Brown',        hex: '#6b3a2a', spine: '#4e2a1e' },
+    { name: 'Orange-Red',   hex: '#e8420a', spine: '#c03508' },
+    { name: 'Red',          hex: '#c0392b', spine: '#a93226' },
+    { name: 'Purple',       hex: '#6c3483', spine: '#5b2c6f' },
+    { name: 'Cream',        hex: '#f5f0e8', spine: '#e8e0d0' },
+  ];
+
+  const grid = document.getElementById('colour-grid');
+  COLOURS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'colour-swatch' + (i === 0 ? ' active' : '');
+    sw.style.background = c.hex;
+    sw.title = c.name;
+    sw.dataset.index = i;
+    sw.onclick = () => selectColour(i, sw);
+    grid.appendChild(sw);
+  });
+
+  function selectColour(i, el) {
+    document.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    const c = COLOURS[i];
+    document.getElementById('colour-name-display').textContent = c.name + ' (selected)';
+    document.getElementById('cover-colour-input').value = c.name;
+    document.getElementById('nb-cover').setAttribute('fill', c.hex);
+    document.getElementById('nb-spine').setAttribute('fill', c.spine);
+    // Adjust accent bars for cream cover
+    const barColor = (c.hex === '#f5f0e8') ? '#e8420a' : '#e8420a';
+    document.getElementById('nb-accent-bar').setAttribute('fill', barColor);
+    document.getElementById('nb-accent-bar-b').setAttribute('fill', barColor);
+  }
+
+  /* ─── TEXT PREVIEW ─── */
+  const FONT_MAP = {
+    sans:   "'DM Sans', sans-serif",
+    serif:  "Georgia, serif",
+    script: "cursive",
+    bold:   "'Bebas Neue', sans-serif"
+  };
+
+  function updatePreview() {
+    const l1   = document.getElementById('line1').value;
+    const l2   = document.getElementById('line2').value;
+    const l3   = document.getElementById('line3').value;
+    const font = FONT_MAP[document.getElementById('font-style').value];
+    const color = document.getElementById('text-colour').value;
+    const hasLogo = document.getElementById('preview-logo').style.display !== 'none';
+
+    const pl1 = document.getElementById('preview-line1');
+    const pl2 = document.getElementById('preview-line2');
+    const pl3 = document.getElementById('preview-line3');
+
+    // Shift text down if logo is showing
+    pl1.setAttribute('y', hasLogo ? '185' : '170');
+    pl2.setAttribute('y', hasLogo ? '205' : '193');
+
+    pl1.textContent = l1;
+    pl1.setAttribute('font-family', font);
+    pl1.setAttribute('fill', color);
+
+    pl2.textContent = l2;
+    pl2.setAttribute('font-family', font);
+    pl2.setAttribute('fill', color === '#ffffff' ? '#cccccc' : '#888888');
+
+    pl3.textContent = l3;
+
+    // Char counters
+    const c1 = document.getElementById('line1-counter');
+    c1.textContent = `${l1.length} / 30`;
+    c1.className = 'char-counter' + (l1.length > 24 ? ' warn' : '');
+
+    const c2 = document.getElementById('line2-counter');
+    c2.textContent = `${l2.length} / 40`;
+    c2.className = 'char-counter' + (l2.length > 32 ? ' warn' : '');
+  }
+
+  /* ─── LOGO UPLOAD ─── */
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '✓ ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const imgEl = document.getElementById('preview-logo');
+      imgEl.setAttribute('href', ev.target.result);
+      imgEl.style.display = 'block';
+      applyLogoPos(document.querySelector('#logo-position-group .toggle-btn.active')?.dataset.pos || 'top-centre');
+      updatePreview();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ─── LOGO POSITION ─── */
+  const LOGO_POSITIONS = {
+    'top-centre':   { x: 112, y: 50,  w: 80, h: 80 },
+    'centre':       { x: 112, y: 130, w: 80, h: 80 },
+    'top-left':     { x: 82,  y: 48,  w: 65, h: 65 },
+    'bottom-right': { x: 160, y: 230, w: 60, h: 60 },
+  };
+
+  function setLogoPos(el) {
+    document.querySelectorAll('#logo-position-group .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('logo-position-input').value = el.dataset.pos;
+    applyLogoPos(el.dataset.pos);
+  }
+
+  function applyLogoPos(pos) {
+    const imgEl = document.getElementById('preview-logo');
+    if (imgEl.style.display === 'none') return;
+    const p = LOGO_POSITIONS[pos] || LOGO_POSITIONS['top-centre'];
+    imgEl.setAttribute('x', p.x);
+    imgEl.setAttribute('y', p.y);
+    imgEl.setAttribute('width', p.w);
+    imgEl.setAttribute('height', p.h);
+    updatePreview();
+  }
+
+  /* ─── SPINE TOGGLE ─── */
+  function setSpine(el) {
+    document.querySelectorAll('#spine-group .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('spine-input').value = el.dataset.val;
+    const rings = document.getElementById('nb-rings');
+    rings.style.opacity = el.dataset.val === 'yes' ? '1' : '0.3';
+  }
+
+  /* ─── PRICING ─── */
+  const BASE_PRICES = {
+    'softcover-a5':    450,
+    'softcover-a4':    600,
+    'hardcover-a5':    700,
+    'hardcover-a4':    900,
+    'executive-diary': 1100,
+    'desk-diary':      1350,
+    'pocket-notebook': 350,
+  };
+  const FINISH_ADD = {
+    'matte-laminate':  0,
+    'glossy-laminate': 50,
+    'soft-touch':      120,
+    'leatherette':     200,
+    'gold-foil':       300,
+    'silver-foil':     250,
+  };
+  const PAGE_ADD = {
+    '80':  0,
+    '120': 80,
+    '200': 150,
+    '300': 220,
+  };
+
+  let qty = 1;
+
+  function updatePrice() {
+    const type   = document.getElementById('notebook-type').value;
+    const finish = document.getElementById('cover-finish').value;
+    const pages  = document.getElementById('page-count').value;
+    const unit   = BASE_PRICES[type] + FINISH_ADD[finish] + PAGE_ADD[pages];
+    const total  = unit * qty;
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(1, qty + delta);
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+  /* ─── CAPTURE PREVIEW ─── */
+  function capturePreview() {
+    html2canvas(document.getElementById('nb-preview-wrap'), { backgroundColor: '#ffffff', scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-notebook-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  function addToCart() {
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+    
+    const notebookType = formData.get('notebook_type');
+    const coverFinish = formData.get('cover_finish');
+    const innerPages = formData.get('inner_pages');
+    const pageCount = formData.get('page_count');
+    const coverColour = formData.get('cover_colour');
+    const fontStyle = formData.get('font_style');
+    const textColour = formData.get('text_colour');
+    const logoPosition = formData.get('logo_position');
+    const spinePrint = formData.get('spine_print');
+    
+    const typeLabels = {
+      'softcover-a5': 'Softcover A5',
+      'softcover-a4': 'Softcover A4',
+      'hardcover-a5': 'Hardcover A5',
+      'hardcover-a4': 'Hardcover A4',
+      'executive-diary': 'Executive Diary (A5)',
+      'desk-diary': 'Desk Diary (A4)',
+      'pocket-notebook': 'Pocket Notebook (A6)'
+    };
+    const finishLabels = {
+      'matte-laminate': 'Matte Laminate',
+      'glossy-laminate': 'Glossy Laminate',
+      'soft-touch': 'Soft-Touch Velvet',
+      'leatherette': 'Leatherette',
+      'gold-foil': 'Gold Foil Emboss',
+      'silver-foil': 'Silver Foil Emboss'
+    };
+    const pageLabels = {
+      'ruled': 'Ruled / Lined',
+      'blank': 'Blank / Plain',
+      'dotted': 'Dotted Grid',
+      'squared': 'Squared Grid',
+      'dated-diary': 'Dated Diary Layout'
+    };
+    
+    const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+    
+    const item = {
+      productName: 'Notebook / Diary',
+      variant: typeLabels[notebookType] || notebookType,
+      colour: coverColour,
+      material: finishLabels[coverFinish] || coverFinish,
+      details: `Pages: ${pageLabels[innerPages] || innerPages}, ${pageCount}pp, Font: ${fontStyle}, Text: ${textColour}, Logo: ${logoPosition}, Spine: ${spinePrint}. ${formData.get('notes') || ''}`,
+      quantity: qty,
+      unitPrice: unitPrice
+    };
+    
+    BensoftCart.add(item);
+  }
+</script>
+</body>
+</html>

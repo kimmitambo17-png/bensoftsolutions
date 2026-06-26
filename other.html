@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Apparel – Bensoft Prints</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --accent: #e8420a;
+    --light: #ebe5d8;
+    --white: #fdfaf4;
+    --border: rgba(13,13,13,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2.5rem; background: var(--ink); border-bottom: 3px solid var(--accent);
+  }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--paper); letter-spacing: 0.08em; text-decoration: none; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--light); text-decoration: none; letter-spacing: 0.12em; text-transform: uppercase; }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+  /* HEADER & LINK TABS BAR */
+  .page-header { padding-top: 5rem; background: var(--ink); color: var(--paper); position: relative; }
+  .page-header-inner { padding: 3.5rem 4rem 0; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+  .page-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 7vw, 6rem); line-height: 0.95; }
+  .page-title span { color: var(--accent); }
+  
+  .tabs-bar { background: var(--ink); padding: 0 4rem; display: flex; overflow-x: auto; border-top: 1px solid rgba(245,240,232,0.08); }
+  .tab-link {
+    font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(245,240,232,0.45); text-decoration: none; padding: 1rem 1.4rem; white-space: nowrap; border-bottom: 3px solid transparent;
+  }
+  .tab-link:hover { color: rgba(245,240,232,0.8); }
+  .tab-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* GRID SYSTEM */
+  main { padding: 4rem; }
+  .category-header { margin-bottom: 2rem; }
+  .category-label { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; }
+  .category-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 4vw, 3rem); }
+  
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+  .photo-slot { aspect-ratio: 4/3; border: 2px solid var(--border); position: relative; overflow: hidden; background: var(--white); }
+  .slot-image { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+  .photo-slot:hover .slot-image { transform: scale(1.04); }
+  
+  .slot-overlay {
+    position: absolute; inset: 0; background: linear-gradient(to top, rgba(13,13,13,0.8) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.2rem;
+  }
+  .photo-slot:hover .slot-overlay { opacity: 1; }
+  .slot-caption { color: var(--paper); font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; }
+  .slot-action-btn { background: rgba(245,240,232,0.2); border: 1px solid rgba(245,240,232,0.3); color: var(--paper); font-family: 'Space Mono', monospace; font-size: 0.6rem; padding: 0.3rem 0.7rem; cursor: pointer; }
+  .slot-action-btn:hover { background: var(--accent); border-color: var(--accent); }
+
+  /* LIGHTBOX */
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(13,13,13,0.95); z-index: 500; align-items: center; justify-content: center; padding: 2rem; }
+  .lightbox.open { display: flex; }
+  .lightbox-img { max-width: 90vw; max-height: 82vh; object-fit: contain; }
+  .lightbox-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; color: var(--paper); font-size: 1.8rem; cursor: pointer; font-family: 'Bebas Neue', sans-serif; }
+
+  /* FOOTER */
+  .page-footer { background: var(--ink); color: rgba(245,240,232,0.4); padding: 1.5rem 4rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border-top: 3px solid var(--accent); }
+  .page-footer a { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--paper); text-decoration: none; }
+  .page-footer a span { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>B</span>ENSOFT</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="apparel.html" class="active">Services</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <h1 class="page-title">OUR <span>PORTFOLIO</span></h1>
+    </div>
+  </div>
+
+  <div class="tabs-bar">
+    <a href="apparel.html" class="tab-link active">👕 Apparel</a>
+    <a href="gifts.html" class="tab-link">🎁 Branded Gifts</a>
+    <a href="design.html" class="tab-link">🎨 Graphic Design</a>
+    <a href="print.html" class="tab-link">🖨️ Print Services</a>
+    <a href="cyber.html" class="tab-link">💻 Cyber & Digital</a>
+    <a href="other.html" class="tab-link">🏷️ Other Work</a>
+  </div>
+</div>
+
+<main>
+  <div class="category-header">
+    <div class="category-label">Category 01</div>
+    <h2 class="category-title">OTHER SERVICES</h2>
+  </div>
+
+  <div class="photo-grid">
+    <div class="photo-slot">
+      <img class="slot-image" src="images/apparel9.jpg" alt="Custom Sports Jerseys for Kianyaga FC">
+      <div class="slot-overlay">
+        <span class="slot-caption">Sports Jerseys for Kianyaga FC</span>
+        <button class="slot-action-btn" onclick="openLightbox(this)">View Image</button>
+      </div>
+    </div>
+    <div class="photo-slot">
+      <img class="slot-image" src="images/apparel10.jpg" alt="Branded Corporate Hoodies">
+      <div class="slot-overlay">
+        <span class="slot-caption">Branded Corporate Hoodies</span>
+        <button class="slot-action-btn" onclick="openLightbox(this)">View Image</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)">✕ CLOSE</button>
+  <img class="lightbox-img" id="lightboxImg" src="">
+</div>
+
+<div class="page-footer">
+  <a href="index.html"><span>B</span>ENSOFT PRINTS</a>
+</div>
+
+<script>
+function openLightbox(button) {
+  const slot = button.closest('.photo-slot');
+  const imgsrc = slot.querySelector('.slot-image').src;
+  document.getElementById('lightboxImg').src = imgsrc;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(e) {
+  if (!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Stickers Order — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      background: var(--ink); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
+    }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+
+    .view-toggle { display: flex; gap: 0; margin-bottom: .8rem; border: 1.5px solid var(--border); width: fit-content; overflow: hidden; border-radius: 2px; }
+    .view-btn {
+      padding: .4rem .9rem; font-family: 'Space Mono', monospace; font-size: .65rem;
+      letter-spacing: 1px; text-transform: uppercase; border: none; background: var(--cream);
+      color: var(--mid); cursor: pointer; transition: all .2s;
+    }
+    .view-btn.active { background: var(--ink); color: var(--cream); }
+
+    #sticker-preview-wrap {
+      background: #f9f6f0; border: 2px solid var(--border); border-radius: 4px;
+      padding: 2rem 1.5rem; display: flex; align-items: center; justify-content: center; min-height: 360px;
+    }
+
+    #sticker-svg { width: 100%; max-width: 340px; height: auto; display: block; }
+
+    .shape-label { font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); text-align: center; margin-top: .8rem; }
+
+    .capture-btn {
+      margin-top: 1rem; width: 100%; padding: .75rem; background: var(--ink); color: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: 2px;
+      text-transform: uppercase; border: none; cursor: pointer; transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    .colour-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .colour-swatch {
+      width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+      border: 3px solid transparent; transition: border-color .15s, transform .15s;
+    }
+    .colour-swatch:hover { transform: scale(1.12); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .selected-colour-name { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-top: .6rem; }
+
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--border);
+      background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .char-counter { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--mid); text-align: right; margin-top: .3rem; }
+    .char-counter.warn { color: var(--accent); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .shape-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .shape-btn {
+      padding: .55rem 1rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .68rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase;
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .shape-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .type-option {
+      padding: .7rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; text-align: center;
+    }
+    .type-option .opt-icon { font-size: 1.3rem; display: block; margin-bottom: .2rem; }
+    .type-option .opt-sub { font-family: 'Space Mono', monospace; font-size: .58rem; color: var(--mid); margin-top: .2rem; }
+    .type-option.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .type-option.active .opt-sub { color: #aaa; }
+
+    .finish-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .finish-option {
+      padding: .7rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; text-align: center;
+    }
+    .finish-option .opt-icon { font-size: 1.3rem; display: block; margin-bottom: .2rem; }
+    .finish-option .opt-sub { font-size: .68rem; color: var(--mid); margin-top: .15rem; }
+    .finish-option.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .finish-option.active .opt-sub { color: #aaa; }
+
+    .upload-area {
+      border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem;
+      text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    .dim-row { display: flex; align-items: flex-end; gap: 1rem; }
+    .dim-row > div { flex: 1; }
+    .dim-x { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--mid); padding-bottom: .55rem; flex-shrink: 0; }
+    .area-display { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--accent); margin-top: .6rem; letter-spacing: 1px; }
+    .dim-hint { font-size: .78rem; color: var(--mid); margin-top: .5rem; }
+
+    .qty-stepper { display: flex; align-items: center; border: 1.5px solid var(--border); width: fit-content; border-radius: 2px; overflow: hidden; }
+    .qty-btn { width: 40px; height: 40px; background: var(--ink); color: var(--cream); border: none; font-size: 1.2rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display { width: 64px; height: 40px; text-align: center; font-family: 'Space Mono', monospace; font-size: .92rem; font-weight: 700; border: none; background: white; color: var(--ink); }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+
+    .order-btn {
+      width: 100%; padding: 1rem; background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="graphic-design.html">← Graphic Design</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Graphic Design · Custom Order</div>
+  <h1>Custom Stickers</h1>
+  <p>UV DTF, vinyl, paper & holographic stickers for branding, labelling & promo.</p>
+</div>
+
+<div class="page-wrap">
+
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="sticker-preview-wrap">
+      <svg id="sticker-svg" viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="rectClip"><rect x="50" y="30" width="220" height="220" rx="8"/></clipPath>
+          <clipPath id="circleClip"><circle cx="160" cy="140" r="110"/></clipPath>
+          <clipPath id="ovalClip"><ellipse cx="160" cy="140" rx="130" ry="100"/></clipPath>
+          <clipPath id="diecutClip"><path d="M160 25 L230 55 L270 125 L240 210 L160 255 L80 210 L50 125 L90 55 Z"/></clipPath>
+          <filter id="dropSh" x="-8%" y="-8%" width="116%" height="124%">
+            <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0d0d0d" flood-opacity="0.16"/>
+          </filter>
+          <linearGradient id="holographic" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff6ec7"/>
+            <stop offset="25%" stop-color="#7af5ff"/>
+            <stop offset="50%" stop-color="#ffff7a"/>
+            <stop offset="75%" stop-color="#7aff7a"/>
+            <stop offset="100%" stop-color="#d17aff"/>
+          </linearGradient>
+        </defs>
+
+        <ellipse cx="162" cy="268" rx="110" ry="12" fill="#0d0d0d" opacity="0.08"/>
+
+        <g id="sticker-shape-group" filter="url(#dropSh)">
+          <rect id="shape-rect" x="50" y="30" width="220" height="220" rx="8" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" clip-path="url(#rectClip)"/>
+          <circle id="shape-circle" cx="160" cy="140" r="110" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" clip-path="url(#circleClip)" style="display:none;"/>
+          <ellipse id="shape-oval" cx="160" cy="140" rx="130" ry="100" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" clip-path="url(#ovalClip)" style="display:none;"/>
+          <path id="shape-diecut" d="M160 25 L230 55 L270 125 L240 210 L160 255 L80 210 L50 125 L90 55 Z" fill="#ffffff" stroke="#e0e0e0" stroke-width="1" clip-path="url(#diecutClip)" style="display:none;"/>
+        </g>
+
+        <image id="preview-image" x="50" y="30" width="220" height="220" preserveAspectRatio="xMidYMid meet" clip-path="url(#rectClip)" style="display:none;"/>
+
+        <text id="preview-text" x="160" y="140" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans',sans-serif" font-size="18" font-weight="700" fill="#0d0d0d"></text>
+        <text id="preview-sub" x="160" y="168" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#666"></text>
+
+        <g id="holo-overlay" style="display:none;">
+          <rect x="50" y="30" width="220" height="220" rx="8" fill="url(#holographic)" opacity="0.15" clip-path="url(#rectClip)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="shape-label" id="shape-label">Rectangle 8×8 cm</div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Sticker Type</span>
+      </div>
+      <div class="step-body">
+        <div class="type-grid" id="type-grid">
+          <div class="type-option active" data-type="uv-dtf" data-rate="4" onclick="setType(this)">
+            <span class="opt-icon">&#9728;</span>UV DTF
+            <div class="opt-sub">KSh 4/sq cm</div>
+          </div>
+          <div class="type-option" data-type="vinyl" data-rate="3" onclick="setType(this)">
+            <span class="opt-icon">&#9986;</span>Vinyl Sticker
+            <div class="opt-sub">KSh 3/sq cm</div>
+          </div>
+          <div class="type-option" data-type="paper" data-rate="1.5" onclick="setType(this)">
+            <span class="opt-icon">&#128196;</span>Paper Label
+            <div class="opt-sub">KSh 1.5/sq cm</div>
+          </div>
+          <div class="type-option" data-type="clear" data-rate="5" onclick="setType(this)">
+            <span class="opt-icon">&#128312;</span>Clear / Transparent
+            <div class="opt-sub">KSh 5/sq cm</div>
+          </div>
+          <div class="type-option" data-type="holographic" data-rate="6" onclick="setType(this)">
+            <span class="opt-icon">&#10024;</span>Holographic
+            <div class="opt-sub">KSh 6/sq cm</div>
+          </div>
+          <div class="type-option" data-type="bumper" data-rate="3.5" onclick="setType(this)">
+            <span class="opt-icon">&#128663;</span>Bumper Sticker
+            <div class="opt-sub">KSh 3.5/sq cm</div>
+          </div>
+        </div>
+        <input type="hidden" name="sticker_type" id="sticker-type-input" value="uv-dtf"/>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Sticker Shape</span>
+      </div>
+      <div class="step-body">
+        <div class="shape-grid" id="shape-grid">
+          <button type="button" class="shape-btn active" data-shape="rectangle" onclick="setShape(this)">&#9645; Rectangle</button>
+          <button type="button" class="shape-btn" data-shape="circle" onclick="setShape(this)">&#9711; Circle</button>
+          <button type="button" class="shape-btn" data-shape="oval" onclick="setShape(this)">&#9675; Oval</button>
+          <button type="button" class="shape-btn" data-shape="die-cut" onclick="setShape(this)">&#9986; Die-Cut</button>
+        </div>
+        <input type="hidden" name="sticker_shape" id="sticker-shape-input" value="rectangle"/>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Dimensions (cm)</span>
+      </div>
+      <div class="step-body">
+        <div class="dim-row">
+          <div>
+            <label class="field-label">Width</label>
+            <input type="number" id="sticker-w" name="width_cm" value="8" min="1" max="25" step="0.5" oninput="updateDimensions()"/>
+          </div>
+          <span class="dim-x">&#10005;</span>
+          <div>
+            <label class="field-label">Height</label>
+            <input type="number" id="sticker-h" name="height_cm" value="8" min="1" max="25" step="0.5" oninput="updateDimensions()"/>
+          </div>
+        </div>
+        <div class="area-display">Total area: <span id="area-display">64</span> sq cm</div>
+        <div class="dim-hint">Maximum sticker width is 25 cm. Minimum order is 20 pcs.</div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Finish & Material</span>
+      </div>
+      <div class="step-body">
+        <div class="finish-grid" id="finish-grid">
+          <div class="finish-option active" data-finish="glossy" onclick="setFinish(this)">
+            <span class="opt-icon">&#10024;</span>Glossy
+            <div class="opt-sub">Shiny, vibrant</div>
+          </div>
+          <div class="finish-option" data-finish="matte" onclick="setFinish(this)">
+            <span class="opt-icon">&#9673;</span>Matte
+            <div class="opt-sub">Smooth, subtle</div>
+          </div>
+          <div class="finish-option" data-finish="laminated" onclick="setFinish(this)">
+            <span class="opt-icon">&#128274;</span>Laminated
+            <div class="opt-sub">Waterproof +UV</div>
+          </div>
+          <div class="finish-option" data-finish="transparent" onclick="setFinish(this)">
+            <span class="opt-icon">&#128312;</span>Transparent
+            <div class="opt-sub">No white ink</div>
+          </div>
+        </div>
+        <input type="hidden" name="finish" id="finish-input" value="glossy"/>
+        <div style="margin-top:.8rem;">
+          <label class="field-label">Adhesive Type</label>
+          <select name="adhesive" id="adhesive" onchange="updatePrice()">
+            <option value="permanent">Permanent (strong bond)</option>
+            <option value="removable">Removable (repositionable)</option>
+            <option value="static">Static cling (no residue)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Artwork Upload</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="upload-area" onclick="document.getElementById('photo-upload').click()">
+          <input type="file" id="photo-upload" name="photo" accept="image/*" onchange="handleUpload(event)"/>
+          <div class="upload-icon">&#127912;</div>
+          <p><strong>Click to upload</strong> your sticker design or logo</p>
+          <p>PNG, JPG, SVG, AI — minimum 300dpi at print size</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+        <div>
+          <label class="field-label">Do you need design help?</label>
+          <select name="design_help" id="design-help" onchange="updatePrice()">
+            <option value="no">No, I have artwork ready</option>
+            <option value="yes">Yes, design for me (+KSh 500)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Preview Text (optional)</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Main Text</label>
+          <input type="text" id="line1" name="line1" placeholder="e.g. Bensoft Prints" maxlength="25" oninput="updatePreview()"/>
+          <div class="char-counter" id="line1-counter">0 / 25</div>
+        </div>
+        <div>
+          <label class="field-label">Sub Text</label>
+          <input type="text" id="line2" name="line2" placeholder="e.g. Est. 2020" maxlength="30" oninput="updatePreview()"/>
+          <div class="char-counter" id="line2-counter">0 / 30</div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Text Colour</label>
+            <select name="text_colour" id="text-colour" onchange="updatePreview()">
+              <option value="#0d0d0d">Black</option>
+              <option value="#ffffff">White</option>
+              <option value="#e8420a">Orange-Red</option>
+              <option value="#1a3a5c">Navy Blue</option>
+              <option value="#c0392b">Red</option>
+              <option value="#27ae60">Green</option>
+              <option value="#8e44ad">Purple</option>
+              <option value="#d4a017">Gold</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Base / Background Colour</label>
+            <select name="base_colour" id="base-colour" onchange="updateBaseColour()">
+              <option value="#ffffff">White</option>
+              <option value="#0d0d0d">Black</option>
+              <option value="#f5f0e8">Cream</option>
+              <option value="#1a3a5c">Navy</option>
+              <option value="#e8420a">Orange-Red</option>
+              <option value="#c0392b">Red</option>
+              <option value="#27ae60">Green</option>
+              <option value="#none">Transparent</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <span class="step-title">Quantity & Price</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-20)">&#8722;</button>
+          <input type="number" id="qty-display" name="quantity" value="50" min="20" max="10000" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(20)">+</button>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--mid);margin-top:.3rem;">Step: 20 stickers &middot; Min order: 20</div>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 256</span></div>
+        <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--mid);margin-top:.2rem;">Rate: KSh <span id="rate-display">4</span>/sq cm</div>
+        <div class="total-price">Total: KSh <span id="total-display">12,800</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="12800"/>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">08</span>
+        <span class="step-title">Your Details & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Custom cut path? Multi-design order? Specific delivery date? Let us know…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+  </form>
+</div>
+
+<script>
+  let stickerType = 'uv-dtf';
+  let ratePerSqCm = 4;
+  let stickerShape = 'rectangle';
+  let stickerFinish = 'glossy';
+  let stickerW = 8;
+  let stickerH = 8;
+  let qty = 50;
+
+  const TYPE_RATES = { 'uv-dtf': 4, 'vinyl': 3, 'paper': 1.5, 'clear': 5, 'holographic': 6, 'bumper': 3.5 };
+  const FINISH_ADD = { 'glossy': 0, 'matte': 0, 'laminated': 1.5, 'transparent': 0.5 };
+  const ADHESIVE_ADD = { 'permanent': 0, 'removable': 0.5, 'static': 1 };
+  const DESIGN_HELP = 500;
+
+  function setType(el) {
+    document.querySelectorAll('.type-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    stickerType = el.dataset.type;
+    ratePerSqCm = parseFloat(el.dataset.rate);
+    document.getElementById('sticker-type-input').value = stickerType;
+    document.getElementById('holo-overlay').style.display = stickerType === 'holographic' ? 'block' : 'none';
+    updatePrice();
+  }
+
+  function setShape(el) {
+    document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    stickerShape = el.dataset.shape;
+    document.getElementById('sticker-shape-input').value = stickerShape;
+    const shapes = { 'rectangle': 'shape-rect', 'circle': 'shape-circle', 'oval': 'shape-oval', 'die-cut': 'shape-diecut' };
+    Object.values(shapes).forEach(id => document.getElementById(id).style.display = 'none');
+    document.getElementById(shapes[stickerShape]).style.display = 'block';
+    const clipIds = { 'rectangle': 'url(#rectClip)', 'circle': 'url(#circleClip)', 'oval': 'url(#ovalClip)', 'die-cut': 'url(#diecutClip)' };
+    document.getElementById('preview-image').setAttribute('clip-path', clipIds[stickerShape]);
+    document.getElementById('holo-overlay').querySelector('rect').setAttribute('clip-path', clipIds[stickerShape]);
+    updateDimensions();
+  }
+
+  function setFinish(el) {
+    document.querySelectorAll('.finish-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    stickerFinish = el.dataset.finish;
+    document.getElementById('finish-input').value = stickerFinish;
+    updatePrice();
+  }
+
+  function updateDimensions() {
+    stickerW = Math.max(1, Math.min(25, parseFloat(document.getElementById('sticker-w').value) || 1));
+    stickerH = Math.max(1, Math.min(25, parseFloat(document.getElementById('sticker-h').value) || 1));
+    if (stickerShape === 'circle') {
+      stickerH = stickerW;
+      document.getElementById('sticker-h').value = stickerW;
+    }
+    const area = stickerW * stickerH;
+    document.getElementById('area-display').textContent = area.toFixed(area % 1 === 0 ? 0 : 1);
+    document.getElementById('shape-label').textContent =
+      (stickerShape === 'rectangle' ? 'Rectangle' :
+       stickerShape === 'circle' ? 'Circle' :
+       stickerShape === 'oval' ? 'Oval' : 'Die-Cut') + ' ' + stickerW + ' \u00d7 ' + stickerH + ' cm';
+    updatePrice();
+  }
+
+  function updateBaseColour() {
+    const col = document.getElementById('base-colour').value;
+    const shapes = { 'rectangle': 'shape-rect', 'circle': 'shape-circle', 'oval': 'shape-oval', 'die-cut': 'shape-diecut' };
+    Object.entries(shapes).forEach(([key, id]) => {
+      const el = document.getElementById(id);
+      if (col === '#none') {
+        el.setAttribute('fill', '#f9f6f0');
+        el.setAttribute('stroke', '#d0d0d0');
+      } else {
+        el.setAttribute('fill', col);
+        el.setAttribute('stroke', '#e0e0e0');
+      }
+    });
+    updatePreview();
+  }
+
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '\u2713 ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const imgEl = document.getElementById('preview-image');
+      imgEl.setAttribute('href', ev.target.result);
+      imgEl.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updatePreview() {
+    const l1 = document.getElementById('line1').value;
+    const l2 = document.getElementById('line2').value;
+    const color = document.getElementById('text-colour').value;
+    document.getElementById('preview-text').textContent = l1;
+    document.getElementById('preview-text').setAttribute('fill', color);
+    document.getElementById('preview-sub').textContent = l2;
+    document.getElementById('preview-sub').setAttribute('fill', color);
+    document.getElementById('line1-counter').textContent = `${l1.length} / 25`;
+    document.getElementById('line1-counter').className = 'char-counter' + (l1.length > 20 ? ' warn' : '');
+    document.getElementById('line2-counter').textContent = `${l2.length} / 30`;
+  }
+
+  function updatePrice() {
+    const area = stickerW * stickerH;
+    const finishAdd = FINISH_ADD[stickerFinish] || 0;
+    const adhesiveAdd = ADHESIVE_ADD[document.getElementById('adhesive').value] || 0;
+    const designHelpAdd = document.getElementById('design-help').value === 'yes' ? DESIGN_HELP : 0;
+    const effectiveRate = ratePerSqCm + finishAdd + adhesiveAdd;
+    const unitPrice = Math.max(Math.ceil(area * effectiveRate), 10);
+    const total = (unitPrice * qty) + designHelpAdd;
+    document.getElementById('rate-display').textContent = effectiveRate.toFixed(effectiveRate % 1 === 0 ? 0 : 1);
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unitPrice.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(d) {
+    qty = Math.max(20, qty + d);
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+  function capturePreview() {
+    html2canvas(document.getElementById('sticker-preview-wrap'), { backgroundColor: '#f9f6f0', scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-sticker-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+    updateDimensions();
+    updatePrice();
+    updatePreview();
+
+    function addToCart() {
+        const form = document.getElementById('order-form');
+        const formData = new FormData(form);
+        
+        const stickerType = formData.get('sticker_type');
+        const stickerShape = formData.get('sticker_shape');
+        const width = formData.get('width_cm');
+        const height = formData.get('height_cm');
+        const finish = formData.get('finish');
+        const adhesive = formData.get('adhesive');
+        const designHelp = formData.get('design_help');
+        
+        const typeLabels = {
+            'uv-dtf': 'UV DTF',
+            'vinyl': 'Vinyl Sticker',
+            'paper': 'Paper Label',
+            'clear': 'Clear / Transparent',
+            'holographic': 'Holographic',
+            'bumper': 'Bumper Sticker'
+        };
+        const shapeLabels = {
+            'rectangle': 'Rectangle',
+            'circle': 'Circle',
+            'oval': 'Oval',
+            'die-cut': 'Die-Cut'
+        };
+        const finishLabels = {
+            'glossy': 'Glossy',
+            'matte': 'Matte',
+            'laminated': 'Laminated',
+            'transparent': 'Transparent'
+        };
+        const adhesiveLabels = {
+            'permanent': 'Permanent',
+            'removable': 'Removable',
+            'static': 'Static Cling'
+        };
+        
+        const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+        
+        const item = {
+            productName: 'Custom Stickers',
+            variant: `${typeLabels[stickerType] || stickerType}, ${shapeLabels[stickerShape] || stickerShape} ${width}×${height}cm`,
+            colour: formData.get('base_colour') || 'White',
+            material: `${finishLabels[finish] || finish}, ${adhesiveLabels[adhesive] || adhesive}`,
+            details: ${formData.get('notes') || ''}`,
+            quantity: qty,
+            unitPrice: unitPrice
+        };
+        
+        BensoftCart.add(item);
+    }
+</script>
+</body>
+</html>

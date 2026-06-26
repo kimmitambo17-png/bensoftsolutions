@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Lanyards — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--ink);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--cream);
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--mid);
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    nav a.back-link:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--ink);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      color: var(--cream);
+      letter-spacing: 2px;
+      line-height: 1;
+    }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    /* ── PREVIEW PANEL ── */
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: .8rem;
+    }
+    #lan-preview-wrap {
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+    }
+    #lan-svg { width: 100%; max-width: 260px; height: auto; display: block; }
+
+    .capture-btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: .75rem;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    /* ── FORM PANEL ── */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header {
+      background: var(--ink);
+      padding: .7rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    /* Colour swatches */
+    .colour-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .colour-swatch {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: border-color .15s, transform .15s;
+    }
+    .colour-swatch:hover { transform: scale(1.12); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .selected-colour-name {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--mid);
+      margin-top: .6rem;
+    }
+
+    /* Toggle buttons */
+    .toggle-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .toggle-btn {
+      padding: .5rem 1rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .83rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all .2s;
+      line-height: 1.3;
+    }
+    .toggle-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    /* Text inputs */
+    label.field-label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: .4rem;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: .65rem .85rem;
+      border: 1.5px solid var(--border);
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .92rem;
+      color: var(--ink);
+      border-radius: 2px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .char-counter {
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      color: var(--mid);
+      text-align: right;
+      margin-top: .3rem;
+    }
+    .char-counter.warn { color: var(--accent); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Info box */
+    .info-box {
+      background: var(--cream);
+      border-left: 3px solid var(--accent);
+      padding: .7rem 1rem;
+      font-size: .82rem;
+      color: #555;
+      margin-bottom: .9rem;
+      border-radius: 0 2px 2px 0;
+    }
+    .info-box strong { color: var(--ink); }
+
+    /* Upload */
+    .upload-area {
+      border: 2px dashed var(--border);
+      background: var(--cream);
+      padding: 1.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s;
+      border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    /* Quantity */
+    .qty-stepper {
+      display: flex; align-items: center;
+      border: 1.5px solid var(--border);
+      width: fit-content; border-radius: 2px; overflow: hidden;
+    }
+    .qty-btn {
+      width: 40px; height: 40px;
+      background: var(--ink); color: var(--cream);
+      border: none; font-size: 1.2rem; cursor: pointer;
+      transition: background .15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display {
+      width: 56px; height: 40px; text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: .95rem; font-weight: 700;
+      border: none; background: white; color: var(--ink);
+    }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+    .moq-note { font-size: .78rem; color: var(--mid); margin-top: .4rem; }
+
+    .notes-hint { font-size: .8rem; color: var(--mid); margin-top: .4rem; }
+
+    /* Order btn */
+    .order-btn {
+      width: 100%; padding: 1rem;
+      background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer;
+      transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* ── MPESA MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(13,13,13,.75);
+      z-index: 200; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-top: 4px solid var(--accent);
+      max-width: 440px; width: 90%; padding: 2rem; position: relative;
+    }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li {
+      counter-increment: mpesa;
+      padding: .55rem 0 .55rem 2.4rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .88rem; position: relative;
+    }
+    .mpesa-steps li::before {
+      content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 22px; height: 22px; background: var(--ink); color: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .65rem;
+      display: flex; align-items: center; justify-content: center; border-radius: 50%;
+    }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn {
+      width: 100%; padding: .85rem; background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .confirm-btn:hover { background: var(--accent-dark); }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="branded-gifts.html">← Branded Gifts</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Branded Gifts · Custom Order</div>
+  <h1>Custom Lanyards</h1>
+  <p>Sublimation-printed satin & polyester lanyards — logos, names, full-colour prints.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page-wrap">
+
+  <!-- LEFT: PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="lan-preview-wrap">
+      <svg id="lan-svg" viewBox="0 0 260 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="strapClip">
+            <rect x="104" y="10" width="52" height="230" rx="4"/>
+          </clipPath>
+          <!-- Subtle strap sheen -->
+          <linearGradient id="strapSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#000" stop-opacity="0.12"/>
+            <stop offset="30%"  stop-color="#fff" stop-opacity="0.10"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0.12"/>
+          </linearGradient>
+        </defs>
+
+        <!-- ── STRAP ── -->
+        <!-- Main strap body -->
+        <rect id="lan-strap" x="104" y="10" width="52" height="230" rx="4" fill="#1a3a5c"/>
+        <!-- Sheen overlay -->
+        <rect x="104" y="10" width="52" height="230" rx="4" fill="url(#strapSheen)" pointer-events="none"/>
+
+        <!-- Strap edge lines -->
+        <line x1="108" y1="10" x2="108" y2="240" stroke="#ffffff18" stroke-width="1"/>
+        <line x1="152" y1="10" x2="152" y2="240" stroke="#00000020" stroke-width="1"/>
+
+        <!-- Logo on strap -->
+        <image id="preview-logo"
+               x="114" y="30" width="32" height="32"
+               preserveAspectRatio="xMidYMid meet"
+               clip-path="url(#strapClip)"
+               style="display:none;"/>
+
+        <!-- Brand text on strap — rotated vertical -->
+        <text id="preview-line1"
+              x="130" y="100"
+              text-anchor="middle"
+              font-family="'DM Sans', sans-serif"
+              font-size="10" font-weight="700"
+              fill="#ffffff"
+              writing-mode="tb"
+              clip-path="url(#strapClip)"></text>
+
+        <!-- Tagline on strap -->
+        <text id="preview-line2"
+              x="144" y="100"
+              text-anchor="middle"
+              font-family="'DM Sans', sans-serif"
+              font-size="7.5"
+              fill="#ffffffbb"
+              writing-mode="tb"
+              clip-path="url(#strapClip)"></text>
+
+        <!-- ── SAFETY BREAKAWAY (mid-strap) ── -->
+        <rect id="lan-breakaway" x="112" y="150" width="36" height="12" rx="3"
+              fill="#c8c8c8" stroke="#aaa" stroke-width="1"/>
+        <rect x="112" y="153" width="36" height="2" rx="1" fill="#ffffff60"/>
+        <text x="130" y="159" text-anchor="middle"
+              font-family="'Space Mono', monospace" font-size="5" fill="#555">BREAKAWAY</text>
+
+        <!-- ── CONNECTOR / ATTACHMENT ── -->
+        <!-- Swivel hook body -->
+        <rect id="lan-connector" x="118" y="240" width="24" height="32" rx="3"
+              fill="#b8b8b8" stroke="#999" stroke-width="1.2"/>
+        <!-- Hook spring bar -->
+        <rect x="118" y="246" width="24" height="4" rx="2" fill="#d0d0d0"/>
+        <!-- Hook spring lever -->
+        <rect x="136" y="242" width="4" height="12" rx="2" fill="#999"/>
+        <!-- Swivel ring top -->
+        <ellipse cx="130" cy="240" rx="8" ry="4" fill="none" stroke="#999" stroke-width="2"/>
+
+        <!-- ── ID CARD HOLDER ── -->
+        <!-- Card holder body -->
+        <rect id="lan-holder" x="88" y="272" width="84" height="108" rx="5"
+              fill="#e8e4dc" stroke="#ccc" stroke-width="1.5"/>
+        <!-- Card holder window -->
+        <rect x="92" y="276" width="76" height="100" rx="3"
+              fill="white" stroke="#ddd" stroke-width="1"/>
+        <!-- Clip at top -->
+        <rect x="122" y="268" width="16" height="8" rx="2" fill="#bbb" stroke="#aaa" stroke-width="1"/>
+
+        <!-- Sample card content inside holder -->
+        <rect x="94" y="278" width="72" height="96" rx="2" fill="#f8f8f8"/>
+        <!-- Card logo placeholder -->
+        <rect x="98" y="282" width="28" height="20" rx="2" fill="#e0ddd6"/>
+        <text x="112" y="296" text-anchor="middle" font-family="'Space Mono',monospace" font-size="5" fill="#bbb">LOGO</text>
+        <!-- Card lines -->
+        <rect x="130" y="284" width="32" height="3" rx="1" fill="#ddd"/>
+        <rect x="130" y="291" width="24" height="2" rx="1" fill="#e8e8e8"/>
+        <rect x="98" y="308" width="64" height="2" rx="1" fill="#ececec"/>
+        <rect x="98" y="314" width="48" height="2" rx="1" fill="#ececec"/>
+        <rect x="98" y="320" width="56" height="2" rx="1" fill="#ececec"/>
+        <rect x="98" y="326" width="40" height="2" rx="1" fill="#ececec"/>
+        <!-- Barcode area -->
+        <rect x="98" y="340" width="64" height="28" rx="2" fill="#f0f0f0" stroke="#e0e0e0" stroke-width="0.5"/>
+        <g fill="#333">
+          <rect x="101" y="343" width="2" height="18"/>
+          <rect x="104" y="343" width="1" height="18"/>
+          <rect x="106" y="343" width="3" height="18"/>
+          <rect x="110" y="343" width="1" height="18"/>
+          <rect x="112" y="343" width="2" height="18"/>
+          <rect x="115" y="343" width="1" height="18"/>
+          <rect x="117" y="343" width="3" height="18"/>
+          <rect x="121" y="343" width="1" height="18"/>
+          <rect x="123" y="343" width="2" height="18"/>
+          <rect x="126" y="343" width="1" height="18"/>
+          <rect x="128" y="343" width="3" height="18"/>
+          <rect x="132" y="343" width="1" height="18"/>
+          <rect x="134" y="343" width="2" height="18"/>
+          <rect x="137" y="343" width="1" height="18"/>
+          <rect x="139" y="343" width="2" height="18"/>
+          <rect x="142" y="343" width="1" height="18"/>
+          <rect x="144" y="343" width="3" height="18"/>
+          <rect x="148" y="343" width="1" height="18"/>
+          <rect x="150" y="343" width="2" height="18"/>
+          <rect x="153" y="343" width="1" height="18"/>
+          <rect x="155" y="343" width="2" height="18"/>
+          <rect x="158" y="343" width="1" height="18"/>
+        </g>
+        <text x="130" y="370" text-anchor="middle" font-family="'Space Mono',monospace" font-size="4" fill="#888">ID CARD HOLDER INCLUDED</text>
+
+      </svg>
+    </div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: STRAP MATERIAL -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Strap Material</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">
+          <strong>Sublimation</strong> gives the sharpest full-colour prints. <strong>Satin</strong> feels premium & silky. <strong>Polyester</strong> is the most durable and cost-effective for bulk orders.
+        </div>
+        <div class="toggle-group" id="material-group">
+          <button type="button" class="toggle-btn active" data-val="sublimation-polyester" onclick="setToggle('material-group','material-input',this); updatePrice()">Sublimation Polyester</button>
+          <button type="button" class="toggle-btn" data-val="satin" onclick="setToggle('material-group','material-input',this); updatePrice()">Satin</button>
+          <button type="button" class="toggle-btn" data-val="nylon" onclick="setToggle('material-group','material-input',this); updatePrice()">Nylon</button>
+          <button type="button" class="toggle-btn" data-val="tubular" onclick="setToggle('material-group','material-input',this); updatePrice()">Tubular Polyester</button>
+          <button type="button" class="toggle-btn" data-val="eco-rpet" onclick="setToggle('material-group','material-input',this); updatePrice()">Eco rPET (Recycled)</button>
+        </div>
+        <input type="hidden" name="material" id="material-input" value="sublimation-polyester"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: STRAP WIDTH -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Strap Width</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">
+          <strong>15mm</strong> — slim, lightweight. <strong>20mm</strong> — most common, fits most ID holders. <strong>25mm</strong> — wide, great for detailed logos and text. <strong>38mm</strong> — billboard-width for maximum visibility.
+        </div>
+        <div class="toggle-group" id="width-group">
+          <button type="button" class="toggle-btn" data-val="15mm" onclick="setToggle('width-group','width-input',this); updateStrapWidth(15); updatePrice()">15mm</button>
+          <button type="button" class="toggle-btn active" data-val="20mm" onclick="setToggle('width-group','width-input',this); updateStrapWidth(20); updatePrice()">20mm</button>
+          <button type="button" class="toggle-btn" data-val="25mm" onclick="setToggle('width-group','width-input',this); updateStrapWidth(25); updatePrice()">25mm</button>
+          <button type="button" class="toggle-btn" data-val="38mm" onclick="setToggle('width-group','width-input',this); updateStrapWidth(38); updatePrice()">38mm</button>
+        </div>
+        <input type="hidden" name="strap_width" id="width-input" value="20mm"/>
+      </div>
+    </div>
+
+    <!-- STEP 3: STRAP COLOUR -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Strap Colour</span>
+      </div>
+      <div class="step-body">
+        <p style="font-size:.82rem;color:var(--mid);margin-bottom:.8rem;">For sublimation print, this is the base colour. Your logo and text print on top.</p>
+        <div class="colour-grid" id="colour-grid"></div>
+        <div class="selected-colour-name" id="colour-name-display">Navy Blue (selected)</div>
+        <input type="hidden" name="strap_colour" id="strap-colour-input" value="Navy Blue"/>
+      </div>
+    </div>
+
+    <!-- STEP 4: PRINT SIDE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Print Side</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">
+          Single-sided is standard. Double-sided prints both faces of the strap — great for showing a logo on one side and a tagline or website on the other.
+        </div>
+        <div class="toggle-group" id="printside-group">
+          <button type="button" class="toggle-btn active" data-val="single" onclick="setToggle('printside-group','printside-input',this); updatePrice()">Single-Sided</button>
+          <button type="button" class="toggle-btn" data-val="double" onclick="setToggle('printside-group','printside-input',this); updatePrice()">Double-Sided (+extra)</button>
+        </div>
+        <input type="hidden" name="print_side" id="printside-input" value="single"/>
+      </div>
+    </div>
+
+    <!-- STEP 5: BRANDING TEXT -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Branding Text</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Company / Organisation Name</label>
+          <input type="text" id="line1" name="brand_name" placeholder="e.g. Acme Corp" maxlength="28" oninput="updatePreview()"/>
+          <div class="char-counter" id="line1-counter">0 / 28</div>
+        </div>
+        <div>
+          <label class="field-label">Tagline or Website (optional)</label>
+          <input type="text" id="line2" name="tagline" placeholder="e.g. www.acmecorp.co.ke" maxlength="36" oninput="updatePreview()"/>
+          <div class="char-counter" id="line2-counter">0 / 36</div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Text Font</label>
+            <select name="font_style" id="font-style" onchange="updatePreview()">
+              <option value="sans">Clean Sans</option>
+              <option value="serif">Elegant Serif</option>
+              <option value="bold">Bold Block</option>
+              <option value="mono">Monospace</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Text Colour</label>
+            <select name="text_colour" id="text-colour" onchange="updatePreview()">
+              <option value="#ffffff">White</option>
+              <option value="#0d0d0d">Black</option>
+              <option value="#f1c40f">Gold</option>
+              <option value="#e8420a">Orange-Red</option>
+              <option value="#c0392b">Red</option>
+              <option value="#1a3a5c">Navy Blue</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: LOGO UPLOAD -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Logo Upload</span>
+      </div>
+      <div class="step-body">
+        <div class="upload-area" onclick="document.getElementById('logo-upload').click()">
+          <input type="file" id="logo-upload" name="logo" accept="image/*" onchange="handleUpload(event)"/>
+          <div class="upload-icon">🖼️</div>
+          <p><strong>Click to upload</strong> your logo or artwork</p>
+          <p>PNG with transparent background recommended · min 300×300px</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7: ATTACHMENT & ACCESSORIES -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <span class="step-title">Attachment & Accessories</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:1rem;">
+
+        <div>
+          <label class="field-label">Connector / Clip Type</label>
+          <div class="info-box" style="margin-bottom:.6rem;">
+            <strong>Swivel hook</strong> — standard J-hook, most versatile. <strong>Bulldog clip</strong> — strong spring clip, great for thick ID cards. <strong>Retractable reel</strong> — extends to swipe card, retracts automatically. <strong>Split ring</strong> — key-ring style. <strong>No connector</strong> — plain strap end.
+          </div>
+          <div class="toggle-group" id="connector-group">
+            <button type="button" class="toggle-btn active" data-val="swivel-hook" onclick="setToggle('connector-group','connector-input',this); updateConnector(this)">Swivel Hook</button>
+            <button type="button" class="toggle-btn" data-val="bulldog-clip" onclick="setToggle('connector-group','connector-input',this); updateConnector(this)">Bulldog Clip</button>
+            <button type="button" class="toggle-btn" data-val="retractable-reel" onclick="setToggle('connector-group','connector-input',this); updatePrice(); updateConnector(this)">Retractable Reel (+extra)</button>
+            <button type="button" class="toggle-btn" data-val="split-ring" onclick="setToggle('connector-group','connector-input',this); updateConnector(this)">Split Ring</button>
+            <button type="button" class="toggle-btn" data-val="none" onclick="setToggle('connector-group','connector-input',this); updateConnector(this)">No Connector</button>
+          </div>
+          <input type="hidden" name="connector" id="connector-input" value="swivel-hook"/>
+        </div>
+
+        <div>
+          <label class="field-label">Safety Breakaway Clip</label>
+          <div class="info-box" style="margin-bottom:.6rem;">
+            A breakaway clip snaps open under pressure — important for safety in environments with machinery, or as a general best practice. Highly recommended.
+          </div>
+          <div class="toggle-group" id="breakaway-group">
+            <button type="button" class="toggle-btn active" data-val="yes" onclick="setToggle('breakaway-group','breakaway-input',this); updateBreakaway(this)">Include Breakaway ✓</button>
+            <button type="button" class="toggle-btn" data-val="no" onclick="setToggle('breakaway-group','breakaway-input',this); updateBreakaway(this)">No Breakaway</button>
+          </div>
+          <input type="hidden" name="breakaway" id="breakaway-input" value="yes"/>
+        </div>
+
+        <div>
+          <label class="field-label">ID Card Holder</label>
+          <div class="info-box" style="margin-bottom:.6rem;">
+            Clear PVC card holder fits standard ID / access cards. Choose hard (rigid) or soft (flexible) PVC. Select "None" if you only need the strap.
+          </div>
+          <div class="toggle-group" id="holder-group">
+            <button type="button" class="toggle-btn active" data-val="soft-pvc" onclick="setToggle('holder-group','holder-input',this); updateHolder(this)">Soft PVC Holder</button>
+            <button type="button" class="toggle-btn" data-val="hard-pvc" onclick="setToggle('holder-group','holder-input',this); updateHolder(this)">Hard PVC Holder</button>
+            <button type="button" class="toggle-btn" data-val="badge-reel" onclick="setToggle('holder-group','holder-input',this); updateHolder(this)">Badge Reel Clip</button>
+            <button type="button" class="toggle-btn" data-val="none" onclick="setToggle('holder-group','holder-input',this); updateHolder(this)">None — Strap Only</button>
+          </div>
+          <input type="hidden" name="id_holder" id="holder-input" value="soft-pvc"/>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STEP 8: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">08</span>
+        <span class="step-title">Quantity</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qty-display" name="quantity" value="10" min="10" max="5000" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <p class="moq-note">Minimum order: <strong>10 pcs</strong>. Bulk pricing applies at 50, 100 & 500+ pcs.</p>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 180</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">1,800</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="1800"/>
+      </div>
+    </div>
+
+    <!-- STEP 9: YOUR DETAILS -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">09</span>
+        <span class="step-title">Your Details & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Colour Pantone codes, individual names per lanyard, event/deadline, delivery or pickup, packaging preferences…"></textarea>
+          <p class="notes-hint">🎟️ Ordering for an event? Let us know the date and we'll prioritise accordingly.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER BUTTON -->
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+
+  </form>
+
+<script>
+  /* ─── COLOUR DATA ─── */
+  const COLOURS = [
+    { name: 'Navy Blue',    hex: '#1a3a5c' },
+    { name: 'Black',        hex: '#1a1a1a' },
+    { name: 'Red',          hex: '#c0392b' },
+    { name: 'Orange-Red',   hex: '#e8420a' },
+    { name: 'Forest Green', hex: '#2d6a4f' },
+    { name: 'Royal Blue',   hex: '#1f4e9e' },
+    { name: 'Sky Blue',     hex: '#5ba4cf' },
+    { name: 'Yellow',       hex: '#f1c40f' },
+    { name: 'Purple',       hex: '#6c3483' },
+    { name: 'Maroon',       hex: '#7b241c' },
+    { name: 'Grey',         hex: '#7f8c8d' },
+    { name: 'White',        hex: '#f0f0f0' },
+  ];
+
+  /* Build colour swatches */
+  const grid = document.getElementById('colour-grid');
+  COLOURS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'colour-swatch' + (i === 0 ? ' active' : '');
+    sw.style.background = c.hex;
+    sw.title = c.name;
+    sw.onclick = () => {
+      document.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
+      sw.classList.add('active');
+      document.getElementById('colour-name-display').textContent = c.name + ' (selected)';
+      document.getElementById('strap-colour-input').value = c.name;
+      document.getElementById('lan-strap').setAttribute('fill', c.hex);
+    };
+    grid.appendChild(sw);
+  });
+
+  /* ─── GENERIC TOGGLE HELPER ─── */
+  function setToggle(groupId, inputId, el) {
+    document.querySelectorAll('#' + groupId + ' .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(inputId).value = el.dataset.val;
+  }
+
+  /* ─── STRAP WIDTH VISUAL ─── */
+  function updateStrapWidth(mm) {
+    const widthMap = { 15: 36, 20: 52, 25: 62, 38: 80 };
+    const w = widthMap[mm] || 52;
+    const x = 130 - w / 2;
+    const strap = document.getElementById('lan-strap');
+    strap.setAttribute('x', x);
+    strap.setAttribute('width', w);
+    // reposition text and logo roughly centred
+    document.getElementById('preview-line1').setAttribute('x', 130);
+    document.getElementById('preview-line2').setAttribute('x', 130 + (w > 52 ? 14 : 14));
+  }
+
+  /* ─── CONNECTOR VISUAL ─── */
+  function updateConnector(el) {
+    const val = el.dataset.val;
+    const conn = document.getElementById('lan-connector');
+    if (val === 'none') {
+      conn.setAttribute('fill', '#e0e0e0');
+      conn.setAttribute('stroke', '#ccc');
+    } else if (val === 'retractable-reel') {
+      conn.setAttribute('fill', '#888');
+      conn.setAttribute('stroke', '#555');
+    } else {
+      conn.setAttribute('fill', '#b8b8b8');
+      conn.setAttribute('stroke', '#999');
+    }
+    updatePrice();
+  }
+
+  /* ─── BREAKAWAY VISUAL ─── */
+  function updateBreakaway(el) {
+    const br = document.getElementById('lan-breakaway');
+    br.style.opacity = el.dataset.val === 'yes' ? '1' : '0.2';
+  }
+
+  /* ─── HOLDER VISUAL ─── */
+  function updateHolder(el) {
+    const holder = document.getElementById('lan-holder');
+    const val = el.dataset.val;
+    if (val === 'none') {
+      holder.style.opacity = '0.15';
+    } else if (val === 'hard-pvc') {
+      holder.setAttribute('fill', '#d8d4cc');
+      holder.style.opacity = '1';
+    } else {
+      holder.setAttribute('fill', '#e8e4dc');
+      holder.style.opacity = '1';
+    }
+    updatePrice();
+  }
+
+  /* ─── TEXT PREVIEW ─── */
+  const FONT_MAP = {
+    sans:  "'DM Sans', sans-serif",
+    serif: "Georgia, serif",
+    bold:  "'Bebas Neue', sans-serif",
+    mono:  "'Space Mono', monospace",
+  };
+
+  function updatePreview() {
+    const l1    = document.getElementById('line1').value;
+    const l2    = document.getElementById('line2').value;
+    const font  = FONT_MAP[document.getElementById('font-style').value];
+    const color = document.getElementById('text-colour').value;
+
+    const pl1 = document.getElementById('preview-line1');
+    const pl2 = document.getElementById('preview-line2');
+
+    pl1.textContent = l1;
+    pl1.setAttribute('font-family', font);
+    pl1.setAttribute('fill', color);
+
+    pl2.textContent = l2;
+    pl2.setAttribute('font-family', font);
+    pl2.setAttribute('fill', color);
+
+    const c1 = document.getElementById('line1-counter');
+    c1.textContent = `${l1.length} / 28`;
+    c1.className = 'char-counter' + (l1.length > 22 ? ' warn' : '');
+
+    const c2 = document.getElementById('line2-counter');
+    c2.textContent = `${l2.length} / 36`;
+    c2.className = 'char-counter' + (l2.length > 28 ? ' warn' : '');
+  }
+
+  /* ─── LOGO UPLOAD ─── */
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '✓ ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const imgEl = document.getElementById('preview-logo');
+      imgEl.setAttribute('href', ev.target.result);
+      imgEl.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ─── PRICING ─── */
+  // Base unit prices per material
+  const BASE = {
+    'sublimation-polyester': 180,
+    'satin':                 220,
+    'nylon':                 200,
+    'tubular':               150,
+    'eco-rpet':              240,
+  };
+  // Add-ons
+  const WIDTH_ADD    = { '15mm': -20, '20mm': 0, '25mm': 30, '38mm': 60 };
+  const PRINTSIDE_ADD = { 'single': 0, 'double': 50 };
+  const CONNECTOR_ADD = { 'swivel-hook': 0, 'bulldog-clip': 0, 'retractable-reel': 80, 'split-ring': 0, 'none': -20 };
+  const HOLDER_ADD    = { 'soft-pvc': 0, 'hard-pvc': 30, 'badge-reel': 50, 'none': -30 };
+
+  // Bulk discount tiers
+  function bulkFactor(q) {
+    if (q >= 500) return 0.72;
+    if (q >= 100) return 0.82;
+    if (q >= 50)  return 0.90;
+    return 1;
+  }
+
+  let qty = 10;
+
+  function updatePrice() {
+    const mat       = document.getElementById('material-input').value;
+    const width     = document.getElementById('width-input').value;
+    const printside = document.getElementById('printside-input').value;
+    const connector = document.getElementById('connector-input').value;
+    const holder    = document.getElementById('holder-input').value;
+
+    const baseUnit = (BASE[mat] || 180)
+      + (WIDTH_ADD[width] || 0)
+      + (PRINTSIDE_ADD[printside] || 0)
+      + (CONNECTOR_ADD[connector] || 0)
+      + (HOLDER_ADD[holder] || 0);
+
+    const unit  = Math.round(baseUnit * bulkFactor(qty));
+    const total = unit * qty;
+
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(10, qty + (delta > 0 ? 10 : -10));
+    // Snap to sensible steps at larger quantities
+    if (qty > 100) qty = Math.round(qty / 50) * 50 + (delta > 0 ? 0 : 0);
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+  /* ─── CAPTURE ─── */
+  function capturePreview() {
+    html2canvas(document.getElementById('lan-preview-wrap'), { backgroundColor: '#ffffff', scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-lanyard-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  /* ─── FORM SUBMIT ─── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    updatePrice();
+    document.getElementById('mpesa-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('mpesa-modal').classList.remove('open');
+  }
+
+  async function confirmPayment() {
+    closeModal();
+    const form = document.getElementById('order-form');
+    const data = new FormData(form);
+    try {
+      await fetch('https://formspree.io/f/xrevgjve', {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' }
+      });
+    } catch (_) {}
+    document.getElementById('success-overlay').classList.add('open');
+  }
+
+  // Init
+  updatePrice();
+
+  function addToCart() {
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+    
+    const material = formData.get('material');
+    const width = formData.get('strap_width');
+    const colour = formData.get('strap_colour');
+    const printSide = formData.get('print_side');
+    const connector = formData.get('connector');
+    const breakaway = formData.get('breakaway');
+    const holder = formData.get('id_holder');
+    const fontStyle = formData.get('font_style');
+    const textColour = formData.get('text_colour');
+    
+    const materialLabels = {
+      'sublimation-polyester': 'Sublimation Polyester',
+      'satin': 'Satin',
+      'nylon': 'Nylon',
+      'tubular': 'Tubular Polyester',
+      'eco-rpet': 'Eco rPET (Recycled)'
+    };
+    const widthLabels = { '15mm': '15mm', '20mm': '20mm', '25mm': '25mm', '38mm': '38mm' };
+    const printSideLabels = { 'single': 'Single-Sided', 'double': 'Double-Sided' };
+    const connectorLabels = {
+      'swivel-hook': 'Swivel Hook',
+      'bulldog-clip': 'Bulldog Clip',
+      'retractable-reel': 'Retractable Reel',
+      'split-ring': 'Split Ring',
+      'none': 'No Connector'
+    };
+    const breakawayLabels = { 'yes': 'Included', 'no': 'None' };
+    const holderLabels = {
+      'soft-pvc': 'Soft PVC Holder',
+      'hard-pvc': 'Hard PVC Holder',
+      'badge-reel': 'Badge Reel Clip',
+      'none': 'None'
+    };
+    
+    const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+    
+    const item = {
+      productName: 'Custom Lanyard',
+      variant: `${widthLabels[width] || width} ${materialLabels[material] || material}`,
+      colour: colour,
+      material: holderLabels[holder] || holder,
+      details: `Print: ${printSideLabels[printSide] || printSide}, Connector: ${connectorLabels[connector] || connector}, Breakaway: ${breakawayLabels[breakaway] || breakaway}, Font: ${fontStyle}, Text: ${textColour}. ${formData.get('notes') || ''}`,
+      quantity: qty,
+      unitPrice: unitPrice
+    };
+    
+    BensoftCart.add(item);
+  }
+</script>
+</body>
+</html>

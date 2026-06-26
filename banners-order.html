@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banners & Posters Order — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    nav {
+      background: var(--ink); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
+    }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+
+    .product-toggle { display: flex; gap: 0; margin-bottom: .8rem; border: 1.5px solid var(--border); width: fit-content; overflow: hidden; border-radius: 2px; }
+    .toggle-btn {
+      padding: .5rem 1.2rem; font-family: 'Space Mono', monospace; font-size: .65rem;
+      letter-spacing: 1px; text-transform: uppercase; border: none; background: var(--cream);
+      color: var(--mid); cursor: pointer; transition: all .2s;
+    }
+    .toggle-btn.active { background: var(--ink); color: var(--cream); }
+
+    .view-toggle { display: flex; gap: 0; margin-bottom: .8rem; border: 1.5px solid var(--border); width: fit-content; overflow: hidden; border-radius: 2px; }
+    .view-btn {
+      padding: .4rem .9rem; font-family: 'Space Mono', monospace; font-size: .65rem;
+      letter-spacing: 1px; text-transform: uppercase; border: none; background: var(--cream);
+      color: var(--mid); cursor: pointer; transition: all .2s;
+    }
+    .view-btn.active { background: var(--ink); color: var(--cream); }
+
+    #preview-wrap {
+      background: #f9f6f0; border: 2px solid var(--border); border-radius: 4px;
+      padding: 2rem 1.5rem; display: flex; align-items: center; justify-content: center; min-height: 400px;
+    }
+
+    .banner-preview {
+      width: 100%; max-width: 360px; position: relative; overflow: hidden;
+      box-shadow: 0 6px 24px rgba(13,13,13,.18); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center; padding: 1.5rem;
+      transition: all .3s;
+    }
+    .banner-preview.portrait { aspect-ratio: 2/3; }
+    .banner-preview.landscape { aspect-ratio: 3/2; }
+    .banner-preview.square { aspect-ratio: 1/1; }
+
+    .banner-grommet {
+      position: absolute; width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid #999; background: #f9f6f0;
+    }
+    .banner-grommet.tl { top: 6px; left: 6px; }
+    .banner-grommet.tr { top: 6px; right: 6px; }
+    .banner-grommet.bl { bottom: 6px; left: 6px; }
+    .banner-grommet.br { bottom: 6px; right: 6px; }
+    .banner-grommet.ml { top: 50%; left: 6px; transform: translateY(-50%); }
+    .banner-grommet.mr { top: 50%; right: 6px; transform: translateY(-50%); }
+
+    .poster-preview {
+      width: 100%; max-width: 280px; position: relative; overflow: hidden;
+      box-shadow: 0 6px 24px rgba(13,13,13,.18); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center; padding: 1.5rem;
+      transition: all .3s;
+    }
+    .poster-preview.portrait { aspect-ratio: 3/4; }
+    .poster-preview.landscape { aspect-ratio: 4/3; }
+    .poster-preview.square { aspect-ratio: 1/1; }
+
+    .preview-image-bg {
+      position: absolute; inset: 0; object-fit: cover; width: 100%; height: 100%;
+      opacity: .3; z-index: 1;
+    }
+
+    .preview-text-block { z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    #p-headline { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 1px; line-height: 1.05; }
+    #p-subline { font-family: 'DM Sans', sans-serif; font-size: .7rem; opacity: .7; margin-top: 6px; max-width: 85%; line-height: 1.3; }
+    #p-date { font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: 2px; text-transform: uppercase; opacity: .6; margin-top: 8px; }
+    #p-venue { font-family: 'DM Sans', sans-serif; font-size: .65rem; opacity: .5; margin-top: 2px; }
+    #p-contact { font-family: 'Space Mono', monospace; font-size: .55rem; opacity: .45; margin-top: 10px; letter-spacing: 1px; }
+
+    .poster-matte-overlay {
+      position: absolute; inset: 0; z-index: 3; pointer-events: none;
+      background: rgba(255,255,255,.04);
+    }
+
+    .size-tag {
+      font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--mid); text-align: center; margin-top: .8rem;
+    }
+
+    .capture-btn {
+      margin-top: 1rem; width: 100%; padding: .75rem; background: var(--ink); color: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: 2px;
+      text-transform: uppercase; border: none; cursor: pointer; transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .type-option {
+      padding: .7rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; text-align: center;
+    }
+    .type-option .opt-icon { font-size: 1.3rem; display: block; margin-bottom: .2rem; }
+    .type-option .opt-sub { font-family: 'Space Mono', monospace; font-size: .58rem; color: var(--mid); margin-top: .2rem; }
+    .type-option.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .type-option.active .opt-sub { color: #aaa; }
+
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--border);
+      background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .char-counter { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--mid); text-align: right; margin-top: .3rem; }
+    .char-counter.warn { color: var(--accent); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .size-grid { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .size-btn {
+      padding: .45rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .68rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; letter-spacing: 1px;
+    }
+    .size-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .size-hint { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--mid); margin-top: .5rem; }
+
+    .orient-grid { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .orient-btn {
+      padding: .45rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .68rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; letter-spacing: 1px;
+    }
+    .orient-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    .material-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .material-option {
+      padding: .7rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; text-align: center;
+    }
+    .material-option .opt-icon { font-size: 1.1rem; display: block; margin-bottom: .15rem; }
+    .material-option .opt-sub { font-size: .65rem; color: var(--mid); margin-top: .15rem; }
+    .material-option.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .material-option.active .opt-sub { color: #aaa; }
+
+    .upload-area {
+      border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem;
+      text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    .qty-stepper { display: flex; align-items: center; border: 1.5px solid var(--border); width: fit-content; border-radius: 2px; overflow: hidden; }
+    .qty-btn { width: 40px; height: 40px; background: var(--ink); color: var(--cream); border: none; font-size: 1.2rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display { width: 56px; height: 40px; text-align: center; font-family: 'Space Mono', monospace; font-size: .92rem; font-weight: 700; border: none; background: white; color: var(--ink); }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+
+    .order-btn {
+      width: 100%; padding: 1rem; background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+
+    .section-divider {
+      border: none; border-top: 2px dashed var(--border); margin: .5rem 0 1.2rem;
+    }
+    .section-note {
+      font-family: 'Space Mono', monospace; font-size: .65rem;
+      color: var(--accent); letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: .6rem;
+    }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="graphic-design.html">← Graphic Design</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Print Services · Custom Order</div>
+  <h1>Banners & Posters</h1>
+  <p>Indoor banners, rollups, teardrops, A-frames, event posters & more.</p>
+</div>
+
+<div class="page-wrap">
+
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div class="product-toggle">
+      <button class="toggle-btn active" onclick="setProduct('banner',this)">Banner</button>
+      <button class="toggle-btn" onclick="setProduct('poster',this)">Poster</button>
+    </div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="setOrient('portrait',this)">Portrait</button>
+      <button class="view-btn" onclick="setOrient('landscape',this)">Landscape</button>
+    </div>
+    <div id="preview-wrap">
+      <div id="banner-el" class="banner-preview portrait" style="background:#1a3a5c;">
+        <img id="banner-img" class="preview-image-bg" style="display:none;" alt=""/>
+        <div class="banner-grommet tl"></div>
+        <div class="banner-grommet tr"></div>
+        <div class="banner-grommet bl"></div>
+        <div class="banner-grommet br"></div>
+        <div class="banner-grommet ml"></div>
+        <div class="banner-grommet mr"></div>
+        <div class="preview-text-block">
+          <span id="p-headline" style="color:#fff;">YOUR HEADLINE</span>
+          <span id="p-subline" style="color:#ccc;">Sub-text or tagline goes here</span>
+          <span id="p-date" style="color:#aaa;">DATE & TIME</span>
+          <span id="p-venue" style="color:#999;">Venue / Location</span>
+          <span id="p-contact" style="color:#888;">Contact Info</span>
+        </div>
+      </div>
+      <div id="poster-el" class="poster-preview portrait" style="background:#ffffff;display:none;">
+        <img id="poster-img" class="preview-image-bg" style="display:none;" alt=""/>
+        <div class="poster-matte-overlay" id="matte-overlay" style="display:none;"></div>
+        <div class="preview-text-block">
+          <span id="p2-headline" style="color:#0d0d0d;">YOUR HEADLINE</span>
+          <span id="p2-subline" style="color:#555;">Sub-text or tagline goes here</span>
+          <span id="p2-date" style="color:#888;">DATE & TIME</span>
+          <span id="p2-venue" style="color:#999;">Venue / Location</span>
+          <span id="p2-contact" style="color:#aaa;">Contact Info</span>
+        </div>
+      </div>
+    </div>
+    <div class="size-tag" id="size-tag">A1 &#8226; 59.4 x 84.1 cm &#8226; Portrait</div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Product Type</span>
+      </div>
+      <div class="step-body">
+        <div class="type-grid" id="type-grid">
+          <div class="type-option active" data-type="rollup" data-cat="banner" onclick="setType(this)">
+            <span class="opt-icon">&#127956;</span>Roll-Up Banner
+            <div class="opt-sub">Pull-up stand</div>
+          </div>
+          <div class="type-option" data-type="vinyl-banner" data-cat="banner" onclick="setType(this)">
+            <span class="opt-icon">&#127912;</span>Vinyl Banner
+            <div class="opt-sub">Outdoor/indoor PVC</div>
+          </div>
+          <div class="type-option" data-type="mesh-banner" data-cat="banner" onclick="setType(this)">
+            <span class="opt-icon">&#127744;</span>Mesh Banner
+            <div class="opt-sub">Wind-permeable</div>
+          </div>
+          <div class="type-option" data-type="teardrop" data-cat="banner" onclick="setType(this)">
+            <span class="opt-icon">&#127762;</span>Teardrop Flag
+            <div class="opt-sub">Feather/teardrop</div>
+          </div>
+          <div class="type-option" data-type="a-frame" data-cat="banner" onclick="setType(this)">
+            <span class="opt-icon">&#128722;</span>A-Frame / X-Banner
+            <div class="opt-sub">Sidewalk sign</div>
+          </div>
+          <div class="type-option" data-type="backdrop" data-cat="banner" onclick="setType(this)">
+            <span class="opt-icon">&#127916;</span>Backdrop Banner
+            <div class="opt-sub">Stage / photo wall</div>
+          </div>
+        </div>
+        <hr class="section-divider"/>
+        <div class="section-note">Poster Types</div>
+        <div class="type-grid" id="poster-type-grid">
+          <div class="type-option" data-type="event-poster" data-cat="poster" onclick="setType(this)">
+            <span class="opt-icon">&#127915;</span>Event Poster
+            <div class="opt-sub">Concert, club, church</div>
+          </div>
+          <div class="type-option" data-type="business-poster" data-cat="poster" onclick="setType(this)">
+            <span class="opt-icon">&#128200;</span>Business Poster
+            <div class="opt-sub">Promo, sale, menu</div>
+          </div>
+          <div class="type-option" data-type="self-adhesive" data-cat="poster" onclick="setType(this)">
+            <span class="opt-icon">&#128311;</span>Self-Adhesive
+            <div class="opt-sub">Sticker wall poster</div>
+          </div>
+          <div class="type-option" data-type="canvas-print" data-cat="poster" onclick="setType(this)">
+            <span class="opt-icon">&#128444;</span>Canvas Print
+            <div class="opt-sub">Stretched frame</div>
+          </div>
+        </div>
+        <input type="hidden" name="product_type" id="product-type-input" value="rollup"/>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Size</span>
+      </div>
+      <div class="step-body">
+        <div class="size-grid" id="size-grid">
+          <button type="button" class="size-btn" data-size="A4" data-w="21" data-h="29.7" data-price="0" onclick="setSize(this)">A4</button>
+          <button type="button" class="size-btn" data-size="A3" data-w="29.7" data-h="42" data-price="200" onclick="setSize(this)">A3</button>
+          <button type="button" class="size-btn active" data-size="A2" data-w="42" data-h="59.4" data-price="500" onclick="setSize(this)">A2</button>
+          <button type="button" class="size-btn" data-size="A1" data-w="59.4" data-h="84.1" data-price="1200" onclick="setSize(this)">A1</button>
+          <button type="button" class="size-btn" data-size="A0" data-w="84.1" data-h="118.9" data-price="2500" onclick="setSize(this)">A0</button>
+          <button type="button" class="size-btn" data-size="2x3ft" data-w="60" data-h="90" data-price="1800" onclick="setSize(this)">2×3 ft</button>
+          <button type="button" class="size-btn" data-size="3x6ft" data-w="90" data-h="180" data-price="3500" onclick="setSize(this)">3×6 ft</button>
+          <button type="button" class="size-btn" data-size="4x8ft" data-w="120" data-h="240" data-price="5500" onclick="setSize(this)">4×8 ft</button>
+          <button type="button" class="size-btn" data-size="custom" data-w="0" data-h="0" data-price="0" onclick="setSize(this)">Custom</button>
+        </div>
+        <div class="size-hint" id="size-hint">Standard — A2 (42×59.4 cm)</div>
+        <div id="custom-dim" style="display:none;margin-top:.8rem;">
+          <div class="field-row">
+            <div>
+              <label class="field-label">Width (cm)</label>
+              <input type="number" id="custom-w" name="custom_width" value="100" min="10" max="500" oninput="updateCustomDim()"/>
+            </div>
+            <div>
+              <label class="field-label">Height (cm)</label>
+              <input type="number" id="custom-h" name="custom_height" value="200" min="10" max="500" oninput="updateCustomDim()"/>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="size" id="size-input" value="A2"/>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Orientation</span>
+      </div>
+      <div class="step-body">
+        <div class="orient-grid">
+          <button type="button" class="orient-btn active" data-orient="portrait" onclick="setOrient('portrait',this)">&#9645; Portrait</button>
+          <button type="button" class="orient-btn" data-orient="landscape" onclick="setOrient('landscape',this)">&#9644; Landscape</button>
+        </div>
+        <input type="hidden" name="orientation" id="orient-input" value="portrait"/>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Material & Print</span>
+      </div>
+      <div class="step-body">
+        <div id="banner-materials">
+          <div class="material-grid" id="banner-mat-grid">
+            <div class="material-option active" data-mat="pvc-vinyl" data-add="0" onclick="setMaterial(this)">
+              <span class="opt-icon">&#9728;</span>PVC Vinyl
+              <div class="opt-sub">Standard outdoor</div>
+            </div>
+            <div class="material-option" data-mat="star-flex" data-add="500" onclick="setMaterial(this)">
+              <span class="opt-icon">&#10024;</span>Star Flex
+              <div class="opt-sub">Premium indoor</div>
+            </div>
+            <div class="material-option" data-mat="mesh" data-add="800" onclick="setMaterial(this)">
+              <span class="opt-icon">&#127744;</span>Mesh PVC
+              <div class="opt-sub">Wind-permeable</div>
+            </div>
+            <div class="material-option" data-mat="fabric" data-add="1000" onclick="setMaterial(this)">
+              <span class="opt-icon">&#128084;</span>Fabric / Satin
+              <div class="opt-sub">Washable, elegant</div>
+            </div>
+          </div>
+        </div>
+        <div id="poster-materials" style="display:none;">
+          <div class="material-grid" id="poster-mat-grid">
+            <div class="material-option active" data-mat="glossy-paper" data-add="0" onclick="setMaterial(this)">
+              <span class="opt-icon">&#128196;</span>Glossy Paper
+              <div class="opt-sub">170gsm coated</div>
+            </div>
+            <div class="material-option" data-mat="matte-paper" data-add="0" onclick="setMaterial(this)">
+              <span class="opt-icon">&#9673;</span>Matte Paper
+              <div class="opt-sub">200gsm premium</div>
+            </div>
+            <div class="material-option" data-mat="self-adhesive" data-add="300" onclick="setMaterial(this)">
+              <span class="opt-icon">&#128311;</span>Self-Adhesive
+              <div class="opt-sub">Sticker vinyl</div>
+            </div>
+            <div class="material-option" data-mat="canvas" data-add="2000" onclick="setMaterial(this)">
+              <span class="opt-icon">&#128444;</span>Canvas Wrap
+              <div class="opt-sub">Stretched frame</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:.8rem;" class="field-row">
+          <div>
+            <label class="field-label">Print Sides</label>
+            <select name="print_sides" id="print-sides" onchange="updatePrice()">
+              <option value="single">Single-Sided</option>
+              <option value="double">Double-Sided (+50%)</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Finishing</label>
+            <select name="finishing" id="finishing" onchange="updatePrice()">
+              <option value="hem-grommet">Hem + Grommets (free)</option>
+              <option value="pole-pocket">Pole Pocket (+KSh 200)</option>
+              <option value="rope-hem">Rope & Hem (+KSh 300)</option>
+              <option value="lamination">Lamination (+KSh 400)</option>
+              <option value="none">No Finishing</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" name="material" id="material-input" value="pvc-vinyl"/>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Design Artwork</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="upload-area" onclick="document.getElementById('photo-upload').click()">
+          <input type="file" id="photo-upload" name="photo" accept="image/*" onchange="handleUpload(event)"/>
+          <div class="upload-icon">&#127912;</div>
+          <p><strong>Click to upload</strong> your banner/poster design</p>
+          <p>PDF, PNG, JPG, AI, CDR — minimum 150dpi at print size</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+        <div>
+          <label class="field-label">Do you need design help?</label>
+          <select name="design_help" id="design-help" onchange="updatePrice()">
+            <option value="no">No, I have artwork ready</option>
+            <option value="simple">Yes, simple design (+KSh 1,000)</option>
+            <option value="full">Yes, full custom design (+KSh 2,500)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Content / Wording</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Headline / Main Text</label>
+          <input type="text" id="headline" name="headline" placeholder="e.g. GRAND OPENING SALE" maxlength="40" oninput="updatePreview()"/>
+          <div class="char-counter" id="headline-counter">0 / 40</div>
+        </div>
+        <div>
+          <label class="field-label">Sub-text / Tagline</label>
+          <input type="text" id="subline" name="subline" placeholder="e.g. Up to 50% off everything" maxlength="60" oninput="updatePreview()"/>
+          <div class="char-counter" id="subline-counter">0 / 60</div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Date & Time</label>
+            <input type="text" id="event-date" name="event_date" placeholder="e.g. Sat 15th Mar, 9AM–6PM" maxlength="40" oninput="updatePreview()"/>
+          </div>
+          <div>
+            <label class="field-label">Venue / Location</label>
+            <input type="text" id="venue" name="venue" placeholder="e.g. Kenyatta Ave, Nairobi" maxlength="40" oninput="updatePreview()"/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Contact Info</label>
+          <input type="text" id="contact" name="contact" placeholder="e.g. Call 0712 345 678 | @brandname" maxlength="50" oninput="updatePreview()"/>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Text Colour</label>
+            <select name="text_colour" id="text-colour" onchange="updatePreview()">
+              <option value="#ffffff">White</option>
+              <option value="#0d0d0d">Black</option>
+              <option value="#e8420a">Orange-Red</option>
+              <option value="#f1c40f">Yellow</option>
+              <option value="#1a3a5c">Navy Blue</option>
+              <option value="#c0392b">Red</option>
+              <option value="#27ae60">Green</option>
+              <option value="#d4a017">Gold</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Background Colour</label>
+            <select name="bg_colour" id="bg-colour" onchange="updateBgColour()">
+              <option value="#1a3a5c">Navy Blue</option>
+              <option value="#0d0d0d">Black</option>
+              <option value="#c0392b">Red</option>
+              <option value="#e8420a">Orange</option>
+              <option value="#27ae60">Green</option>
+              <option value="#ffffff">White</option>
+              <option value="#f5f0e8">Cream</option>
+              <option value="#6c3483">Purple</option>
+              <option value="#2c3e50">Charcoal</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <span class="step-title">Accessories</span>
+      </div>
+      <div class="step-body">
+        <div class="field-row">
+          <div id="banner-extras">
+            <label class="field-label">Banner Stand / Hardware</label>
+            <select name="stand_type" id="stand-type" onchange="updatePrice()">
+              <option value="none">No Stand / Hardware</option>
+              <option value="rollup-basic">Roll-Up Stand (Basic) — +KSh 4,500</option>
+              <option value="rollup-premium">Roll-Up Stand (Premium) — +KSh 7,000</option>
+              <option value="x-banner-stand">X-Banner Stand — +KSh 2,500</option>
+              <option value="a-frame-stand">A-Frame Stand — +KSh 6,000</option>
+              <option value="teardrop-pole">Teardrop Flag + Pole — +KSh 5,500</option>
+              <option value="pop-up-frame">Pop-Up Display Frame — +KSh 19,000</option>
+            </select>
+          </div>
+          <div id="poster-extras" style="display:none;">
+            <label class="field-label">Poster Finishing</label>
+            <select name="poster_extra" id="poster-extra" onchange="updatePrice()">
+              <option value="none">No Extra</option>
+              <option value="foam-board">Mount on Foam Board — +KSh 800</option>
+              <option value="frame">Wooden Frame — +KSh 1,500</option>
+              <option value="snap-frame">Snap Frame (A1) — +KSh 3,500</option>
+              <option value="laminated">Laminated — +KSh 400</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Rush Order</label>
+            <select name="rush" id="rush" onchange="updatePrice()">
+              <option value="standard">Standard (3–5 days)</option>
+              <option value="rush">Rush (1–2 days) +30%</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">08</span>
+        <span class="step-title">Quantity & Price</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">&#8722;</button>
+          <input type="number" id="qty-display" name="quantity" value="1" min="1" max="500" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 6,000</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">6,000</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="6000"/>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">09</span>
+        <span class="step-title">Your Details & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Delivery address? Installation needed? Specific Pantone colours? Event date? Let us know…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+  </form>
+</div>
+
+<script>
+  let activeCat = 'banner';
+  let activeType = 'rollup';
+  let activeSize = 'A2';
+  let activeOrient = 'portrait';
+  let activeMaterial = 'pvc-vinyl';
+  let sizeW = 42;
+  let sizeH = 59.4;
+  let sizePriceAdd = 500;
+  let materialAdd = 0;
+  let qty = 1;
+
+  const BASE_PRICES = {
+    'rollup': 6000,
+    'vinyl-banner': 4000,
+    'mesh-banner': 5000,
+    'teardrop': 8000,
+    'a-frame': 7000,
+    'backdrop': 5500,
+    'event-poster': 500,
+    'business-poster': 600,
+    'self-adhesive': 900,
+    'canvas-print': 3500,
+  };
+
+  const SIZE_DATA = {
+    'A4':        { w: 21,   h: 29.7, add: 0 },
+    'A3':        { w: 29.7, h: 42,   add: 200 },
+    'A2':        { w: 42,   h: 59.4, add: 500 },
+    'A1':        { w: 59.4, h: 84.1, add: 1200 },
+    'A0':        { w: 84.1, h: 118.9,add: 2500 },
+    '2x3ft':     { w: 60,   h: 90,   add: 1800 },
+    '3x6ft':     { w: 90,   h: 180,  add: 3500 },
+    '4x8ft':     { w: 120,  h: 240,  add: 5500 },
+  };
+
+  const FINISHING_ADD = { 'hem-grommet': 0, 'pole-pocket': 200, 'rope-hem': 300, 'lamination': 400, 'none': 0 };
+
+  const STAND_ADD = { 'none': 0, 'rollup-basic': 4500, 'rollup-premium': 7000, 'x-banner-stand': 2500, 'a-frame-stand': 6000, 'teardrop-pole': 5500, 'pop-up-frame': 19000 };
+
+  const POSTER_EXTRA_ADD = { 'none': 0, 'foam-board': 800, 'frame': 1500, 'snap-frame': 3500, 'laminated': 400 };
+
+  const DESIGN_ADD = { 'no': 0, 'simple': 1000, 'full': 2500 };
+
+  function setType(el) {
+    document.querySelectorAll('.type-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    activeType = el.dataset.type;
+    const cat = el.dataset.cat;
+    document.getElementById('product-type-input').value = activeType;
+    setProduct(cat, document.querySelector('.product-toggle .' + (cat === 'banner' ? 'toggle-btn:first-child' : 'toggle-btn:last-child')));
+    updatePrice();
+  }
+
+  function setProduct(cat, el) {
+    activeCat = cat;
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('banner-el').style.display = cat === 'banner' ? 'flex' : 'none';
+    document.getElementById('poster-el').style.display = cat === 'poster' ? 'flex' : 'none';
+    document.getElementById('banner-materials').style.display = cat === 'banner' ? 'block' : 'none';
+    document.getElementById('poster-materials').style.display = cat === 'poster' ? 'block' : 'none';
+    document.getElementById('banner-extras').style.display = cat === 'banner' ? 'block' : 'none';
+    document.getElementById('poster-extras').style.display = cat === 'poster' ? 'block' : 'none';
+    const grommets = document.querySelectorAll('.banner-grommet');
+    grommets.forEach(g => g.style.display = cat === 'banner' ? 'block' : 'none');
+    if (cat === 'poster') {
+      activeMaterial = document.querySelector('#poster-mat-grid .material-option.active')?.dataset.mat || 'glossy-paper';
+    } else {
+      activeMaterial = document.querySelector('#banner-mat-grid .material-option.active')?.dataset.mat || 'pvc-vinyl';
+    }
+    document.getElementById('material-input').value = activeMaterial;
+    updatePrice();
+  }
+
+  function setOrient(orient, el) {
+    activeOrient = orient;
+    if (el) {
+      document.querySelectorAll('.orient-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+    document.querySelectorAll('.orient-btn').forEach(b => {
+      if (b.dataset.orient === orient) b.classList.add('active');
+    });
+    document.getElementById('orient-input').value = orient;
+    document.getElementById('banner-el').className = 'banner-preview ' + orient;
+    document.getElementById('poster-el').className = 'poster-preview ' + orient;
+    updateSizeTag();
+  }
+
+  function setSize(el) {
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    activeSize = el.dataset.size;
+    sizePriceAdd = parseInt(el.dataset.price) || 0;
+    document.getElementById('size-input').value = activeSize;
+    if (activeSize === 'custom') {
+      document.getElementById('custom-dim').style.display = 'block';
+      updateCustomDim();
+    } else {
+      document.getElementById('custom-dim').style.display = 'none';
+      const sd = SIZE_DATA[activeSize];
+      if (sd) { sizeW = sd.w; sizeH = sd.h; }
+      updateSizeTag();
+      updatePrice();
+    }
+  }
+
+  function updateCustomDim() {
+    sizeW = Math.max(10, Math.min(500, parseFloat(document.getElementById('custom-w').value) || 100));
+    sizeH = Math.max(10, Math.min(500, parseFloat(document.getElementById('custom-h').value) || 200));
+    const area = sizeW * sizeH;
+    sizePriceAdd = Math.round(area * 0.5);
+    document.getElementById('size-hint').textContent = 'Custom — ' + sizeW + '×' + sizeH + ' cm';
+    updateSizeTag();
+    updatePrice();
+  }
+
+  function updateSizeTag() {
+    const w = activeOrient === 'landscape' ? Math.max(sizeW, sizeH) : Math.min(sizeW, sizeH);
+    const h = activeOrient === 'landscape' ? Math.min(sizeW, sizeH) : Math.max(sizeW, sizeH);
+    document.getElementById('size-tag').textContent = activeSize + ' \u2022 ' + w + ' \u00d7 ' + h + ' cm \u2022 ' + (activeOrient === 'portrait' ? 'Portrait' : 'Landscape');
+  }
+
+  function setMaterial(el) {
+    const parent = el.closest('.material-grid');
+    parent.querySelectorAll('.material-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    activeMaterial = el.dataset.mat;
+    materialAdd = parseInt(el.dataset.add) || 0;
+    document.getElementById('material-input').value = activeMaterial;
+    const isMatte = activeMaterial === 'matte-paper';
+    document.getElementById('matte-overlay').style.display = isMatte ? 'block' : 'none';
+    updatePrice();
+  }
+
+  function updateBgColour() {
+    const col = document.getElementById('bg-colour').value;
+    document.getElementById('banner-el').style.background = col;
+    document.getElementById('poster-el').style.background = col;
+    updatePreview();
+  }
+
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '\u2713 ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      document.getElementById('banner-img').src = ev.target.result;
+      document.getElementById('banner-img').style.display = 'block';
+      document.getElementById('poster-img').src = ev.target.result;
+      document.getElementById('poster-img').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updatePreview() {
+    const hl = document.getElementById('headline').value;
+    const sl = document.getElementById('subline').value;
+    const dt = document.getElementById('event-date').value;
+    const vn = document.getElementById('venue').value;
+    const ct = document.getElementById('contact').value;
+    const tc = document.getElementById('text-colour').value;
+
+    ['p-headline','p2-headline'].forEach(id => {
+      const el = document.getElementById(id);
+      el.textContent = hl || 'YOUR HEADLINE';
+      el.style.color = tc;
+    });
+    ['p-subline','p2-subline'].forEach(id => {
+      const el = document.getElementById(id);
+      el.textContent = sl || 'Sub-text or tagline goes here';
+      el.style.color = tc; el.style.opacity = '.7';
+    });
+    ['p-date','p2-date'].forEach(id => {
+      const el = document.getElementById(id);
+      el.textContent = dt || ''; el.style.color = tc; el.style.opacity = '.6';
+    });
+    ['p-venue','p2-venue'].forEach(id => {
+      const el = document.getElementById(id);
+      el.textContent = vn || ''; el.style.color = tc; el.style.opacity = '.5';
+    });
+    ['p-contact','p2-contact'].forEach(id => {
+      const el = document.getElementById(id);
+      el.textContent = ct || ''; el.style.color = tc; el.style.opacity = '.45';
+    });
+
+    document.getElementById('headline-counter').textContent = `${(hl||'').length} / 40`;
+    document.getElementById('headline-counter').className = 'char-counter' + ((hl||'').length > 33 ? ' warn' : '');
+    document.getElementById('subline-counter').textContent = `${(sl||'').length} / 60`;
+  }
+
+  function updatePrice() {
+    const base = BASE_PRICES[activeType] || 4000;
+    const finishing = FINISHING_ADD[document.getElementById('finishing').value] || 0;
+    const sides = document.getElementById('print-sides').value === 'double' ? 1.5 : 1;
+    const design = DESIGN_ADD[document.getElementById('design-help').value] || 0;
+    const stand = activeCat === 'banner' ? (STAND_ADD[document.getElementById('stand-type').value] || 0) : 0;
+    const posterExtra = activeCat === 'poster' ? (POSTER_EXTRA_ADD[document.getElementById('poster-extra').value] || 0) : 0;
+    const rush = document.getElementById('rush').value === 'rush' ? 1.3 : 1;
+    const unitRaw = base + sizePriceAdd + materialAdd + finishing + stand + posterExtra;
+    const unit = Math.round(unitRaw * sides * rush);
+    const total = (unit * qty) + design;
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+    updatePrice();
+    updatePreview();
+
+    function addToCart() {
+        const form = document.getElementById('order-form');
+        const formData = new FormData(form);
+        
+        const productType = formData.get('product_type');
+        const size = formData.get('size');
+        const orientation = formData.get('orientation');
+        const material = formData.get('material');
+        const finishing = formData.get('finishing');
+        const printSides = formData.get('print_sides');
+        const designHelp = formData.get('design_help');
+        const rush = formData.get('rush');
+        
+        const typeLabels = {
+            'rollup': 'Roll-Up Banner',
+            'vinyl-banner': 'Vinyl Banner',
+            'mesh-banner': 'Mesh Banner',
+            'teardrop': 'Teardrop Flag',
+            'a-frame': 'A-Frame / X-Banner',
+            'backdrop': 'Backdrop Banner',
+            'event-poster': 'Event Poster',
+            'business-poster': 'Business Poster',
+            'self-adhesive': 'Self-Adhesive Poster',
+            'canvas-print': 'Canvas Print'
+        };
+        const materialLabels = {
+            'pvc-vinyl': 'PVC Vinyl',
+            'star-flex': 'Star Flex',
+            'mesh': 'Mesh PVC',
+            'fabric': 'Fabric / Satin',
+            'glossy-paper': 'Glossy Paper',
+            'matte-paper': 'Matte Paper',
+            'self-adhesive': 'Self-Adhesive Vinyl',
+            'canvas': 'Canvas Wrap'
+        };
+        const finishLabels = {
+            'hem-grommet': 'Hem + Grommets',
+            'pole-pocket': 'Pole Pocket',
+            'rope-hem': 'Rope & Hem',
+            'lamination': 'Lamination',
+            'none': 'No Finishing'
+        };
+        const sidesLabels = { 'single': 'Single-Sided', 'double': 'Double-Sided' };
+        const rushLabels = { 'standard': 'Standard', 'rush': 'Rush (1-2 days)' };
+        
+        const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+        
+        const item = {
+            productName: 'Banner / Poster',
+            variant: `${typeLabels[productType] || productType}, ${size}, ${orientation}`,
+            colour: formData.get('bg_colour') || 'N/A',
+            material: `${materialLabels[material] || material}, ${finishLabels[finishing] || finishing}`,
+            details: `Sides: ${sidesLabels[printSides] || printSides}, Design: ${designHelp}, Rush: ${rushLabels[rush] || rush}, ${formData.get('notes') || ''}`,
+            quantity: qty,
+            unitPrice: unitPrice
+        };
+        
+        BensoftCart.add(item);
+    }
+</script>
+</body>
+</html>

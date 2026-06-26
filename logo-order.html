@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Logo Design Order — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NOISE */
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--ink); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+    /* LAYOUT */
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2.5rem; align-items: start;
+    }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    /* BRIEF PANEL (left sticky) */
+    .brief-panel { position: sticky; top: 80px; }
+    .brief-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+
+    .brief-card {
+      background: var(--ink); border: 2px solid rgba(232,66,10,0.4);
+      border-radius: 4px; padding: 2rem; min-height: 420px;
+      display: flex; flex-direction: column; gap: 1.2rem;
+      position: relative; overflow: hidden;
+    }
+    .brief-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(232,66,10,0.03) 12px, rgba(232,66,10,0.03) 13px);
+      pointer-events: none;
+    }
+
+    /* Big placeholder letter in background */
+    .brief-bg-letter {
+      position: absolute; bottom: -1rem; right: -0.5rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 10rem; line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(232,66,10,0.12);
+      pointer-events: none; z-index: 0;
+      transition: -webkit-text-stroke 0.4s;
+    }
+
+    .brief-row { position: relative; z-index: 1; }
+    .brief-key {
+      font-family: 'Space Mono', monospace; font-size: .58rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: .25rem;
+    }
+    .brief-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: .04em;
+      color: var(--cream); line-height: 1.15;
+      min-height: 1.6rem; word-break: break-word;
+      transition: color 0.2s;
+    }
+    .brief-val.placeholder { color: rgba(245,240,232,0.18); font-size: 1rem; font-family: 'DM Sans', sans-serif; font-weight: 300; letter-spacing: 0; }
+
+    .brief-tagline {
+      font-family: 'DM Sans', sans-serif; font-style: italic;
+      font-size: .88rem; color: rgba(245,240,232,0.5);
+      font-weight: 300; line-height: 1.5;
+      position: relative; z-index: 1;
+      min-height: 1.2rem;
+    }
+
+    /* colour dots row */
+    .brief-colours { display: flex; gap: .5rem; flex-wrap: wrap; position: relative; z-index: 1; margin-top: .2rem; }
+    .brief-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); }
+
+    /* style badge */
+    .brief-style-badge {
+      display: inline-block;
+      font-family: 'Space Mono', monospace; font-size: .6rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      background: rgba(232,66,10,0.15); color: var(--accent);
+      border: 1px solid rgba(232,66,10,0.3);
+      padding: .3rem .7rem; border-radius: 2px;
+      position: relative; z-index: 1;
+    }
+
+    /* use-cases chips */
+    .brief-chips { display: flex; flex-wrap: wrap; gap: .4rem; position: relative; z-index: 1; }
+    .brief-chip {
+      font-family: 'Space Mono', monospace; font-size: .56rem;
+      letter-spacing: 1px; text-transform: uppercase;
+      background: rgba(245,240,232,0.08); color: rgba(245,240,232,0.55);
+      border: 1px solid rgba(245,240,232,0.12);
+      padding: .22rem .55rem; border-radius: 2px;
+    }
+
+    /* divider inside brief */
+    .brief-divider { border: none; border-top: 1px solid rgba(245,240,232,0.08); margin: 0; position: relative; z-index: 1; }
+
+    /* tips box below brief card */
+    .tips-box {
+      margin-top: 1rem;
+      background: white; border: 1.5px solid var(--border); border-radius: 4px;
+      padding: 1.2rem 1.4rem;
+    }
+    .tips-box h4 {
+      font-family: 'Space Mono', monospace; font-size: .65rem;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--accent);
+      margin-bottom: .7rem;
+    }
+    .tips-box ul { list-style: none; display: flex; flex-direction: column; gap: .45rem; }
+    .tips-box li { font-size: .8rem; color: var(--mid); padding-left: 1.2rem; position: relative; line-height: 1.5; }
+    .tips-box li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: .75rem; }
+
+    /* FORM PANEL */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; display: flex; flex-direction: column; gap: .9rem; }
+
+    /* inputs */
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], input[type="tel"], input[type="email"], textarea, select {
+      width: 100%; padding: .7rem .9rem;
+      border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 80px; }
+    input::placeholder, textarea::placeholder { color: rgba(90,82,72,0.38); }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field-hint { font-size: .78rem; color: var(--mid); margin-top: .3rem; line-height: 1.5; }
+
+    /* toggle buttons */
+    .toggle-group { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .toggle-btn {
+      padding: .5rem 1rem; border: 1.5px solid var(--border);
+      background: var(--cream); font-family: 'DM Sans', sans-serif;
+      font-size: .83rem; cursor: pointer; border-radius: 2px;
+      transition: all .2s; line-height: 1.3;
+    }
+    .toggle-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .toggle-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+    /* colour palette picker */
+    .palette-row { display: flex; flex-wrap: wrap; gap: .55rem; margin-bottom: .4rem; }
+    .pal-swatch {
+      width: 32px; height: 32px; border-radius: 50%;
+      cursor: pointer; border: 3px solid transparent;
+      transition: transform .15s, border-color .15s;
+      position: relative;
+    }
+    .pal-swatch:hover { transform: scale(1.12); }
+    .pal-swatch.selected { border-color: var(--accent); transform: scale(1.12); }
+    .pal-swatch.selected::after {
+      content: '✓'; position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; font-weight: 700; color: rgba(255,255,255,0.9);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .pal-swatch[data-hex="#ffffff"].selected::after,
+    .pal-swatch[data-hex="#f5f0e8"].selected::after,
+    .pal-swatch[data-hex="#ffeb3b"].selected::after { color: rgba(0,0,0,0.7); text-shadow: none; }
+    .pal-legend { font-family: 'Space Mono', monospace; font-size: .63rem; color: var(--mid); }
+
+    /* upload */
+    .upload-area {
+      border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem;
+      text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    /* info box */
+    .info-box {
+      background: var(--cream); border-left: 3px solid var(--accent);
+      padding: .65rem 1rem; font-size: .82rem; color: #555;
+      border-radius: 0 2px 2px 0;
+    }
+    .info-box strong { color: var(--ink); }
+
+    /* pricing summary */
+    .price-summary {
+      background: var(--cream); border: 1.5px solid var(--border);
+      border-radius: 2px; padding: 1rem 1.2rem;
+    }
+    .price-row { display: flex; justify-content: space-between; align-items: center; padding: .35rem 0; border-bottom: 1px solid var(--border); font-size: .85rem; }
+    .price-row:last-child { border-bottom: none; }
+    .price-row .label { color: var(--mid); }
+    .price-row .value { font-weight: 600; color: var(--ink); }
+    .price-total { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--accent); margin-top: .4rem; }
+
+    /* order btn */
+    .order-btn {
+      width: 100%; padding: 1rem;
+      background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* MPESA MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+
+    /* SUCCESS */
+    #success-overlay .modal { text-align: center; padding: 2.5rem; }
+
+    @media (max-width: 560px) {
+      .field-row { grid-template-columns: 1fr; }
+    }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="graphic-design.html">← Graphic Design</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Graphic Design · Custom Order</div>
+  <h1>Logo Design</h1>
+  <p>Tell us about your business and the logo you have in mind. We'll create professional concepts and send you a proof before finalising.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page-wrap">
+
+  <!-- LEFT: LIVE BRIEF SUMMARY -->
+  <div class="brief-panel">
+    <div class="brief-label">Your Brief — Live Preview</div>
+    <div class="brief-card">
+      <div class="brief-bg-letter" id="brief-bg-letter">B</div>
+
+      <div class="brief-row">
+        <div class="brief-key">Business / Brand Name</div>
+        <div class="brief-val placeholder" id="brief-name">Your business name will appear here</div>
+      </div>
+
+      <div class="brief-tagline" id="brief-tagline">Tagline or slogan will appear here…</div>
+
+      <hr class="brief-divider">
+
+      <div class="brief-row">
+        <div class="brief-key">Industry / Business Type</div>
+        <div class="brief-val placeholder" id="brief-industry">e.g. School · Restaurant · NGO</div>
+      </div>
+
+      <div class="brief-row">
+        <div class="brief-key">Logo Style</div>
+        <div class="brief-style-badge" id="brief-style">Not selected yet</div>
+      </div>
+
+      <div class="brief-row">
+        <div class="brief-key">Preferred Colours</div>
+        <div class="brief-colours" id="brief-colours">
+          <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;color:rgba(245,240,232,0.25);font-weight:300;">Select colours below</span>
+        </div>
+      </div>
+
+      <hr class="brief-divider">
+
+      <div class="brief-row">
+        <div class="brief-key">Logo Will Be Used On</div>
+        <div class="brief-chips" id="brief-uses">
+          <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;color:rgba(245,240,232,0.25);font-weight:300;">Select use cases below</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tips-box">
+      <h4>💡 Tips for a Great Brief</h4>
+      <ul>
+        <li>Keep the business name short — logos look best with concise text.</li>
+        <li>Think about where your logo will appear most (shirt, signboard, card).</li>
+        <li>If you have a competitor logo you admire, mention it in your notes.</li>
+        <li>Reference images or inspiration are very welcome — upload them below.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RIGHT: ORDER FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: BUSINESS DETAILS -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Business Details</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <label class="field-label">Business / Brand Name *</label>
+          <input type="text" name="business_name" id="input-name" placeholder="e.g. Sunrise Bakery" required
+            oninput="updateBriefName(this.value)"/>
+        </div>
+        <div>
+          <label class="field-label">Tagline or Slogan (optional)</label>
+          <input type="text" name="tagline" id="input-tagline" placeholder="e.g. Fresh Every Morning"
+            oninput="updateBriefTagline(this.value)"/>
+        </div>
+        <div>
+          <label class="field-label">Industry / Type of Business *</label>
+          <input type="text" name="industry" id="input-industry" placeholder="e.g. School, Restaurant, Church, NGO, Hardware…" required
+            oninput="updateBriefIndustry(this.value)"/>
+        </div>
+        <div>
+          <label class="field-label">Brief Description of What You Do</label>
+          <textarea name="business_description" placeholder="Tell us a bit about your business — what you offer, who your customers are, what makes you different…" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: LOGO STYLE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Logo Style</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">
+          Choose the overall look and feel you're going for. You can select more than one if you're open to options.
+        </div>
+        <div class="toggle-group" id="style-group">
+          <button type="button" class="toggle-btn" data-val="Modern & Minimal" onclick="toggleStyle(this)">Modern & Minimal</button>
+          <button type="button" class="toggle-btn" data-val="Bold & Strong" onclick="toggleStyle(this)">Bold & Strong</button>
+          <button type="button" class="toggle-btn" data-val="Classic & Professional" onclick="toggleStyle(this)">Classic & Professional</button>
+          <button type="button" class="toggle-btn" data-val="Playful & Fun" onclick="toggleStyle(this)">Playful & Fun</button>
+          <button type="button" class="toggle-btn" data-val="Elegant & Luxury" onclick="toggleStyle(this)">Elegant & Luxury</button>
+          <button type="button" class="toggle-btn" data-val="Religious / Faith" onclick="toggleStyle(this)">Religious / Faith</button>
+          <button type="button" class="toggle-btn" data-val="Sporty & Dynamic" onclick="toggleStyle(this)">Sporty & Dynamic</button>
+          <button type="button" class="toggle-btn" data-val="Not Sure — Advise Me" onclick="toggleStyle(this)">Not Sure — Advise Me</button>
+        </div>
+        <input type="hidden" name="logo_style" id="style-input" value=""/>
+      </div>
+    </div>
+
+    <!-- STEP 3: LOGO TYPE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Logo Type</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">
+          <strong>Wordmark</strong> — text only (e.g. Google). <strong>Lettermark</strong> — initials only (e.g. IBM). <strong>Icon + Text</strong> — symbol with name (most popular). <strong>Icon Only</strong> — standalone symbol/icon. <strong>Emblem</strong> — text inside a badge or crest.
+        </div>
+        <div class="toggle-group" id="type-group">
+          <button type="button" class="toggle-btn" data-val="Wordmark (Text Only)" onclick="setToggle('type-group','type-input',this)">Wordmark (Text Only)</button>
+          <button type="button" class="toggle-btn" data-val="Lettermark (Initials)" onclick="setToggle('type-group','type-input',this)">Lettermark (Initials)</button>
+          <button type="button" class="toggle-btn active" data-val="Icon + Text" onclick="setToggle('type-group','type-input',this)">Icon + Text</button>
+          <button type="button" class="toggle-btn" data-val="Icon Only" onclick="setToggle('type-group','type-input',this)">Icon Only</button>
+          <button type="button" class="toggle-btn" data-val="Emblem / Badge" onclick="setToggle('type-group','type-input',this)">Emblem / Badge</button>
+        </div>
+        <input type="hidden" name="logo_type" id="type-input" value="Icon + Text"/>
+      </div>
+    </div>
+
+    <!-- STEP 4: COLOUR PREFERENCES -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Colour Preferences</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">
+          Select up to <strong>3 colours</strong> you'd like in your logo. Or choose "Advise Me" and our designer will suggest a palette that suits your industry.
+        </div>
+        <div class="palette-row" id="palette-row"></div>
+        <div class="pal-legend" id="pal-legend">0 colours selected (max 3)</div>
+        <input type="hidden" name="colour_preferences" id="colours-input" value=""/>
+
+        <div style="margin-top:.5rem;">
+          <label class="field-label">Colours to Avoid (optional)</label>
+          <input type="text" name="colours_avoid" placeholder="e.g. No red, avoid yellow…"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: WHERE WILL THE LOGO BE USED -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Where Will the Logo Be Used?</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">Select all that apply — this helps us design a logo that works at every size and on every surface.</div>
+        <div class="toggle-group" id="uses-group">
+          <button type="button" class="toggle-btn" data-val="Business Cards" onclick="toggleUse(this)">Business Cards</button>
+          <button type="button" class="toggle-btn" data-val="T-Shirts & Apparel" onclick="toggleUse(this)">T-Shirts & Apparel</button>
+          <button type="button" class="toggle-btn" data-val="Banners & Signage" onclick="toggleUse(this)">Banners & Signage</button>
+          <button type="button" class="toggle-btn" data-val="Social Media" onclick="toggleUse(this)">Social Media</button>
+          <button type="button" class="toggle-btn" data-val="Website" onclick="toggleUse(this)">Website</button>
+          <button type="button" class="toggle-btn" data-val="Packaging & Stickers" onclick="toggleUse(this)">Packaging & Stickers</button>
+          <button type="button" class="toggle-btn" data-val="Stamps & IDs" onclick="toggleUse(this)">Stamps & IDs</button>
+          <button type="button" class="toggle-btn" data-val="Vehicle Branding" onclick="toggleUse(this)">Vehicle Branding</button>
+          <button type="button" class="toggle-btn" data-val="Mugs & Gifts" onclick="toggleUse(this)">Mugs & Gifts</button>
+        </div>
+        <input type="hidden" name="logo_uses" id="uses-input" value=""/>
+      </div>
+    </div>
+
+    <!-- STEP 6: DESIGN NOTES & INSPIRATION -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Design Notes & Inspiration</span>
+      </div>
+      <div class="step-body">
+        <div>
+          <label class="field-label">Describe the Logo You Have in Mind</label>
+          <textarea name="design_notes" placeholder="e.g. I want a lion holding a pen to represent strength and creativity. The name should be bold, the tagline smaller underneath. I like clean lines…" rows="4"></textarea>
+          <p class="field-hint">The more detail you give, the fewer revision rounds we'll need. Feel free to reference logos you admire.</p>
+        </div>
+        <div>
+          <label class="field-label">Any Icons, Symbols or Elements to Include?</label>
+          <input type="text" name="icons_symbols" placeholder="e.g. star, cross, book, shield, leaf, map of Kenya…"/>
+        </div>
+        <div>
+          <label class="field-label">Upload Inspiration / Reference Images (optional)</label>
+          <div class="upload-area" onclick="document.getElementById('inspo-upload').click()">
+            <input type="file" id="inspo-upload" name="inspiration_files" accept="image/*,.pdf" multiple onchange="showFileName(event,'inspo-label')"/>
+            <div class="upload-icon">🖼️</div>
+            <p><strong>Click to upload</strong> reference logos or inspiration images</p>
+            <p>PNG, JPG, PDF · Multiple files allowed</p>
+            <div class="upload-filename" id="inspo-label"></div>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Existing Logo to Redesign? (optional)</label>
+          <div class="upload-area" onclick="document.getElementById('existing-upload').click()">
+            <input type="file" id="existing-upload" name="existing_logo" accept="image/*,.pdf,.ai,.eps,.svg" onchange="showFileName(event,'existing-label')"/>
+            <div class="upload-icon">🔄</div>
+            <p><strong>Click to upload</strong> your current logo if this is a redesign</p>
+            <p>PNG, JPG, PDF, AI, EPS, SVG</p>
+            <div class="upload-filename" id="existing-label"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7: DELIVERABLES & PACKAGE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <span class="step-title">Package & Deliverables</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">
+          All packages include <strong>3 initial concepts</strong>, revisions, and final files in PNG, JPG and PDF. The Full Brand Kit also includes social media variations and a colour palette guide.
+        </div>
+        <div class="toggle-group" id="package-group">
+          <button type="button" class="toggle-btn active" data-val="Basic Logo" data-price="1500" onclick="setPackage(this)">
+            Basic Logo — KSh 1,500
+          </button>
+          <button type="button" class="toggle-btn" data-val="Logo + Business Card Design" data-price="2500" onclick="setPackage(this)">
+            Logo + Business Card — KSh 2,500
+          </button>
+          <button type="button" class="toggle-btn" data-val="Full Brand Kit" data-price="4500" onclick="setPackage(this)">
+            Full Brand Kit — KSh 4,500
+          </button>
+        </div>
+        <input type="hidden" name="package" id="package-input" value="Basic Logo"/>
+        <input type="hidden" name="total_price" id="price-input" value="1500"/>
+
+        <div class="price-summary" style="margin-top:.8rem;">
+          <div class="price-row">
+            <span class="label">Selected Package</span>
+            <span class="value" id="summary-package">Basic Logo</span>
+          </div>
+          <div class="price-row">
+            <span class="label">Includes</span>
+            <span class="value" id="summary-includes">3 concepts · Revisions · PNG/JPG/PDF</span>
+          </div>
+          <div class="price-total">KSh <span id="summary-price">1,500</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 8: YOUR DETAILS -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">08</span>
+        <span class="step-title">Your Contact Details</span>
+      </div>
+      <div class="step-body">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name *</label>
+            <input type="text" name="customer_name" placeholder="Your full name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number *</label>
+            <input type="tel" name="phone" id="cust-phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email Address (optional but recommended)</label>
+          <input type="email" name="email" placeholder="your@email.com"/>
+          <p class="field-hint">We'll send your logo concepts to this email for review.</p>
+        </div>
+        <div>
+          <label class="field-label">Deadline / When Do You Need It? (optional)</label>
+          <input type="text" name="deadline" placeholder="e.g. Within 3 days, by Friday, no rush…"/>
+        </div>
+        <div>
+          <label class="field-label">Any Other Notes</label>
+          <textarea name="other_notes" placeholder="Anything else we should know…" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+
+  </div>
+
+<!-- M-PESA MODAL -->
+<div class="modal-overlay" id="mpesa-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div style="font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.2rem;">Payment</div>
+    <h2>M-Pesa Checkout</h2>
+    <div class="mpesa-sub">Complete your deposit payment to confirm the order</div>
+    <div style="font-size:.85rem;color:var(--mid);">Amount Due</div>
+    <div class="mpesa-amount">KSh <span id="modal-amount">1,500</span></div>
+    <ol class="mpesa-steps">
+      <li>Go to <strong>M-Pesa</strong> on your phone → <strong>Lipa na M-Pesa</strong></li>
+      <li>Select <strong>Pay Bill</strong></li>
+      <li>Business No: <span class="mpesa-number">522533</span> &nbsp;·&nbsp; Account: <span class="mpesa-number">1316538</span></li>
+      <li>Enter amount: <strong>KSh <span id="modal-amount-2">1,500</span></strong></li>
+      <li>Enter your M-Pesa PIN and confirm</li>
+      <li>You'll receive an SMS confirmation — share the code with us</li>
+    </ol>
+    <button class="confirm-btn" onclick="confirmPayment()">I've Paid — Submit My Brief</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="modal-overlay" id="success-overlay">
+  <div class="modal" style="text-align:center;padding:2.5rem;">
+    <div style="font-size:3rem;margin-bottom:.5rem;">✅</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:.4rem;">Brief Received!</h2>
+    <p style="color:var(--mid);font-size:.9rem;margin-bottom:.6rem;">Thank you! Your logo design brief has been submitted to Bensoft Prints.</p>
+    <p style="color:var(--mid);font-size:.88rem;margin-bottom:1.4rem;">We'll review your brief and get back to you with initial concepts. If you provided an email, we'll send proofs there — otherwise we'll call you.</p>
+    <a href="graphic-design.html" style="font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-decoration:none;">← Back to Graphic Design</a>
+  </div>
+</div>
+
+<script>
+  /* ─── COLOUR PALETTE DATA ─── */
+  const PALETTE = [
+    { name: 'Black',        hex: '#1a1a1a' },
+    { name: 'Ink',          hex: '#0d0d0d' },
+    { name: 'White',        hex: '#ffffff' },
+    { name: 'Orange-Red',   hex: '#e8420a' },
+    { name: 'Red',          hex: '#c0392b' },
+    { name: 'Maroon',       hex: '#7b241c' },
+    { name: 'Royal Blue',   hex: '#1f4e9e' },
+    { name: 'Navy Blue',    hex: '#1a3a5c' },
+    { name: 'Sky Blue',     hex: '#5ba4cf' },
+    { name: 'Forest Green', hex: '#2d6a4f' },
+    { name: 'Lime Green',   hex: '#27ae60' },
+    { name: 'Yellow',       hex: '#ffeb3b' },
+    { name: 'Gold',         hex: '#d4a017' },
+    { name: 'Purple',       hex: '#6c3483' },
+    { name: 'Pink',         hex: '#e91e8c' },
+    { name: 'Teal',         hex: '#1a7070' },
+    { name: 'Brown',        hex: '#6b3a2a' },
+    { name: 'Grey',         hex: '#7f8c8d' },
+    { name: 'Advise Me',    hex: '#f5f0e8' },
+  ];
+
+  let selectedColours = [];
+
+  const palRow = document.getElementById('palette-row');
+  PALETTE.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'pal-swatch';
+    sw.style.background = c.hex;
+    sw.dataset.hex = c.hex;
+    sw.dataset.name = c.name;
+    sw.title = c.name;
+    if (c.hex === '#ffffff' || c.hex === '#f5f0e8') sw.style.border = '3px solid var(--border)';
+    sw.onclick = () => toggleColour(c, sw);
+    palRow.appendChild(sw);
+  });
+
+  function toggleColour(c, el) {
+    if (el.classList.contains('selected')) {
+      el.classList.remove('selected');
+      selectedColours = selectedColours.filter(x => x.hex !== c.hex);
+    } else {
+      if (selectedColours.length >= 3) return;
+      el.classList.add('selected');
+      selectedColours.push(c);
+    }
+    document.getElementById('pal-legend').textContent =
+      selectedColours.length + ' colour' + (selectedColours.length !== 1 ? 's' : '') + ' selected (max 3)';
+    document.getElementById('colours-input').value = selectedColours.map(x => x.name).join(', ');
+    updateBriefColours();
+  }
+
+  function updateBriefColours() {
+    const container = document.getElementById('brief-colours');
+    if (selectedColours.length === 0) {
+      container.innerHTML = '<span style="font-family:\'DM Sans\',sans-serif;font-size:.75rem;color:rgba(245,240,232,0.25);font-weight:300;">Select colours below</span>';
+    } else {
+      container.innerHTML = selectedColours.map(c =>
+        `<div class="brief-dot" style="background:${c.hex};border-color:${c.hex === '#ffffff' || c.hex === '#f5f0e8' ? 'rgba(255,255,255,0.3)' : 'transparent'}" title="${c.name}"></div>`
+      ).join('');
+    }
+  }
+
+  /* ─── GENERIC TOGGLE (single select) ─── */
+  function setToggle(groupId, inputId, el) {
+    document.querySelectorAll('#' + groupId + ' .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(inputId).value = el.dataset.val;
+  }
+
+  /* ─── STYLE (multi-select, update brief) ─── */
+  const selectedStyles = new Set();
+  function toggleStyle(el) {
+    const val = el.dataset.val;
+    if (el.classList.contains('active')) {
+      el.classList.remove('active');
+      selectedStyles.delete(val);
+    } else {
+      el.classList.add('active');
+      selectedStyles.add(val);
+    }
+    const arr = [...selectedStyles];
+    document.getElementById('style-input').value = arr.join(', ');
+    document.getElementById('brief-style').textContent = arr.length > 0 ? arr.join(' · ') : 'Not selected yet';
+  }
+
+  /* ─── USE CASES (multi-select, update brief) ─── */
+  const selectedUses = new Set();
+  function toggleUse(el) {
+    const val = el.dataset.val;
+    if (el.classList.contains('active')) {
+      el.classList.remove('active');
+      selectedUses.delete(val);
+    } else {
+      el.classList.add('active');
+      selectedUses.add(val);
+    }
+    const arr = [...selectedUses];
+    document.getElementById('uses-input').value = arr.join(', ');
+    const container = document.getElementById('brief-uses');
+    if (arr.length === 0) {
+      container.innerHTML = '<span style="font-family:\'DM Sans\',sans-serif;font-size:.75rem;color:rgba(245,240,232,0.25);font-weight:300;">Select use cases below</span>';
+    } else {
+      container.innerHTML = arr.map(u => `<div class="brief-chip">${u}</div>`).join('');
+    }
+  }
+
+  /* ─── BRIEF LIVE UPDATES ─── */
+  function updateBriefName(val) {
+    const el = document.getElementById('brief-name');
+    const bgEl = document.getElementById('brief-bg-letter');
+    if (val.trim()) {
+      el.textContent = val.trim();
+      el.classList.remove('placeholder');
+      bgEl.textContent = val.trim()[0].toUpperCase();
+    } else {
+      el.textContent = 'Your business name will appear here';
+      el.classList.add('placeholder');
+      bgEl.textContent = 'B';
+    }
+  }
+
+  function updateBriefTagline(val) {
+    const el = document.getElementById('brief-tagline');
+    el.textContent = val.trim() || 'Tagline or slogan will appear here…';
+    el.style.color = val.trim() ? 'rgba(245,240,232,0.65)' : 'rgba(245,240,232,0.2)';
+  }
+
+  function updateBriefIndustry(val) {
+    const el = document.getElementById('brief-industry');
+    if (val.trim()) {
+      el.textContent = val.trim();
+      el.classList.remove('placeholder');
+    } else {
+      el.textContent = 'e.g. School · Restaurant · NGO';
+      el.classList.add('placeholder');
+    }
+  }
+
+  /* ─── PACKAGE SELECTION ─── */
+  const PACKAGE_INCLUDES = {
+    'Basic Logo': '3 concepts · Revisions · PNG/JPG/PDF',
+    'Logo + Business Card Design': '3 logo concepts · Business card design · PNG/JPG/PDF',
+    'Full Brand Kit': '3 concepts · Business card · Social media · Colour guide · All file formats',
+  };
+
+  function setPackage(el) {
+    document.querySelectorAll('#package-group .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    const pkg = el.dataset.val;
+    const price = parseInt(el.dataset.price);
+    document.getElementById('package-input').value = pkg;
+    document.getElementById('price-input').value = price;
+    document.getElementById('summary-package').textContent = pkg;
+    document.getElementById('summary-includes').textContent = PACKAGE_INCLUDES[pkg] || '';
+    document.getElementById('summary-price').textContent = price.toLocaleString();
+    document.getElementById('modal-amount').textContent = price.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = price.toLocaleString();
+  }
+
+  /* ─── FILE UPLOAD FEEDBACK ─── */
+  function showFileName(e, labelId) {
+    const files = e.target.files;
+    if (!files.length) return;
+    const names = Array.from(files).map(f => f.name).join(', ');
+    document.getElementById(labelId).textContent = '✓ ' + names;
+  }
+
+    /* ─── FORM SUBMIT ─── */
+  function addToCart() {
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+    
+    const businessName = formData.get('business_name');
+    const tagline = formData.get('tagline');
+    const industry = formData.get('industry');
+    const description = formData.get('business_description');
+    const logoStyle = formData.get('logo_style');
+    const logoType = formData.get('logo_type');
+    const colours = formData.get('colour_preferences');
+    const coloursAvoid = formData.get('colours_avoid');
+    const uses = formData.get('logo_uses');
+    const designNotes = formData.get('design_notes');
+    const icons = formData.get('icons_symbols');
+    const package = formData.get('package');
+    const price = parseInt(document.getElementById('price-input').value);
+    
+    const packageIncludes = {
+      'Basic Logo': '3 concepts · Revisions · PNG/JPG/PDF',
+      'Logo + Business Card Design': '3 logo concepts · Business card design · PNG/JPG/PDF',
+      'Full Brand Kit': '3 concepts · Business card · Social media · Colour guide · All file formats',
+    };
+    
+    const item = {
+      productName: 'Logo Design',
+      variant: package,
+      colour: colours || 'Not specified',
+      details: `Industry: ${industry}. Style: ${logoStyle}. Type: ${logoType}. Uses: ${uses}. ${designNotes || ''} ${icons ? 'Icons: ' + icons : ''}. Includes: ${packageIncludes[package] || ''}. ${formData.get('colours_avoid') ? 'Avoid: ' + formData.get('colours_avoid') : ''}. ${formData.get('other_notes') || ''}`,
+      quantity: 1,
+      unitPrice: price
+    };
+    
+    BensoftCart.add(item);
+  }
+</script>
+</body>
+</html>

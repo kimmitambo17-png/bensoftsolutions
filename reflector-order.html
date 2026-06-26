@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflector Vest Order | Bensoft Prints & Branding Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0d0d0d;
+            --paper: #f5f0e8;
+            --accent: #e8420a;
+            --mid: #5a5248;
+            --light: #ebe5d8;
+            --white: #fdfaf4;
+            --border: rgba(13,13,13,0.12);
+            --border-strong: rgba(13,13,13,0.25);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; }
+
+        body::before {
+            content: ''; position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.4;
+        }
+
+        /* NAV */
+        nav { position: sticky; top: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; background: var(--ink); border-bottom: 3px solid var(--accent); }
+        .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--paper); letter-spacing: 0.08em; text-decoration: none; }
+        .nav-logo span { color: var(--accent); }
+        .back-link { font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--light); text-decoration: none; transition: color 0.2s; }
+        .back-link:hover { color: var(--accent); }
+
+        /* PAGE HEADER */
+        .page-header { background: var(--ink); color: var(--paper); padding: 3.5rem 4rem 2.5rem; position: relative; overflow: hidden; }
+        .page-header::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(232,66,10,0.05) 10px, rgba(232,66,10,0.05) 11px); }
+        .page-header-inner { position: relative; z-index: 1; }
+        .page-eyebrow { font-family: 'Space Mono', monospace; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem; }
+        .page-eyebrow::before { content: ''; display: block; width: 28px; height: 2px; background: var(--accent); }
+        .page-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 5rem); line-height: 1; letter-spacing: 0.02em; }
+        .page-title span { color: var(--accent); }
+        .page-desc { margin-top: 0.7rem; font-size: 1rem; color: rgba(245,240,232,0.6); font-weight: 300; max-width: 500px; }
+
+        /* LAYOUT */
+        .workspace { display: grid; grid-template-columns: 420px 1fr; min-height: calc(100vh - 180px); }
+
+        /* PREVIEW PANEL */
+        .preview-panel { background: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; position: sticky; top: 75px; height: calc(100vh - 75px); border-right: 3px solid var(--accent); }
+        .preview-label { font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(245,240,232,0.35); margin-bottom: 1.5rem; }
+
+        /* VIEW TOGGLE */
+        .view-toggle { display: flex; margin-bottom: 1.5rem; }
+        .view-btn { font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; background: transparent; color: rgba(245,240,232,0.45); border: 1px solid rgba(245,240,232,0.2); padding: 0.7rem 1.6rem; cursor: pointer; transition: all 0.2s; }
+        .view-btn:first-child { border-right: none; }
+        .view-btn.active { background: var(--accent); color: var(--white); border-color: var(--accent); }
+
+        .vest-wrap { position: relative; width: 260px; height: 280px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+        .vest-wrap svg { width: 100%; height: 100%; }
+        .vest-body { transition: fill 0.4s ease; }
+
+        /* text overlays */
+        .vest-text-back {
+            position: absolute; top: 44%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.95rem; letter-spacing: 0.1em;
+            text-align: center; pointer-events: none;
+            max-width: 110px; word-break: break-word;
+            line-height: 1.3; transition: color 0.3s;
+        }
+        .vest-text-chest {
+            position: absolute; top: 33%; left: 61%;
+            transform: translate(-50%, -50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 0.5rem; letter-spacing: 0.06em;
+            text-align: center; pointer-events: none;
+            max-width: 44px; word-break: break-word;
+            line-height: 1.2; transition: color 0.3s;
+        }
+
+        .preview-note { margin-top: 1.2rem; font-family: 'Space Mono', monospace; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,240,232,0.2); text-align: center; }
+
+        /* FORM PANEL */
+        .form-panel { padding: 3rem 3.5rem; background: var(--paper); }
+        .form-section { margin-bottom: 2.5rem; }
+        .section-heading { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.04em; color: var(--ink); margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.7rem; }
+        .section-heading .step-num { background: var(--accent); color: var(--white); font-size: 0.9rem; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .section-divider { border: none; border-top: 2px solid var(--border); margin-bottom: 1.5rem; }
+
+        /* TWO COLOUR CARDS */
+        .color-two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 340px; }
+        .color-card { border: 3px solid var(--border-strong); cursor: pointer; transition: border-color 0.2s, transform 0.15s; position: relative; overflow: hidden; }
+        .color-card:hover { transform: translateY(-2px); border-color: var(--ink); }
+        .color-card.selected { border-color: var(--accent); }
+        .color-card.selected::after { content: '✓ Selected'; position: absolute; bottom: 0; left: 0; right: 0; background: var(--accent); color: var(--white); font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; text-align: center; padding: 0.35rem; }
+        .color-card-swatch { height: 80px; width: 100%; position: relative; overflow: hidden; }
+        /* reflective strips on the swatch */
+        .color-card-swatch::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 14px; margin-top: -7px; background: rgba(255,255,255,0.55); }
+        .color-card-label { padding: 0.7rem 1rem; background: var(--white); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.06em; color: var(--ink); }
+
+        /* SIZE */
+        .size-grid { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+        .size-btn { font-family: 'Space Mono', monospace; font-size: 0.85rem; letter-spacing: 0.1em; font-weight: 700; background: var(--white); border: 2px solid var(--border-strong); color: var(--mid); padding: 0.9rem 1.5rem; cursor: pointer; transition: all 0.2s; min-width: 68px; text-align: center; }
+        .size-btn:hover { border-color: var(--ink); color: var(--ink); }
+        .size-btn.selected { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+        /* QUANTITY */
+        .qty-stepper { display: flex; align-items: center; border: 2px solid var(--border-strong); width: fit-content; }
+        .qty-btn { background: var(--ink); color: var(--paper); border: none; width: 56px; height: 56px; font-size: 1.6rem; cursor: pointer; font-family: 'Bebas Neue', sans-serif; transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
+        .qty-btn:hover { background: var(--accent); }
+        .qty-display { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--ink); width: 80px; text-align: center; border: none; background: var(--white); padding: 0.3rem; outline: none; }
+
+        /* FIELDS */
+        .field-group { margin-bottom: 1.2rem; }
+        .field-label { display: block; font-family: 'Space Mono', monospace; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.5rem; }
+        .field-hint { font-size: 0.78rem; color: rgba(90,82,72,0.55); margin-top: 0.3rem; }
+        input[type="text"], input[type="tel"], textarea { width: 100%; padding: 0.9rem 1rem; border: 2px solid var(--border-strong); background: var(--white); font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--ink); outline: none; transition: border-color 0.2s; border-radius: 0; }
+        input:focus, textarea:focus { border-color: var(--accent); }
+        input::placeholder, textarea::placeholder { color: rgba(90,82,72,0.4); }
+
+        /* UPLOAD */
+        .upload-zone { border: 2px dashed var(--border-strong); background: var(--white); padding: 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; }
+        .upload-zone:hover { border-color: var(--accent); background: var(--light); }
+        .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+        .upload-icon { font-size: 2.2rem; margin-bottom: 0.6rem; display: block; }
+        .upload-text { font-family: 'Space Mono', monospace; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); }
+        .upload-sub { font-size: 0.78rem; color: rgba(90,82,72,0.5); margin-top: 0.3rem; }
+
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+
+        /* SUBMIT */
+        .submit-section { background: var(--ink); padding: 2.5rem 3.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; border-top: 3px solid var(--accent); }
+        .submit-info { color: rgba(245,240,232,0.6); font-size: 0.9rem; font-weight: 300; }
+        .submit-info strong { color: var(--paper); display: block; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .submit-btn { background: var(--accent); color: var(--white); border: 3px solid var(--accent); padding: 1.1rem 3rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.1em; cursor: pointer; transition: background 0.2s, transform 0.15s; white-space: nowrap; }
+        .submit-btn:hover:not(:disabled) { background: #c73509; border-color: #c73509; transform: translateY(-2px); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* M-PESA MODAL */
+        #mpesa-modal { display: none; position: fixed; inset: 0; background: rgba(13,13,13,0.92); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .mpesa-card { background: var(--ink); width: 360px; border: 3px solid var(--accent); padding: 2.5rem; }
+        .mpesa-header { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.08em; color: var(--accent); text-align: center; margin-bottom: 0.3rem; }
+        .mpesa-sub { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(245,240,232,0.3); text-align: center; margin-bottom: 2rem; }
+        .mpesa-row { display: flex; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid rgba(245,240,232,0.08); font-size: 0.9rem; }
+        .mpesa-row span:first-child { color: rgba(245,240,232,0.5); }
+        .mpesa-row span:last-child { color: var(--paper); font-weight: 600; }
+        .mpesa-amount { color: var(--accent) !important; font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem !important; }
+        #mpesa-status { text-align: center; font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-top: 1.5rem; padding: 1rem; background: rgba(232,66,10,0.08); border: 1px solid rgba(232,66,10,0.2); }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; }
+            .preview-panel { position: relative; top: 0; height: auto; padding: 3rem 2rem; }
+            .form-panel { padding: 2rem 1.5rem; }
+            .page-header { padding: 2.5rem 1.5rem 2rem; }
+            nav { padding: 1rem 1.5rem; }
+            .submit-section { padding: 2rem 1.5rem; flex-direction: column; align-items: stretch; }
+            .submit-btn { width: 100%; text-align: center; }
+            .two-col { grid-template-columns: 1fr; }
+        }
+    </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="nav-logo"><span>B</span>ENSOFT</a>
+    <a href="custom-apparel.html" class="back-link">← Back to Apparel</a>
+    <a href="cart.html" class="cart-nav-link">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<div class="page-header">
+    <div class="page-header-inner">
+        <div class="page-eyebrow">Custom Apparel</div>
+        <h1 class="page-title">REFLECTOR <span>VEST ORDER</span></h1>
+        <p class="page-desc">High-visibility safety vests with your company logo or name. Perfect for construction sites, events, and field teams. Fulfilled right here in Kianyaga.</p>
+    </div>
+</div>
+
+<form id="reflectorForm" action="https://formspree.io/f/xrevgjve" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="Product" value="Reflector Vest">
+    <input type="hidden" name="Selected Color" id="color-input-value" value="Yellow-Green">
+    <input type="hidden" name="Selected Size" id="size-input-value" value="M">
+    <input type="hidden" name="Quantity" id="qty-input-value" value="1">
+
+    <div class="workspace">
+
+        <!-- PREVIEW -->
+        <div class="preview-panel">
+            <div class="preview-label">Live Preview</div>
+
+            <div class="view-toggle">
+                <button type="button" class="view-btn active" id="btn-front" onclick="setView('front')">Front</button>
+                <button type="button" class="view-btn" id="btn-back" onclick="setView('back')">Back</button>
+            </div>
+
+            <!-- FRONT -->
+            <div class="vest-wrap" id="view-front-svg">
+                <svg viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="130" cy="275" rx="80" ry="5" fill="rgba(0,0,0,0.25)"/>
+                    <!-- Vest body -->
+                    <path class="vest-body" id="vest-fill-front"
+                        d="M75,18 L48,30 L14,72 L50,88 L44,255 L216,255 L210,88 L246,72 L212,30 L185,18
+                           C178,36 156,48 130,48 C104,48 82,36 75,18 Z"
+                        fill="#f9a825" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>
+                    <!-- Armhole cut-outs for vest look -->
+                    <path d="M50,88 Q44,140 44,160 L60,160 Q60,130 65,105 Z" fill="var(--ink)" stroke="none"/>
+                    <path d="M210,88 Q216,140 216,160 L200,160 Q200,130 195,105 Z" fill="var(--ink)" stroke="none"/>
+                    <!-- Reflective strips horizontal (front) -->
+                    <rect x="50" y="145" width="160" height="14" rx="2" fill="rgba(255,255,255,0.65)" stroke="rgba(200,200,200,0.4)" stroke-width="1"/>
+                    <rect x="50" y="167" width="160" height="14" rx="2" fill="rgba(255,255,255,0.65)" stroke="rgba(200,200,200,0.4)" stroke-width="1"/>
+                    <!-- Chest zip -->
+                    <rect x="125" y="50" width="10" height="95" fill="rgba(0,0,0,0.1)" rx="2"/>
+                    <line x1="130" y1="50" x2="130" y2="145" stroke="rgba(0,0,0,0.15)" stroke-width="1" stroke-dasharray="4,4"/>
+                    <!-- Left chest panel for branding -->
+                    <rect x="60" y="70" width="55" height="42" rx="2" fill="rgba(0,0,0,0.07)" stroke="rgba(0,0,0,0.12)" stroke-width="1.2"/>
+                    <!-- Collar -->
+                    <path d="M100,20 Q130,44 160,20" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="2"/>
+                </svg>
+                <!-- Chest branding text -->
+                <div class="vest-text-chest" id="chest-text-preview" style="color:#000000;"></div>
+            </div>
+
+            <!-- BACK -->
+            <div class="vest-wrap" id="view-back-svg" style="display:none;">
+                <svg viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="130" cy="275" rx="80" ry="5" fill="rgba(0,0,0,0.25)"/>
+                    <!-- Vest body back -->
+                    <path class="vest-body" id="vest-fill-back"
+                        d="M75,18 L48,30 L14,72 L50,88 L44,255 L216,255 L210,88 L246,72 L212,30 L185,18
+                           C178,36 156,48 130,48 C104,48 82,36 75,18 Z"
+                        fill="#f9a825" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/>
+                    <!-- Armhole cut-outs -->
+                    <path d="M50,88 Q44,140 44,160 L60,160 Q60,130 65,105 Z" fill="var(--ink)" stroke="none"/>
+                    <path d="M210,88 Q216,140 216,160 L200,160 Q200,130 195,105 Z" fill="var(--ink)" stroke="none"/>
+                    <!-- Reflective strips back -->
+                    <rect x="50" y="145" width="160" height="14" rx="2" fill="rgba(255,255,255,0.65)" stroke="rgba(200,200,200,0.4)" stroke-width="1"/>
+                    <rect x="50" y="167" width="160" height="14" rx="2" fill="rgba(255,255,255,0.65)" stroke="rgba(200,200,200,0.4)" stroke-width="1"/>
+                    <!-- Vertical reflective strips -->
+                    <rect x="108" y="55" width="14" height="88" rx="2" fill="rgba(255,255,255,0.55)" stroke="rgba(200,200,200,0.4)" stroke-width="1"/>
+                    <rect x="138" y="55" width="14" height="88" rx="2" fill="rgba(255,255,255,0.55)" stroke="rgba(200,200,200,0.4)" stroke-width="1"/>
+                    <!-- Centre back seam -->
+                    <line x1="130" y1="50" x2="130" y2="255" stroke="rgba(0,0,0,0.05)" stroke-width="1.5"/>
+                    <!-- Back collar seam -->
+                    <path d="M100,20 Q130,42 160,20" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1.5"/>
+                </svg>
+                <!-- Back text overlay -->
+                <div class="vest-text-back" id="back-text-preview" style="color:#000000;"></div>
+            </div>
+
+            <p class="preview-note">Preview is approximate</p>
+        </div>
+
+        <!-- FORM -->
+        <div class="form-panel">
+
+            <!-- STEP 1: COLOUR -->
+            <div class="form-section">
+                <h3 class="section-heading"><span class="step-num">1</span> Choose Vest Colour</h3>
+                <hr class="section-divider">
+                <div class="color-two">
+                    <div class="color-card selected" id="card-green" onclick="changeColor('green', this)">
+                        <div class="color-card-swatch" style="background:#7cb342;"></div>
+                        <div class="color-card-label">Hi-Vis Green</div>
+                    </div>
+                    <div class="color-card" id="card-orange" onclick="changeColor('orange', this)">
+                        <div class="color-card-swatch" style="background:#f9a825;"></div>
+                        <div class="color-card-label">Hi-Vis Orange</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: SIZE -->
+            <div class="form-section">
+                <h3 class="section-heading"><span class="step-num">2</span> Select Size</h3>
+                <hr class="section-divider">
+                <div class="size-grid">
+                    <button type="button" class="size-btn" onclick="selectSize('S',this)">S</button>
+                    <button type="button" class="size-btn selected" onclick="selectSize('M',this)">M</button>
+                    <button type="button" class="size-btn" onclick="selectSize('L',this)">L</button>
+                    <button type="button" class="size-btn" onclick="selectSize('XL',this)">XL</button>
+                    <button type="button" class="size-btn" onclick="selectSize('XXL',this)">XXL</button>
+                    <button type="button" class="size-btn" onclick="selectSize('3XL',this)">3XL</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: QUANTITY -->
+            <div class="form-section">
+                <h3 class="section-heading"><span class="step-num">3</span> Quantity</h3>
+                <hr class="section-divider">
+                <div class="qty-stepper">
+                    <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+                    <input type="text" class="qty-display" id="qty-display" value="1" readonly>
+                    <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                </div>
+            </div>
+
+            <!-- STEP 4: BRANDING -->
+            <div class="form-section">
+                <h3 class="section-heading"><span class="step-num">4</span> Branding &amp; Text</h3>
+                <hr class="section-divider">
+
+                <div class="field-group">
+                    <label class="field-label">Text on Back (large print)</label>
+                    <input type="text" name="Back Text" id="back-text-input"
+                        placeholder="e.g. SECURITY / STAFF / COMPANY NAME"
+                        oninput="updateBackText()">
+                    <p class="field-hint">Printed large across the back panel of the vest.</p>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Text on Chest Panel (small print)</label>
+                    <input type="text" name="Chest Text" id="chest-text-input"
+                        placeholder="e.g. Staff Name or Role"
+                        oninput="updateChestText()">
+                    <p class="field-hint">Printed on the left chest panel — short text or name works best.</p>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Upload Logo or Artwork (optional)</label>
+                    <div class="upload-zone">
+                        <input type="file" name="Design File" id="logo-upload" accept="image/*,.pdf">
+                        <span class="upload-icon">📁</span>
+                        <div class="upload-text">Click to Upload Your Logo or Design</div>
+                        <div class="upload-sub">PNG, JPG, PDF · High resolution recommended</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 5: CUSTOMER DETAILS -->
+            <div class="form-section">
+                <h3 class="section-heading"><span class="step-num">5</span> Your Details</h3>
+                <hr class="section-divider">
+                <div class="two-col">
+                    <div class="field-group">
+                        <label class="field-label">Full Name *</label>
+                        <input type="text" name="Customer Name" id="cust-name" required placeholder="Your full name">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Phone Number *</label>
+                        <input type="tel" name="Customer Phone" id="cust-phone" required placeholder="e.g. 0712 345 678">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Special Instructions (optional)</label>
+                    <textarea name="Instructions" rows="3" placeholder="e.g. 10 pieces with individual names, deliver to Kianyaga town..."></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SUBMIT BAR -->
+    <div class="submit-section">
+        <div class="submit-info">
+            <strong>Ready to Order?</strong>
+            We'll confirm your order by phone and arrange delivery or pickup in Kianyaga.
+        </div>
+        <button type="button" class="submit-btn" onclick="addToCart()">
+            Add to Cart →
+        </button>
+    </div>
+
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="cart.js"></script>
+<script>
+    let qty = 1;
+    let currentColor = 'green';
+    let currentView = 'front';
+
+    const colorMap = {
+        green:  { fill: '#7cb342', text: '#000000', label: 'Hi-Vis Green' },
+        orange: { fill: '#f9a825', text: '#000000', label: 'Hi-Vis Orange' }
+    };
+
+    function setView(view) {
+        currentView = view;
+        document.getElementById('btn-front').classList.toggle('active', view === 'front');
+        document.getElementById('btn-back').classList.toggle('active', view === 'back');
+        document.getElementById('view-front-svg').style.display = view === 'front' ? 'block' : 'none';
+        document.getElementById('view-back-svg').style.display  = view === 'back'  ? 'block' : 'none';
+    }
+
+    function changeColor(color, card) {
+        currentColor = color;
+        document.querySelectorAll('.color-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        const { fill, text, label } = colorMap[color];
+        document.getElementById('color-input-value').value = label;
+        ['vest-fill-front','vest-fill-back'].forEach(id => {
+            document.getElementById(id).setAttribute('fill', fill);
+        });
+        document.getElementById('back-text-preview').style.color  = text;
+        document.getElementById('chest-text-preview').style.color = text;
+    }
+
+    // Init green on load
+    changeColor('green', document.getElementById('card-green'));
+
+    function selectSize(size, el) {
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('size-input-value').value = size;
+    }
+
+    function changeQty(delta) {
+        qty = Math.max(1, Math.min(500, qty + delta));
+        document.getElementById('qty-display').value = qty;
+        document.getElementById('qty-input-value').value = qty;
+    }
+
+    function updateBackText() {
+        document.getElementById('back-text-preview').innerText = document.getElementById('back-text-input').value;
+    }
+    function updateChestText() {
+        document.getElementById('chest-text-preview').innerText = document.getElementById('chest-text-input').value;
+    }
+
+    function addToCart() {
+        const form = document.getElementById('reflectorForm');
+        const formData = new FormData(form);
+        
+        const colour = document.getElementById('color-input-value').value;
+        const size = document.getElementById('size-input-value').value;
+        const unitPrice = 600;
+        
+        const item = {
+            productName: 'Reflector Vest',
+            variant: colour,
+            size: size,
+            colour: colour,
+            details: formData.get('Instructions') || '',
+            quantity: qty,
+            unitPrice: unitPrice
+        };
+        
+        BensoftCart.add(item);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Photocopying & Lamination — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    nav {
+      background: var(--ink); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
+    }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    /* PREVIEW PANEL */
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+
+    #preview-wrap {
+      background: #f9f6f0; border: 2px solid var(--border); border-radius: 4px;
+      padding: 2rem 1.5rem; display: flex; align-items: center; justify-content: center; min-height: 380px;
+    }
+
+    #preview-svg { width: 100%; max-width: 320px; height: auto; display: block; }
+
+    .capture-btn {
+      margin-top: 1rem; width: 100%; padding: .75rem; background: var(--ink); color: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: 2px;
+      text-transform: uppercase; border: none; cursor: pointer; transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    /* FORM */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .service-option {
+      padding: .7rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; text-align: center;
+    }
+    .service-option .opt-icon { font-size: 1.3rem; display: block; margin-bottom: .2rem; }
+    .service-option .opt-sub { font-family: 'Space Mono', monospace; font-size: .58rem; color: var(--mid); margin-top: .2rem; }
+    .service-option.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .service-option.active .opt-sub { color: #aaa; }
+
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--border);
+      background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .info-box {
+      background: var(--cream); border-left: 3px solid var(--accent);
+      padding: .65rem 1rem; font-size: .82rem; color: #555;
+      margin-bottom: .9rem; border-radius: 0 2px 2px 0;
+    }
+    .info-box strong { color: var(--ink); }
+
+    /* size toggle */
+    .toggle-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .toggle-btn {
+      padding: .5rem 1.1rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .72rem; cursor: pointer;
+      border-radius: 2px; transition: all .2s; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .toggle-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    .upload-area {
+      border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem;
+      text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    .qty-stepper { display: flex; align-items: center; border: 1.5px solid var(--border); width: fit-content; border-radius: 2px; overflow: hidden; }
+    .qty-btn { width: 40px; height: 40px; background: var(--ink); color: var(--cream); border: none; font-size: 1.2rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display { width: 64px; height: 40px; text-align: center; font-family: 'Space Mono', monospace; font-size: .92rem; font-weight: 700; border: none; background: white; color: var(--ink); }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+
+    /* pricing table */
+    .price-table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .82rem; }
+    .price-table th { font-family: 'Space Mono', monospace; font-size: .62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); text-align: left; padding: .4rem .6rem; border-bottom: 2px solid var(--border); }
+    .price-table td { padding: .5rem .6rem; border-bottom: 1px solid var(--border); }
+    .price-table tr:last-child td { border-bottom: none; }
+    .price-table .price-val { font-family: 'Space Mono', monospace; font-size: .78rem; color: var(--accent); text-align: right; }
+
+    .order-btn {
+      width: 100%; padding: 1rem; background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="print-services.html">← Print Services</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Print Services · Custom Order</div>
+  <h1>Photocopying & Lamination</h1>
+  <p>B&W and colour copies, document scanning, and professional lamination in A4 and A3 — same-day service available.</p>
+</div>
+
+<div class="page-wrap">
+
+  <!-- PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="preview-wrap">
+      <svg id="preview-svg" viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="docShadow" x="-6%" y="-4%" width="114%" height="114%">
+            <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#0d0d0d" flood-opacity="0.14"/>
+          </filter>
+          <linearGradient id="laminateSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="white" stop-opacity="0.18"/>
+            <stop offset="50%" stop-color="white" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="white" stop-opacity="0.12"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Stack of pages behind -->
+        <rect x="68" y="46" width="188" height="268" rx="3" fill="#e8e0d0" filter="url(#docShadow)"/>
+        <rect x="64" y="42" width="188" height="268" rx="3" fill="#eee8dc"/>
+
+        <!-- Main document -->
+        <rect id="doc-bg" x="60" y="36" width="200" height="270" rx="3" fill="#ffffff" filter="url(#docShadow)"/>
+
+        <!-- Laminate overlay (shown when lamination selected) -->
+        <rect id="laminate-overlay" x="60" y="36" width="200" height="270" rx="3" fill="url(#laminateSheen)" stroke="#c8e0f0" stroke-width="1.5" style="display:none;"/>
+
+        <!-- Doc header bar -->
+        <rect id="doc-header-bar" x="60" y="36" width="200" height="24" rx="3" fill="#1a3a5c"/>
+        <rect x="60" y="52" width="200" height="8" fill="#1a3a5c"/>
+
+        <!-- BW/Colour indicator lines -->
+        <g id="content-bw">
+          <rect x="76" y="74" width="120" height="8" rx="2" fill="#ddd"/>
+          <rect x="76" y="88" width="168" height="6" rx="2" fill="#eee"/>
+          <rect x="76" y="100" width="150" height="6" rx="2" fill="#eee"/>
+          <rect x="76" y="114" width="160" height="6" rx="2" fill="#eee"/>
+          <rect x="76" y="130" width="168" height="50" rx="3" fill="#f0f0f0"/>
+          <rect x="76" y="190" width="168" height="6" rx="2" fill="#eee"/>
+          <rect x="76" y="202" width="140" height="6" rx="2" fill="#eee"/>
+          <rect x="76" y="214" width="158" height="6" rx="2" fill="#eee"/>
+          <rect x="76" y="228" width="110" height="6" rx="2" fill="#eee"/>
+          <rect x="76" y="250" width="80" height="20" rx="2" fill="#e8e8e8"/>
+          <rect x="168" y="250" width="76" height="20" rx="2" fill="#e8e8e8"/>
+        </g>
+        <g id="content-colour" style="display:none;">
+          <rect x="76" y="74" width="120" height="8" rx="2" fill="#1a3a5c"/>
+          <rect x="76" y="88" width="168" height="6" rx="2" fill="#ccc"/>
+          <rect x="76" y="100" width="150" height="6" rx="2" fill="#ccc"/>
+          <rect x="76" y="114" width="160" height="6" rx="2" fill="#ccc"/>
+          <rect x="76" y="130" width="80" height="50" rx="3" fill="#e8420a" opacity=".7"/>
+          <rect x="164" y="130" width="80" height="50" rx="3" fill="#1a56db" opacity=".6"/>
+          <rect x="76" y="190" width="168" height="6" rx="2" fill="#ccc"/>
+          <rect x="76" y="202" width="140" height="6" rx="2" fill="#ccc"/>
+          <rect x="76" y="214" width="158" height="6" rx="2" fill="#ccc"/>
+          <rect x="76" y="228" width="110" height="6" rx="2" fill="#ccc"/>
+          <rect x="76" y="250" width="80" height="20" rx="2" fill="#e8420a" opacity=".6"/>
+          <rect x="168" y="250" width="76" height="20" rx="2" fill="#27ae60" opacity=".6"/>
+        </g>
+
+        <!-- Page size label -->
+        <text id="size-label-text" x="160" y="306" text-anchor="middle"
+          font-family="'Space Mono',monospace" font-size="9" fill="#aaa" letter-spacing="1">A4 · PORTRAIT</text>
+
+        <!-- Copy count badge -->
+        <rect x="220" y="36" width="40" height="28" rx="0 3 0 6" fill="#e8420a"/>
+        <text id="copy-badge" x="240" y="54" text-anchor="middle"
+          font-family="'Bebas Neue',sans-serif" font-size="14" fill="white">1×</text>
+
+        <!-- Laminate gloss edge -->
+        <rect id="laminate-edge" x="60" y="36" width="200" height="3" rx="1" fill="#a8d0f0" style="display:none;"/>
+
+        <!-- Corner fold -->
+        <path d="M240 36 L260 56 L240 56 Z" fill="#e8e4dc"/>
+        <path d="M240 36 L260 56 L240 36 Z" fill="#ccc8bc"/>
+
+        <!-- Scan preview (hidden by default) -->
+        <g id="scan-indicator" style="display:none;">
+          <rect x="70" y="46" width="180" height="4" rx="2" fill="#1a56db" opacity=".4"/>
+          <text x="160" y="358" text-anchor="middle" font-family="'Space Mono',monospace" font-size="8" fill="#aaa" letter-spacing="1">SCANNING TO PDF</text>
+        </g>
+      </svg>
+    </div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <!-- FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: SERVICE TYPE -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">01</span><span class="step-title">Service Type</span></div>
+      <div class="step-body">
+        <div class="service-grid" id="service-grid">
+          <div class="service-option active" data-service="bw-copy" onclick="setService(this)">
+            <span class="opt-icon">⬛</span>B&W Photocopy
+            <div class="opt-sub">Monochrome copies</div>
+          </div>
+          <div class="service-option" data-service="colour-copy" onclick="setService(this)">
+            <span class="opt-icon">🎨</span>Colour Photocopy
+            <div class="opt-sub">Full-colour copies</div>
+          </div>
+          <div class="service-option" data-service="scan" onclick="setService(this)">
+            <span class="opt-icon">📲</span>Scanning
+            <div class="opt-sub">Doc to PDF/JPG</div>
+          </div>
+          <div class="service-option" data-service="lamination" onclick="setService(this)">
+            <span class="opt-icon">✨</span>Lamination
+            <div class="opt-sub">Gloss or matte seal</div>
+          </div>
+          <div class="service-option" data-service="bw-lam" onclick="setService(this)">
+            <span class="opt-icon">🗒️</span>B&W + Lamination
+            <div class="opt-sub">Copy then laminate</div>
+          </div>
+          <div class="service-option" data-service="col-lam" onclick="setService(this)">
+            <span class="opt-icon">🌈</span>Colour + Lamination
+            <div class="opt-sub">Copy then laminate</div>
+          </div>
+        </div>
+        <input type="hidden" name="service_type" id="service-type-input" value="bw-copy"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: PAPER SIZE -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">02</span><span class="step-title">Paper / Document Size</span></div>
+      <div class="step-body">
+        <div class="toggle-group" id="size-group">
+          <button type="button" class="toggle-btn active" data-val="A4" onclick="setToggle('size-group','size-input',this);updateSizeLabel('A4')">A4</button>
+          <button type="button" class="toggle-btn" data-val="A3" onclick="setToggle('size-group','size-input',this);updateSizeLabel('A3')">A3</button>
+          <button type="button" class="toggle-btn" data-val="A5" onclick="setToggle('size-group','size-input',this);updateSizeLabel('A5')">A5</button>
+          <button type="button" class="toggle-btn" data-val="Legal" onclick="setToggle('size-group','size-input',this);updateSizeLabel('LEGAL')">Legal</button>
+        </div>
+        <input type="hidden" name="paper_size" id="size-input" value="A4"/>
+      </div>
+    </div>
+
+    <!-- STEP 3: ORIENTATION & SIDES -->
+    <div class="step-block" id="copy-options">
+      <div class="step-header"><span class="step-num">03</span><span class="step-title">Copy Options</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Orientation</label>
+            <div class="toggle-group" id="orient-group">
+              <button type="button" class="toggle-btn active" data-val="portrait" onclick="setToggle('orient-group','orient-input',this)">Portrait</button>
+              <button type="button" class="toggle-btn" data-val="landscape" onclick="setToggle('orient-group','orient-input',this)">Landscape</button>
+            </div>
+            <input type="hidden" name="orientation" id="orient-input" value="portrait"/>
+          </div>
+          <div>
+            <label class="field-label">Print Sides</label>
+            <div class="toggle-group" id="sides-group">
+              <button type="button" class="toggle-btn active" data-val="single" onclick="setToggle('sides-group','sides-input',this);updatePrice()">Single-Sided</button>
+              <button type="button" class="toggle-btn" data-val="double" onclick="setToggle('sides-group','sides-input',this);updatePrice()">Double-Sided</button>
+            </div>
+            <input type="hidden" name="print_sides" id="sides-input" value="single"/>
+          </div>
+        </div>
+        <div id="lamination-options" style="display:none;">
+          <label class="field-label">Lamination Finish</label>
+          <div class="toggle-group" id="lam-finish-group">
+            <button type="button" class="toggle-btn active" data-val="glossy" onclick="setToggle('lam-finish-group','lam-finish-input',this)">Glossy</button>
+            <button type="button" class="toggle-btn" data-val="matte" onclick="setToggle('lam-finish-group','lam-finish-input',this)">Matte</button>
+          </div>
+          <input type="hidden" name="lam_finish" id="lam-finish-input" value="glossy"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: PRICING REFERENCE -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">04</span><span class="step-title">Our Rates</span></div>
+      <div class="step-body">
+        <table class="price-table">
+          <thead>
+            <tr><th>Service</th><th>A4</th><th>A3</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>B&W Photocopy (single-sided)</td><td class="price-val">KSh 5</td><td class="price-val">KSh 10</td></tr>
+            <tr><td>B&W Photocopy (double-sided)</td><td class="price-val">KSh 8</td><td class="price-val">KSh 15</td></tr>
+            <tr><td>Colour Photocopy (single-sided)</td><td class="price-val">KSh 20</td><td class="price-val">KSh 40</td></tr>
+            <tr><td>Colour Photocopy (double-sided)</td><td class="price-val">KSh 35</td><td class="price-val">KSh 70</td></tr>
+            <tr><td>Scanning (to PDF/JPG)</td><td class="price-val">KSh 10</td><td class="price-val">KSh 20</td></tr>
+            <tr><td>Lamination (glossy or matte)</td><td class="price-val">KSh 50</td><td class="price-val">KSh 80</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.75rem;color:var(--mid);margin-top:.6rem;">Bulk discounts apply for 50+ copies. Scan-to-email included free.</p>
+      </div>
+    </div>
+
+    <!-- STEP 5: FILE UPLOAD -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">05</span><span class="step-title">Upload Your Document</span></div>
+      <div class="step-body">
+        <div class="info-box">Upload your file here, or bring it to our shop on a flash drive, email it to us, or share via WhatsApp. We'll confirm the copy count before printing.</div>
+        <div class="upload-area" onclick="document.getElementById('doc-upload').click()">
+          <input type="file" id="doc-upload" name="document" accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" onchange="handleUpload(event)"/>
+          <div class="upload-icon">📄</div>
+          <p><strong>Click to upload</strong> your document</p>
+          <p>PDF, Word, JPG, PNG — we'll print exactly as submitted</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">06</span><span class="step-title">Number of Copies / Pages</span></div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qty-display" name="quantity" value="1" min="1" max="5000" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 5</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">5</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="5"/>
+      </div>
+    </div>
+
+    <!-- STEP 7: DETAILS -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">07</span><span class="step-title">Your Details & Notes</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional — for scan delivery)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Collate and staple? Print specific pages only? Scan to WhatsApp? Let us know…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+  </form>
+</div>
+
+<script>
+  const PRICES = {
+    'bw-copy':   { A4: 5,  A3: 10, A5: 3,  Legal: 7 },
+    'colour-copy':{ A4: 20, A3: 40, A5: 12, Legal: 25 },
+    'scan':      { A4: 10, A3: 20, A5: 8,  Legal: 12 },
+    'lamination':{ A4: 50, A3: 80, A5: 30, Legal: 60 },
+    'bw-lam':   { A4: 55, A3: 90, A5: 33, Legal: 67 },
+    'col-lam':  { A4: 70, A3: 120, A5: 42, Legal: 82 },
+  };
+
+  let activeService = 'bw-copy';
+  let activeSize = 'A4';
+  let qty = 1;
+
+  function setService(el) {
+    document.querySelectorAll('.service-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    activeService = el.dataset.service;
+    document.getElementById('service-type-input').value = activeService;
+
+    const isColour = activeService.includes('colour') || activeService.includes('col');
+    const isLam = activeService.includes('lam');
+    const isScan = activeService === 'scan';
+
+    document.getElementById('content-bw').style.display = (isColour) ? 'none' : 'block';
+    document.getElementById('content-colour').style.display = (isColour) ? 'block' : 'none';
+    document.getElementById('laminate-overlay').style.display = isLam ? 'block' : 'none';
+    document.getElementById('laminate-edge').style.display = isLam ? 'block' : 'none';
+    document.getElementById('scan-indicator').style.display = isScan ? 'block' : 'none';
+    document.getElementById('lamination-options').style.display = isLam ? 'block' : 'none';
+    updatePrice();
+  }
+
+  function setToggle(groupId, inputId, el) {
+    document.querySelectorAll('#' + groupId + ' .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(inputId).value = el.dataset.val;
+  }
+
+  function updateSizeLabel(label) {
+    activeSize = label === 'LEGAL' ? 'Legal' : label;
+    document.getElementById('size-input').value = activeSize;
+    document.getElementById('size-label-text').textContent = activeSize + ' · PORTRAIT';
+    updatePrice();
+  }
+
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '✓ ' + file.name;
+  }
+
+  function updatePrice() {
+    const sidesMult = document.getElementById('sides-input').value === 'double' ? 1.6 : 1;
+    const base = PRICES[activeService]?.[activeSize] || 5;
+    const unit = Math.round(base * sidesMult);
+    const total = unit * qty;
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(d) {
+    qty = Math.max(1, qty + d);
+    document.getElementById('qty-display').value = qty;
+    document.getElementById('copy-badge').textContent = qty + '×';
+    updatePrice();
+  }
+
+  function capturePreview() {
+    html2canvas(document.getElementById('preview-wrap'), { backgroundColor: '#f9f6f0', scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-copy-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+    updatePrice();
+
+    function addToCart() {
+        const form = document.getElementById('order-form');
+        const formData = new FormData(form);
+        
+        const service = formData.get('service_type');
+        const size = formData.get('paper_size');
+        const orientation = formData.get('orientation');
+        const sides = formData.get('print_sides');
+        const lamFinish = formData.get('lam_finish');
+        
+        const serviceLabels = {
+            'bw-copy': 'B&W Photocopy',
+            'colour-copy': 'Colour Photocopy',
+            'scan': 'Scanning',
+            'lamination': 'Lamination',
+            'bw-lam': 'B&W + Lamination',
+            'col-lam': 'Colour + Lamination'
+        };
+        const sizeLabels = { 'A4': 'A4', 'A3': 'A3', 'A5': 'A5', 'Legal': 'Legal' };
+        const sidesLabels = { 'single': 'Single-Sided', 'double': 'Double-Sided' };
+        const lamLabels = { 'glossy': 'Glossy', 'matte': 'Matte' };
+        const isLam = service.includes('lam') || service === 'lamination';
+        
+        const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+        
+        const item = {
+            productName: 'Photocopying / Lamination',
+            variant: (serviceLabels[service] || service) + ', ' + size,
+            colour: orientation,
+            material: (sidesLabels[sides] || sides) + (isLam ? ', ' + (lamLabels[lamFinish] || lamFinish) : ''),
+            details: 'Orientation: ' + orientation + ', Sides: ' + (sidesLabels[sides] || sides) + (isLam ? ', Finish: ' + (lamLabels[lamFinish] || lamFinish) : '') + '. ' + (formData.get('notes') || ''),
+            quantity: qty,
+            unitPrice: unitPrice
+        };
+        
+        BensoftCart.add(item);
+    }
+</script>
+</body>
+</html>

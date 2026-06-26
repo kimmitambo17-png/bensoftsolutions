@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branded Gifts | Bensoft Prints & Branding Solutions</title>
+    
+    <style>
+        /* --- Branded Gifts Hub Styles --- */
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fdfdfd;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .gifts-header {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #f8f9fa; 
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .back-home-btn {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 15px;
+            transition: color 0.2s ease;
+        }
+
+        .back-home-btn:hover {
+            color: #28a745; /* A distinct brand accent color for corporate gifts */
+        }
+
+        .gifts-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #222;
+        }
+
+        .gifts-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        /* Grid Layout */
+        .gifts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 10px 0;
+        }
+
+        /* Product Cards */
+        .product-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .product-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .product-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-card p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 20px;
+            flex-grow: 1; 
+        }
+
+        /* Action Buttons */
+        .select-btn {
+            display: inline-block;
+            background-color: #28a745; /* Green tone for gifts corporate identity */
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .select-btn:hover {
+            background-color: #218838; 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Simple Navigation Back to Home -->
+    <header class="gifts-header">
+        <div class="container">
+            <a href="index.html" class="back-home-btn">&larr; Back to Home</a>
+            <h1>Branded Corporate Gifts</h1>
+            <p>Select a product item below to start customizing your design preferences</p>
+        </div>
+    </header>
+
+    <!-- Products Grid Section -->
+    <main class="container">
+        <section class="gifts-grid">
+            
+            <!-- Mugs -->
+            <div class="product-card">
+                <div class="product-icon">☕</div>
+                <h3>Custom Mugs</h3>
+                <p>Magic mugs, ceramic mugs, and travel flasks with custom graphics.</p>
+                <a href="mug-order.html" class="select-btn">Customize Mug</a>
+            </div>
+
+            <!-- Pillows -->
+            <div class="product-card">
+                <div class="product-icon">🛏️</div>
+                <h3>Branded Pillows</h3>
+                <p>Personalized throw pillows and cushions with vibrant prints.</p>
+                <a href="pillow-order.html" class="select-btn">Customize Pillow</a>
+            </div>
+
+            <!-- Diaries -->
+            <div class="product-card">
+                <div class="product-icon">📓</div>
+                <h3>Notebooks & Diaries</h3>
+                <p>Premium executive diaries and corporate notebooks with gold foil emboss.</p>
+                <a href="notebook-order.html" class="select-btn">Customize Diary</a>
+            </div>
+
+            <!-- Umbrellas -->
+            <div class="product-card">
+                <div class="product-icon">⛱️</div>
+                <h3>Branded Umbrellas</h3>
+                <p>High-quality promotional and corporate umbrellas printed with company logos.</p>
+                <a href="umbrella-order.html" class="select-btn">Customize Umbrella</a>
+            </div>
+
+            <!-- Lanyards -->
+            <div class="product-card">
+                <div class="product-icon">🆔</div>
+                <h3>Custom Lanyards</h3>
+                <p>Sublimation printed satin lanyards for corporate badges and events.</p>
+                <a href="lanyard-order.html" class="select-btn">Customize Lanyard</a>
+            </div>
+
+        </section>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedding Card Order — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    /* NAV */
+    nav { background: var(--ink); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+    /* LAYOUT */
+    .page-wrap { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    /* PREVIEW PANEL */
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+    #invite-preview-wrap {
+      background: #e9e4da; border: 2px solid var(--border); border-radius: 4px;
+      padding: 2.2rem 1.4rem; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1.2rem; min-height: 460px;
+    }
+
+    /* THE INVITATION CARD */
+    .invite-card {
+      width: 100%; max-width: 300px;
+      aspect-ratio: 5/7;
+      background: #fffdfa;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.12);
+      padding: 1.8rem 1.4rem;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; position: relative; overflow: hidden;
+      transition: background 0.3s, border 0.3s;
+    }
+    .invite-border-frame {
+      position: absolute; inset: 12px; border: 1.5px solid currentColor;
+      opacity: .55; pointer-events: none; transition: border-color 0.3s;
+    }
+    .invite-monogram {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1.8rem; letter-spacing: .05em; margin-bottom: .5rem;
+      transition: color 0.3s;
+    }
+    .invite-names {
+      font-family: 'Cormorant Garamond', serif; font-weight: 600;
+      font-size: 1.7rem; line-height: 1.25; letter-spacing: .02em;
+      margin-bottom: .6rem; transition: color 0.3s;
+    }
+    .invite-divider { width: 36px; height: 1.5px; background: currentColor; opacity: .5; margin: .3rem 0 .8rem; transition: background 0.3s; }
+    .invite-subtext {
+      font-family: 'Space Mono', monospace; font-size: .56rem; letter-spacing: .15em;
+      text-transform: uppercase; opacity: .65; margin-bottom: .25rem; line-height: 1.6;
+    }
+    .invite-date {
+      font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem;
+      margin: .5rem 0 .2rem; transition: color 0.3s;
+    }
+    .invite-venue { font-family: 'DM Sans', sans-serif; font-size: .68rem; opacity: .7; margin-top: .15rem; }
+
+    .view-toggle { display: flex; gap: 0; border: 1.5px solid var(--border); width: fit-content; overflow: hidden; border-radius: 2px; }
+    .view-btn { padding: .4rem .9rem; font-family: 'Space Mono', monospace; font-size: .65rem; letter-spacing: 1px; text-transform: uppercase; border: none; background: var(--cream); color: var(--mid); cursor: pointer; transition: all .2s; }
+    .view-btn.active { background: var(--ink); color: var(--cream); }
+
+    .capture-btn { margin-top: .3rem; width: 100%; padding: .75rem; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; border: none; cursor: pointer; transition: background .2s; }
+    .capture-btn:hover { background: #222; }
+
+    /* FORM */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], input[type="tel"], input[type="email"], input[type="date"], textarea, select {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .92rem; color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+    input::placeholder, textarea::placeholder { color: rgba(90,82,72,0.4); }
+
+    .char-counter { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--mid); text-align: right; margin-top: .3rem; }
+    .char-counter.warn { color: var(--accent); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* colour / palette swatches */
+    .colour-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .colour-swatch { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border-color .15s, transform .15s; }
+    .colour-swatch:hover { transform: scale(1.1); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .colour-swatch[data-hex="#fffdfa"] { border: 3px solid var(--border); }
+    .selected-colour-name { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-top: .6rem; }
+
+    /* toggle buttons */
+    .toggle-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .toggle-btn { padding: .5rem 1rem; border: 1.5px solid var(--border); background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .83rem; cursor: pointer; border-radius: 2px; transition: all .2s; line-height: 1.3; }
+    .toggle-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    /* style cards (theme picker) */
+    .theme-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: .7rem; }
+    .theme-card { border: 1.5px solid var(--border); border-radius: 2px; padding: .8rem .6rem; text-align: center; cursor: pointer; transition: all .2s; }
+    .theme-card.active { border-color: var(--accent); background: rgba(232,66,10,0.05); }
+    .theme-card .tc-icon { font-size: 1.4rem; display: block; margin-bottom: .35rem; }
+    .theme-card .tc-label { font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: .05em; text-transform: uppercase; color: var(--mid); }
+
+    /* upload */
+    .upload-area { border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem; text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px; }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    .info-box { background: var(--cream); border-left: 3px solid var(--accent); padding: .65rem 1rem; font-size: .82rem; color: #555; margin-bottom: .9rem; border-radius: 0 2px 2px 0; }
+    .info-box strong { color: var(--ink); }
+
+    /* quantity */
+    .qty-stepper { display: flex; align-items: center; border: 1.5px solid var(--border); width: fit-content; border-radius: 2px; overflow: hidden; }
+    .qty-btn { width: 40px; height: 40px; background: var(--ink); color: var(--cream); border: none; font-size: 1.2rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display { width: 70px; height: 40px; text-align: center; font-family: 'Space Mono', monospace; font-size: .9rem; font-weight: 700; border: none; background: white; color: var(--ink); }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+    .moq-note { font-size: .78rem; color: var(--mid); margin-top: .4rem; }
+
+    .order-btn { width: 100%; padding: 1rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* MPESA MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+
+    @media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } .theme-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="graphic-design.html">← Graphic Design</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Graphic Design · Custom Order</div>
+  <h1>Wedding Cards</h1>
+  <p>Beautiful custom-designed wedding invitations and thank-you cards — tailored exactly to your big day.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="page-wrap">
+
+  <!-- LEFT: PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="invite-preview-wrap">
+
+      <div class="view-toggle">
+        <button type="button" class="view-btn active" onclick="setCardType('invitation', this)">Invitation</button>
+        <button type="button" class="view-btn" onclick="setCardType('thankyou', this)">Thank-You Card</button>
+      </div>
+
+      <!-- INVITATION VIEW -->
+      <div class="invite-card" id="invite-card" style="color:#0d0d0d;">
+        <div class="invite-border-frame"></div>
+        <div class="invite-subtext" id="invite-top-label">Together With Their Families</div>
+        <div class="invite-names" id="invite-names">Faith<br>&amp;<br>James</div>
+        <div class="invite-divider"></div>
+        <div class="invite-subtext">Request The Honour Of Your Presence</div>
+        <div class="invite-date" id="invite-date">Saturday, the 14th of November 2026</div>
+        <div class="invite-venue" id="invite-venue">St. Mary's Church, Kianyaga</div>
+      </div>
+
+      <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: CARD TYPE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">What Do You Need?</span>
+      </div>
+      <div class="step-body">
+        <div class="toggle-group" id="cardtype-group">
+          <button type="button" class="toggle-btn active" data-val="Wedding Invitation" onclick="setToggle('cardtype-group','cardtype-input',this)">Wedding Invitation</button>
+          <button type="button" class="toggle-btn" data-val="Thank-You Card" onclick="setToggle('cardtype-group','cardtype-input',this)">Thank-You Card</button>
+          <button type="button" class="toggle-btn" data-val="Both" onclick="setToggle('cardtype-group','cardtype-input',this)">Both</button>
+          <button type="button" class="toggle-btn" data-val="Save-the-Date" onclick="setToggle('cardtype-group','cardtype-input',this)">Save-the-Date</button>
+        </div>
+        <input type="hidden" name="card_type_request" id="cardtype-input" value="Wedding Invitation"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: COUPLE'S NAMES -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Couple's Names</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Bride's Name *</label>
+            <input type="text" id="bride-name" name="bride_name" placeholder="e.g. Faith" maxlength="20" required oninput="updatePreview()"/>
+          </div>
+          <div>
+            <label class="field-label">Groom's Name *</label>
+            <input type="text" id="groom-name" name="groom_name" placeholder="e.g. James" maxlength="20" required oninput="updatePreview()"/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Opening Line</label>
+          <select id="top-label" name="opening_line" onchange="updatePreview()">
+            <option value="Together With Their Families">Together With Their Families</option>
+            <option value="Together With Our Families">Together With Our Families</option>
+            <option value="With Joyful Hearts">With Joyful Hearts</option>
+            <option value="By The Grace Of God">By The Grace Of God</option>
+            <option value="Mr. & Mrs. Invite You To Celebrate">Parents' Names — Invite You To Celebrate</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: EVENT DETAILS -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Event Details</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Wedding Date *</label>
+            <input type="date" id="wedding-date" name="wedding_date" required oninput="updatePreview()" onchange="updatePreview()"/>
+          </div>
+          <div>
+            <label class="field-label">Time</label>
+            <input type="text" name="wedding_time" placeholder="e.g. 11:00 AM"/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Venue *</label>
+          <input type="text" id="venue" name="venue" placeholder="e.g. St. Mary's Church, Kianyaga" maxlength="60" required oninput="updatePreview()"/>
+        </div>
+        <div>
+          <label class="field-label">Reception Venue (if different)</label>
+          <input type="text" name="reception_venue" placeholder="e.g. Greenview Gardens, Kerugoya"/>
+        </div>
+        <div>
+          <label class="field-label">RSVP Contact</label>
+          <input type="text" name="rsvp_contact" placeholder="e.g. 0712 345 678 — Mary"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: STYLE & THEME -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Style & Theme</span>
+      </div>
+      <div class="step-body">
+        <label class="field-label" style="margin-bottom:.5rem;">Colour Theme</label>
+        <div class="colour-grid" id="colour-grid"></div>
+        <div class="selected-colour-name" id="colour-name-display">Ivory & Black (selected)</div>
+        <input type="hidden" name="colour_theme" id="colour-input" value="Ivory & Black"/>
+
+        <div style="margin-top:1.1rem;">
+          <label class="field-label">Design Theme</label>
+          <div class="theme-grid" id="theme-grid">
+            <div class="theme-card active" data-theme="classic-elegant" onclick="setTheme(this)">
+              <span class="tc-icon">🤍</span><span class="tc-label">Classic Elegant</span>
+            </div>
+            <div class="theme-card" data-theme="floral-botanical" onclick="setTheme(this)">
+              <span class="tc-icon">🌿</span><span class="tc-label">Floral / Botanical</span>
+            </div>
+            <div class="theme-card" data-theme="modern-minimal" onclick="setTheme(this)">
+              <span class="tc-icon">⬛</span><span class="tc-label">Modern Minimal</span>
+            </div>
+            <div class="theme-card" data-theme="traditional-cultural" onclick="setTheme(this)">
+              <span class="tc-icon">🎎</span><span class="tc-label">Traditional / Cultural</span>
+            </div>
+            <div class="theme-card" data-theme="gold-luxury" onclick="setTheme(this)">
+              <span class="tc-icon">✨</span><span class="tc-label">Gold & Luxury</span>
+            </div>
+            <div class="theme-card" data-theme="rustic-bohemian" onclick="setTheme(this)">
+              <span class="tc-icon">🍃</span><span class="tc-label">Rustic / Boho</span>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="design_theme" id="theme-input" value="Classic Elegant"/>
+      </div>
+    </div>
+
+    <!-- STEP 5: PAPER & FINISH -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Paper & Finish</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Card Stock</label>
+            <select name="card_stock" id="card-stock" onchange="updatePrice()">
+              <option value="matte-card">Matte Card</option>
+              <option value="pearl-shimmer">Pearl Shimmer Card</option>
+              <option value="textured-linen">Textured Linen Card</option>
+              <option value="premium-foil">Premium Card + Gold/Silver Foil</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Envelope</label>
+            <select name="envelope" id="envelope" onchange="updatePrice()">
+              <option value="included-plain">Included — Plain</option>
+              <option value="included-lined">Included — Lined Inner Envelope</option>
+              <option value="none">No Envelope Needed</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Extras</label>
+          <div class="toggle-group" id="extras-group">
+            <button type="button" class="toggle-btn" data-val="Ribbon" onclick="toggleExtra(this)">Ribbon Tie</button>
+            <button type="button" class="toggle-btn" data-val="Wax Seal" onclick="toggleExtra(this)">Wax Seal</button>
+            <button type="button" class="toggle-btn" data-val="Belly Band" onclick="toggleExtra(this)">Belly Band</button>
+            <button type="button" class="toggle-btn" data-val="QR Code RSVP" onclick="toggleExtra(this)">QR Code RSVP</button>
+          </div>
+          <input type="hidden" name="extras" id="extras-input" value=""/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: PHOTO / DESIGN UPLOAD -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Photo or Inspiration (Optional)</span>
+      </div>
+      <div class="step-body">
+        <div class="info-box">Want to include a couple's photo, or have a design you'd like us to match? Upload it here.</div>
+        <div class="upload-area" onclick="document.getElementById('photo-upload').click()">
+          <input type="file" id="photo-upload" name="photo_or_inspiration" accept="image/*,.pdf" multiple onchange="handleUpload(event)"/>
+          <div class="upload-icon">💍</div>
+          <p><strong>Click to upload</strong> a photo or inspiration image</p>
+          <p>PNG, JPG, PDF · Multiple files allowed</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <span class="step-title">Quantity</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qty-display" name="quantity" value="50" min="20" max="2000" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <p class="moq-note">Minimum order: <strong>20 pcs</strong>. Bulk discounts apply at 100, 250 & 500+ pcs.</p>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 60</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">3,000</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="3000"/>
+      </div>
+    </div>
+
+    <!-- STEP 8: YOUR DETAILS -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">08</span>
+        <span class="step-title">Your Contact & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Your Full Name *</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Your Phone Number *</label>
+            <input type="tel" id="cust-phone" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Your Email (optional — we'll send proofs here)</label>
+          <input type="email" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Bible verse to include, parents' names, additional wording, deadline, delivery or pickup…"></textarea>
+          <p class="field-hint" style="font-size:.8rem;color:var(--mid);margin-top:.4rem;">💌 We recommend ordering at least 2–3 weeks before you plan to send invitations out.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER BUTTON -->
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+
+  </form>
+</div>
+
+<script>
+  /* ─── COLOUR THEMES ─── */
+  const COLOURS = [
+    { name: 'Ivory & Black',  bg: '#fffdfa', text: '#0d0d0d' },
+    { name: 'Blush & Gold',   bg: '#fdf2ee', text: '#9c5b3c' },
+    { name: 'Sage & Cream',   bg: '#f4f6ef', text: '#4a5a3e' },
+    { name: 'Navy & Gold',    bg: '#0f1f33', text: '#d4a017' },
+    { name: 'Maroon & Cream', bg: '#fdf8f1', text: '#6e1423' },
+    { name: 'Dusty Pink',     bg: '#fbeef0', text: '#a14b5d' },
+    { name: 'Charcoal & Gold',bg: '#1a1a1a', text: '#d4a017' },
+    { name: 'Classic White',  bg: '#ffffff', text: '#1a1a1a' },
+  ];
+
+  let selectedColour = COLOURS[0];
+
+  const grid = document.getElementById('colour-grid');
+  COLOURS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'colour-swatch' + (i === 0 ? ' active' : '');
+    sw.style.background = c.bg;
+    sw.style.boxShadow = `inset 0 0 0 8px ${c.text}`;
+    sw.title = c.name;
+    sw.onclick = () => selectColour(c, sw);
+    grid.appendChild(sw);
+  });
+
+  function selectColour(c, el) {
+    document.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    selectedColour = c;
+    document.getElementById('colour-name-display').textContent = c.name + ' (selected)';
+    document.getElementById('colour-input').value = c.name;
+    applyInviteColours();
+  }
+
+  function applyInviteColours() {
+    const card = document.getElementById('invite-card');
+    card.style.background = selectedColour.bg;
+    card.style.color = selectedColour.text;
+  }
+
+  /* ─── THEME PICKER ─── */
+  function setTheme(el) {
+    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('theme-input').value = el.querySelector('.tc-label').textContent;
+  }
+
+  /* ─── EXTRAS (multi-select) ─── */
+  const selectedExtras = new Set();
+  function toggleExtra(el) {
+    const val = el.dataset.val;
+    if (el.classList.contains('active')) {
+      el.classList.remove('active');
+      selectedExtras.delete(val);
+    } else {
+      el.classList.add('active');
+      selectedExtras.add(val);
+    }
+    document.getElementById('extras-input').value = [...selectedExtras].join(', ');
+    updatePrice();
+  }
+
+  /* ─── GENERIC TOGGLE ─── */
+  function setToggle(groupId, inputId, el) {
+    document.querySelectorAll('#' + groupId + ' .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(inputId).value = el.dataset.val;
+  }
+
+  /* ─── CARD TYPE PREVIEW TOGGLE (invitation vs thank-you) ─── */
+  let currentCardView = 'invitation';
+  function setCardType(type, el) {
+    currentCardView = type;
+    document.querySelectorAll('.view-toggle .view-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    updatePreview();
+  }
+
+  /* ─── LIVE PREVIEW ─── */
+  function formatDate(dateStr) {
+    if (!dateStr) return 'Saturday, the 14th of November 2026';
+    const d = new Date(dateStr + 'T00:00:00');
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const day = d.getDate();
+    const suffix = (day % 10 === 1 && day !== 11) ? 'st' : (day % 10 === 2 && day !== 12) ? 'nd' : (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+    return `${days[d.getDay()]}, the ${day}${suffix} of ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  function updatePreview() {
+    const bride = document.getElementById('bride-name').value.trim() || 'Faith';
+    const groom = document.getElementById('groom-name').value.trim() || 'James';
+    const topLabel = document.getElementById('top-label').value;
+    const venue = document.getElementById('venue').value.trim() || "St. Mary's Church, Kianyaga";
+    const dateVal = document.getElementById('wedding-date').value;
+
+    document.getElementById('invite-top-label').textContent =
+      currentCardView === 'thankyou' ? 'With Heartfelt Gratitude' : topLabel;
+
+    if (currentCardView === 'thankyou') {
+      document.getElementById('invite-names').innerHTML = `${bride}<br>&amp;<br>${groom}`;
+      document.getElementById('invite-date').textContent = 'Thank You For Celebrating With Us';
+      document.getElementById('invite-venue').textContent = '';
+      document.querySelector('.invite-card .invite-subtext:nth-of-type(2)').textContent = '';
+    } else {
+      document.getElementById('invite-names').innerHTML = `${bride}<br>&amp;<br>${groom}`;
+      document.getElementById('invite-date').textContent = formatDate(dateVal);
+      document.getElementById('invite-venue').textContent = venue;
+      const subtexts = document.querySelectorAll('.invite-card .invite-subtext');
+      if (subtexts[1]) subtexts[1].textContent = 'Request The Honour Of Your Presence';
+    }
+  }
+
+  /* ─── FILE UPLOAD ─── */
+  function handleUpload(e) {
+    const files = e.target.files;
+    if (!files.length) return;
+    const names = Array.from(files).map(f => f.name).join(', ');
+    document.getElementById('upload-filename').textContent = '✓ ' + names;
+  }
+
+  /* ─── PRICING ─── */
+  const STOCK_PRICE = {
+    'matte-card': 60,
+    'pearl-shimmer': 85,
+    'textured-linen': 95,
+    'premium-foil': 140,
+  };
+  const ENVELOPE_ADD = { 'included-plain': 0, 'included-lined': 15, 'none': -10 };
+  const EXTRA_ADD = { 'Ribbon': 10, 'Wax Seal': 15, 'Belly Band': 20, 'QR Code RSVP': 8 };
+
+  function bulkFactor(q) {
+    if (q >= 500) return 0.7;
+    if (q >= 250) return 0.8;
+    if (q >= 100) return 0.9;
+    return 1;
+  }
+
+  let qty = 50;
+
+  function updatePrice() {
+    const stock = document.getElementById('card-stock').value;
+    const envelope = document.getElementById('envelope').value;
+
+    let extrasTotal = 0;
+    selectedExtras.forEach(ex => extrasTotal += (EXTRA_ADD[ex] || 0));
+
+    const baseUnit = (STOCK_PRICE[stock] || 60) + (ENVELOPE_ADD[envelope] || 0) + extrasTotal;
+    const unit = Math.max(Math.round(baseUnit * bulkFactor(qty)), 25);
+    const total = unit * qty;
+
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(20, qty + (delta > 0 ? 10 : -10));
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+  /* ─── CAPTURE ─── */
+  function capturePreview() {
+    html2canvas(document.getElementById('invite-card'), { backgroundColor: null, scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-wedding-card-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  /* ─── FORM SUBMIT ─── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    updatePrice();
+    document.getElementById('mpesa-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('mpesa-modal').classList.remove('open');
+  }
+
+  async function confirmPayment() {
+    closeModal();
+    const form = document.getElementById('order-form');
+    const data = new FormData(form);
+    try {
+      await fetch('https://formspree.io/f/xrevgjve', {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' }
+      });
+    } catch (_) {}
+    document.getElementById('success-overlay').classList.add('open');
+  }
+
+  // Init
+  applyInviteColours();
+  updatePreview();
+  updatePrice();
+
+  function addToCart() {
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+    
+    const cardType = formData.get('card_type_request');
+    const brideName = formData.get('bride_name');
+    const groomName = formData.get('groom_name');
+    const topLabel = formData.get('opening_line');
+    const weddingDate = formData.get('wedding_date');
+    const weddingTime = formData.get('wedding_time');
+    const venue = formData.get('venue');
+    const receptionVenue = formData.get('reception_venue');
+    const rsvpContact = formData.get('rsvp_contact');
+    const colourTheme = formData.get('colour_theme');
+    const designTheme = formData.get('design_theme');
+    const cardStock = formData.get('card_stock');
+    const envelope = formData.get('envelope');
+    const extras = formData.get('extras');
+    
+    const stockLabels = { 'matte-card': 'Matte Card', 'pearl-shimmer': 'Pearl Shimmer', 'textured-linen': 'Textured Linen', 'premium-foil': 'Premium + Foil' };
+    const envelopeLabels = { 'included-plain': 'Plain Envelope', 'included-lined': 'Lined Envelope', 'none': 'No Envelope' };
+    
+    const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+    
+    const item = {
+      productName: 'Wedding Cards',
+      variant: cardType,
+      colour: colourTheme,
+      material: `${stockLabels[cardStock] || cardStock}, ${envelopeLabels[envelope] || envelope}`,
+      details: `Names: ${brideName} & ${groomName}, Date: ${weddingDate || 'TBD'}, Time: ${weddingTime || 'TBD'}, Venue: ${venue || 'TBD'}, Theme: ${designTheme}, Extras: ${extras || 'None'}. ${formData.get('notes') || ''}`,
+      quantity: qty,
+      unitPrice: unitPrice
+    };
+    
+    BensoftCart.add(item);
+  }
+</script>
+</body>
+</html>

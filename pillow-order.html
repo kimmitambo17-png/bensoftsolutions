@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Pillow Order — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      background: var(--ink); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; }
+
+    /* LAYOUT */
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
+    }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    /* PREVIEW PANEL */
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+    #pillow-preview-wrap {
+      background: #f9f6f0; border: 2px solid var(--border); border-radius: 4px;
+      padding: 2rem 1.5rem; display: flex; align-items: center; justify-content: center; min-height: 340px;
+    }
+    #pillow-svg { width: 100%; max-width: 360px; height: auto; display: block; }
+
+    /* View toggle */
+    .view-toggle { display: flex; gap: 0; margin-bottom: .8rem; border: 1.5px solid var(--border); width: fit-content; overflow: hidden; border-radius: 2px; }
+    .view-btn {
+      padding: .4rem .9rem; font-family: 'Space Mono', monospace; font-size: .65rem;
+      letter-spacing: 1px; text-transform: uppercase; border: none; background: var(--cream);
+      color: var(--mid); cursor: pointer; transition: all .2s;
+    }
+    .view-btn.active { background: var(--ink); color: var(--cream); }
+
+    .capture-btn {
+      margin-top: 1rem; width: 100%; padding: .75rem; background: var(--ink); color: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: 2px;
+      text-transform: uppercase; border: none; cursor: pointer; transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    /* FORM */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    /* Colours */
+    .colour-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .colour-swatch {
+      width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+      border: 3px solid transparent; transition: border-color .15s, transform .15s;
+    }
+    .colour-swatch:hover { transform: scale(1.12); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .selected-colour-name { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-top: .6rem; }
+
+    /* Inputs */
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], textarea, select {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--border);
+      background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .char-counter { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--mid); text-align: right; margin-top: .3rem; }
+    .char-counter.warn { color: var(--accent); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Size buttons */
+    .size-grid { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .size-btn {
+      padding: .45rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .72rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; letter-spacing: 1px;
+    }
+    .size-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .size-hint { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--mid); margin-top: .5rem; }
+
+    /* Print style */
+    .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .print-option {
+      padding: .7rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; text-align: center;
+    }
+    .print-option .opt-icon { font-size: 1.3rem; display: block; margin-bottom: .2rem; }
+    .print-option.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    /* Upload */
+    .upload-area {
+      border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem;
+      text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    /* Qty */
+    .qty-stepper { display: flex; align-items: center; border: 1.5px solid var(--border); width: fit-content; border-radius: 2px; overflow: hidden; }
+    .qty-btn { width: 40px; height: 40px; background: var(--ink); color: var(--cream); border: none; font-size: 1.2rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display { width: 56px; height: 40px; text-align: center; font-family: 'Space Mono', monospace; font-size: .95rem; font-weight: 700; border: none; background: white; color: var(--ink); }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+
+    .order-btn {
+      width: 100%; padding: 1rem; background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* MPESA MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+  </style>
+<style>.cart-nav-link{position:relative;display:inline-flex;align-items:center;gap:4px;}.cart-badge{position:absolute;top:-8px;right:-12px;min-width:18px;height:18px;background:#e8420a;color:#fff;font-family:Space Mono,monospace;font-size:10px;border-radius:50%;display:none;align-items:center;justify-content:center;padding:0 4px;line-height:1;}</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="branded-gifts.html">← Branded Gifts</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Branded Gifts · Custom Order</div>
+  <h1>Custom Pillows</h1>
+  <p>Personalised photo pillows, name cushions & branded gifts.</p>
+</div>
+
+<div class="page-wrap">
+
+  <!-- PREVIEW -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.8rem;">
+      <button class="view-btn active" onclick="setView('front',this)">Front</button>
+      <button class="view-btn" onclick="setView('back',this)">Back</button>
+    </div>
+    <div id="pillow-preview-wrap">
+      <svg id="pillow-svg" viewBox="0 0 360 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Pillow body -->
+        <defs>
+          <radialGradient id="pillowShade" cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stop-color="white" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="black" stop-opacity="0.08"/>
+          </radialGradient>
+          <clipPath id="pillowClip">
+            <ellipse cx="180" cy="150" rx="155" ry="118"/>
+          </clipPath>
+          <filter id="softShadow" x="-10%" y="-10%" width="120%" height="130%">
+            <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0d0d0d" flood-opacity="0.18"/>
+          </filter>
+        </defs>
+
+        <!-- Shadow -->
+        <ellipse cx="182" cy="268" rx="140" ry="18" fill="#0d0d0d" opacity="0.1"/>
+
+        <!-- Pillow shape -->
+        <ellipse id="pillow-body" cx="180" cy="148" rx="155" ry="118" fill="#ffffff" filter="url(#softShadow)"/>
+
+        <!-- Seam border -->
+        <ellipse id="pillow-seam" cx="180" cy="148" rx="143" ry="107" fill="none" stroke-width="3" stroke="#ddd" stroke-dasharray="6 4"/>
+
+        <!-- Corner puffs -->
+        <ellipse id="puff-tl" cx="68" cy="72" rx="28" ry="22" fill="none" opacity="0.6"/>
+        <ellipse id="puff-tr" cx="292" cy="72" rx="28" ry="22" fill="none" opacity="0.6"/>
+        <ellipse id="puff-bl" cx="68" cy="224" rx="28" ry="22" fill="none" opacity="0.6"/>
+        <ellipse id="puff-br" cx="292" cy="224" rx="28" ry="22" fill="none" opacity="0.6"/>
+
+        <!-- Design zone -->
+        <image id="preview-image" x="120" y="88" width="120" height="120" preserveAspectRatio="xMidYMid meet" clip-path="url(#pillowClip)" style="display:none;"/>
+
+        <!-- Front text -->
+        <text id="preview-line1" x="180" y="145" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="22" font-weight="700" fill="#0d0d0d" clip-path="url(#pillowClip)"></text>
+        <text id="preview-line2" x="180" y="172" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="14" fill="#666" clip-path="url(#pillowClip)"></text>
+
+        <!-- Sheen overlay -->
+        <ellipse cx="180" cy="148" rx="155" ry="118" fill="url(#pillowShade)" clip-path="url(#pillowClip)" pointer-events="none"/>
+
+        <!-- Back view label (hidden by default) -->
+        <g id="back-view" style="display:none;">
+          <rect x="60" y="110" width="240" height="80" rx="4" fill="none" stroke="#ddd" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="180" y="148" text-anchor="middle" font-family="'Space Mono',monospace" font-size="10" fill="#bbb" letter-spacing="1">BACK PANEL</text>
+          <text x="180" y="165" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="11" fill="#bbb">Zip closure · Inner filling</text>
+          <!-- Zip line -->
+          <line x1="110" y1="240" x2="250" y2="240" stroke="#ccc" stroke-width="3" stroke-linecap="round"/>
+          <rect x="170" y="234" width="20" height="12" rx="3" fill="#aaa"/>
+        </g>
+      </svg>
+    </div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <!-- FORM -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: PILLOW COLOUR -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">01</span>
+        <span class="step-title">Pillow Base Colour</span>
+      </div>
+      <div class="step-body">
+        <div class="colour-grid" id="colour-grid"></div>
+        <div class="selected-colour-name" id="colour-name-display">White (selected)</div>
+        <input type="hidden" name="pillow_colour" id="pillow-colour-input" value="White"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: SIZE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">02</span>
+        <span class="step-title">Pillow Size</span>
+      </div>
+      <div class="step-body">
+        <div class="size-grid" id="size-grid">
+          <button type="button" class="size-btn" data-size="30x30" data-price="0" onclick="setSize(this)">30×30 cm</button>
+          <button type="button" class="size-btn active" data-size="40x40" data-price="0" onclick="setSize(this)">40×40 cm</button>
+          <button type="button" class="size-btn" data-size="45x45" data-price="150" onclick="setSize(this)">45×45 cm</button>
+          <button type="button" class="size-btn" data-size="50x50" data-price="250" onclick="setSize(this)">50×50 cm</button>
+          <button type="button" class="size-btn" data-size="40x60" data-price="300" onclick="setSize(this)">40×60 cm</button>
+          <button type="button" class="size-btn" data-size="50x70" data-price="400" onclick="setSize(this)">50×70 cm (Body)</button>
+        </div>
+        <div class="size-hint" id="size-hint">Standard cushion — 40×40 cm</div>
+        <input type="hidden" name="pillow_size" id="pillow-size-input" value="40x40"/>
+      </div>
+    </div>
+
+    <!-- STEP 3: PRINT STYLE -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">03</span>
+        <span class="step-title">Print Style</span>
+      </div>
+      <div class="step-body">
+        <div class="print-grid" id="print-grid">
+          <div class="print-option active" data-style="full-photo" onclick="setPrintStyle(this)">
+            <span class="opt-icon">🖼️</span>Full Photo Print
+          </div>
+          <div class="print-option" data-style="center-logo" onclick="setPrintStyle(this)">
+            <span class="opt-icon">🔵</span>Centre Logo/Design
+          </div>
+          <div class="print-option" data-style="text-only" onclick="setPrintStyle(this)">
+            <span class="opt-icon">✍️</span>Text Only
+          </div>
+          <div class="print-option" data-style="collage" onclick="setPrintStyle(this)">
+            <span class="opt-icon">🗂️</span>Photo Collage
+          </div>
+        </div>
+        <input type="hidden" name="print_style" id="print-style-input" value="full-photo"/>
+      </div>
+    </div>
+
+    <!-- STEP 4: PHOTO/LOGO UPLOAD -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">04</span>
+        <span class="step-title">Photo / Logo Upload</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="upload-area" onclick="document.getElementById('photo-upload').click()">
+          <input type="file" id="photo-upload" name="photo" accept="image/*" onchange="handleUpload(event)"/>
+          <div class="upload-icon">📷</div>
+          <p><strong>Click to upload</strong> your photo or logo</p>
+          <p>PNG, JPG — minimum 1000×1000px recommended</p>
+          <div class="upload-filename" id="upload-filename"></div>
+        </div>
+        <p style="font-size:.8rem;color:var(--mid);">💡 For best print quality, upload a high-resolution image. Blurry uploads will affect the final print.</p>
+      </div>
+    </div>
+
+    <!-- STEP 5: PERSONALISATION TEXT -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">05</span>
+        <span class="step-title">Personalisation Text</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Main Text / Name</label>
+          <input type="text" id="line1" name="line1" placeholder="e.g. Happy Anniversary, James & Faith" maxlength="30" oninput="updatePreview()"/>
+          <div class="char-counter" id="line1-counter">0 / 30</div>
+        </div>
+        <div>
+          <label class="field-label">Sub-text (optional)</label>
+          <input type="text" id="line2" name="line2" placeholder="e.g. Forever & Always · 2024" maxlength="40" oninput="updatePreview()"/>
+          <div class="char-counter" id="line2-counter">0 / 40</div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Font Style</label>
+            <select name="font_style" id="font-style" onchange="updatePreview()">
+              <option value="sans">Clean Sans</option>
+              <option value="serif">Elegant Serif</option>
+              <option value="script">Script / Cursive</option>
+              <option value="bold">Bold Block</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Text Colour</label>
+            <select name="text_colour" id="text-colour" onchange="updatePreview()">
+              <option value="#0d0d0d">Black</option>
+              <option value="#ffffff">White</option>
+              <option value="#e8420a">Orange-Red</option>
+              <option value="#1a5276">Navy Blue</option>
+              <option value="#c0392b">Red</option>
+              <option value="#f39c12">Gold</option>
+              <option value="#27ae60">Green</option>
+              <option value="#8e44ad">Purple</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: FILLING & FINISHING -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">06</span>
+        <span class="step-title">Filling & Cover Material</span>
+      </div>
+      <div class="step-body">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Inner Filling</label>
+            <select name="filling" id="filling" onchange="updatePrice()">
+              <option value="hollow-fibre">Hollow Fibre (soft)</option>
+              <option value="memory-foam">Memory Foam</option>
+              <option value="cover-only">Cover Only (no filling)</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Cover Material</label>
+            <select name="material" id="material" onchange="updatePrice()">
+              <option value="satin">Satin (smooth, glossy)</option>
+              <option value="canvas">Canvas (matte, textured)</option>
+              <option value="velvet">Velvet (soft touch)</option>
+              <option value="linen">Linen blend</option>
+            </select>
+          </div>
+        </div>
+        <p style="font-size:.8rem;color:var(--mid);margin-top:.7rem;">🔒 All covers include a hidden zip closure for easy washing.</p>
+      </div>
+    </div>
+
+    <!-- STEP 7: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">07</span>
+        <span class="step-title">Quantity & Price</span>
+      </div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input type="number" id="qty-display" name="quantity" value="1" min="1" max="200" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 1,200</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">1,200</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="1200"/>
+      </div>
+    </div>
+
+    <!-- STEP 8: CONTACT & NOTES -->
+    <div class="step-block">
+      <div class="step-header">
+        <span class="step-num">08</span>
+        <span class="step-title">Your Details & Notes</span>
+      </div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="Gift wrapping? Specific occasion? Delivery address? Let us know…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+  </form>
+
+<script>
+  /* ─── COLOURS ─── */
+  const COLOURS = [
+    { name: 'White',        hex: '#ffffff', fill: '#f8f8f8', seam: '#ddd', puff: '#e8e8e8' },
+    { name: 'Cream',        hex: '#f5f0e8', fill: '#ede8de', seam: '#ccc8be', puff: '#e0dbd2' },
+    { name: 'Black',        hex: '#1a1a1a', fill: '#1a1a1a', seam: '#333',   puff: '#2a2a2a' },
+    { name: 'Navy Blue',    hex: '#1a3a5c', fill: '#1a3a5c', seam: '#254e7a', puff: '#1e4570' },
+    { name: 'Sky Blue',     hex: '#5ba4cf', fill: '#5ba4cf', seam: '#4a8fb5', puff: '#6ab5e0' },
+    { name: 'Sage Green',   hex: '#7d9e7a', fill: '#7d9e7a', seam: '#6a8a67', puff: '#8db08a' },
+    { name: 'Dusty Pink',   hex: '#e8a0b0', fill: '#e8a0b0', seam: '#d08898', puff: '#f0b0c0' },
+    { name: 'Red',          hex: '#c0392b', fill: '#c0392b', seam: '#a93226', puff: '#d44234' },
+    { name: 'Orange-Red',   hex: '#e8420a', fill: '#e8420a', seam: '#c9380a', puff: '#f05520' },
+    { name: 'Yellow',       hex: '#f1c40f', fill: '#f1c40f', seam: '#d4ac0d', puff: '#f5d030' },
+    { name: 'Purple',       hex: '#6c3483', fill: '#6c3483', seam: '#5b2c6f', puff: '#7d3d99' },
+    { name: 'Grey',         hex: '#95a5a6', fill: '#95a5a6', seam: '#7f8c8d', puff: '#a5b5b6' },
+  ];
+
+  let selectedColour = COLOURS[0];
+
+  const grid = document.getElementById('colour-grid');
+  COLOURS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'colour-swatch' + (i === 0 ? ' active' : '');
+    sw.style.background = c.hex;
+    if (c.hex === '#ffffff') sw.style.border = '3px solid var(--border)';
+    sw.title = c.name;
+    sw.onclick = () => selectColour(c, sw);
+    grid.appendChild(sw);
+  });
+
+  function selectColour(c, el) {
+    document.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    selectedColour = c;
+    document.getElementById('colour-name-display').textContent = c.name + ' (selected)';
+    document.getElementById('pillow-colour-input').value = c.name;
+    document.getElementById('pillow-body').setAttribute('fill', c.fill);
+    document.getElementById('pillow-seam').setAttribute('stroke', c.seam);
+    ['puff-tl','puff-tr','puff-bl','puff-br'].forEach(id => {
+      document.getElementById(id).setAttribute('fill', c.puff);
+    });
+  }
+
+  /* ─── SIZE ─── */
+  const SIZE_HINTS = {
+    '30x30': 'Small cushion — 30×30 cm',
+    '40x40': 'Standard cushion — 40×40 cm',
+    '45x45': 'Medium cushion — 45×45 cm',
+    '50x50': 'Large cushion — 50×50 cm',
+    '40x60': 'Rectangular cushion — 40×60 cm',
+    '50x70': 'Body pillow — 50×70 cm',
+  };
+  const SIZE_ADD = { '30x30': -200, '40x40': 0, '45x45': 150, '50x50': 250, '40x60': 300, '50x70': 400 };
+  let selectedSize = '40x40';
+
+  function setSize(el) {
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    selectedSize = el.dataset.size;
+    document.getElementById('size-hint').textContent = SIZE_HINTS[selectedSize];
+    document.getElementById('pillow-size-input').value = selectedSize;
+    updatePrice();
+  }
+
+  /* ─── PRINT STYLE ─── */
+  function setPrintStyle(el) {
+    document.querySelectorAll('.print-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('print-style-input').value = el.dataset.style;
+  }
+
+  /* ─── VIEW TOGGLE ─── */
+  function setView(view, el) {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    const back = document.getElementById('back-view');
+    const imgEl = document.getElementById('preview-image');
+    const l1 = document.getElementById('preview-line1');
+    const l2 = document.getElementById('preview-line2');
+    if (view === 'back') {
+      back.style.display = 'block';
+      imgEl.style.display = 'none';
+      l1.style.display = 'none';
+      l2.style.display = 'none';
+    } else {
+      back.style.display = 'none';
+      l1.style.display = 'block';
+      l2.style.display = 'block';
+      updatePreview();
+    }
+  }
+
+  /* ─── IMAGE UPLOAD ─── */
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('upload-filename').textContent = '✓ ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const imgEl = document.getElementById('preview-image');
+      imgEl.setAttribute('href', ev.target.result);
+      imgEl.style.display = 'block';
+      updatePreview();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /* ─── TEXT PREVIEW ─── */
+  const FONT_MAP = {
+    sans: "'DM Sans', sans-serif",
+    serif: "Georgia, serif",
+    script: "cursive",
+    bold: "'Bebas Neue', sans-serif"
+  };
+
+  function updatePreview() {
+    const l1val = document.getElementById('line1').value;
+    const l2val = document.getElementById('line2').value;
+    const font = FONT_MAP[document.getElementById('font-style').value];
+    const color = document.getElementById('text-colour').value;
+    const imgEl = document.getElementById('preview-image');
+    const hasImage = imgEl.style.display !== 'none';
+
+    const pl1 = document.getElementById('preview-line1');
+    const pl2 = document.getElementById('preview-line2');
+
+    pl1.setAttribute('y', hasImage ? '210' : '145');
+    pl2.setAttribute('y', hasImage ? '232' : '168');
+    pl1.textContent = l1val;
+    pl1.setAttribute('font-family', font);
+    pl1.setAttribute('fill', color);
+    pl2.textContent = l2val;
+    pl2.setAttribute('font-family', font);
+    pl2.setAttribute('fill', color);
+
+    const c1 = document.getElementById('line1-counter');
+    c1.textContent = `${l1val.length} / 30`;
+    c1.className = 'char-counter' + (l1val.length > 24 ? ' warn' : '');
+
+    const c2 = document.getElementById('line2-counter');
+    c2.textContent = `${l2val.length} / 40`;
+    c2.className = 'char-counter' + (l2val.length > 32 ? ' warn' : '');
+  }
+
+  /* ─── PRICING ─── */
+  const BASE_PRICES = {
+    'hollow-fibre': 1200,
+    'memory-foam': 1600,
+    'cover-only': 700,
+  };
+  const MATERIAL_ADD = { 'satin': 0, 'canvas': 50, 'velvet': 150, 'linen': 100 };
+  let qty = 1;
+
+  function updatePrice() {
+    const filling = document.getElementById('filling').value;
+    const material = document.getElementById('material').value;
+    const sizeAdd = SIZE_ADD[selectedSize] || 0;
+    const unit = BASE_PRICES[filling] + MATERIAL_ADD[material] + sizeAdd;
+    const safeUnit = Math.max(unit, 500);
+    const total = safeUnit * qty;
+    document.getElementById('unit-price-display').textContent = 'KSh ' + safeUnit.toLocaleString();
+    document.getElementById('total-display').textContent = total.toLocaleString();
+    document.getElementById('total-hidden').value = total;
+    document.getElementById('modal-amount').textContent = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent = total.toLocaleString();
+  }
+
+  function changeQty(d) {
+    qty = Math.max(1, qty + d);
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+    /* ─── CAPTURE ─── */
+  function capturePreview() {
+    html2canvas(document.getElementById('pillow-preview-wrap'), { backgroundColor: '#f9f6f0', scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-pillow-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  function addToCart() {
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+    
+    const pillowColour = formData.get('pillow_colour');
+    const pillowSize = formData.get('pillow_size');
+    const printStyle = formData.get('print_style');
+    const filling = formData.get('filling');
+    const material = formData.get('material');
+    const fontStyle = formData.get('font_style');
+    const textColour = formData.get('text_colour');
+    
+    const sizeLabels = {
+      '30x30': '30×30 cm',
+      '40x40': '40×40 cm',
+      '45x45': '45×45 cm',
+      '50x50': '50×50 cm',
+      '40x60': '40×60 cm',
+      '50x70': '50×70 cm (Body)'
+    };
+    const styleLabels = {
+      'full-photo': 'Full Photo Print',
+      'center-logo': 'Centre Logo/Design',
+      'text-only': 'Text Only',
+      'collage': 'Photo Collage'
+    };
+    const fillingLabels = {
+      'hollow-fibre': 'Hollow Fibre (soft)',
+      'memory-foam': 'Memory Foam',
+      'cover-only': 'Cover Only (no filling)'
+    };
+    const materialLabels = {
+      'satin': 'Satin (smooth, glossy)',
+      'canvas': 'Canvas (matte, textured)',
+      'velvet': 'Velvet (soft touch)',
+      'linen': 'Linen blend'
+    };
+    
+    const unitPrice = parseInt(document.getElementById('total-hidden').value) / qty;
+    
+    const item = {
+      productName: 'Custom Pillow',
+      variant: styleLabels[printStyle] || printStyle,
+      size: sizeLabels[pillowSize] || pillowSize,
+      colour: pillowColour,
+      material: materialLabels[material] || material,
+      details: `Filling: ${fillingLabels[filling] || filling}, Font: ${fontStyle}, Text: ${textColour}. ${formData.get('notes') || ''}`,
+      quantity: qty,
+      unitPrice: unitPrice
+    };
+    
+    BensoftCart.add(item);
+  }
+</script>
+</body>
+</html>
