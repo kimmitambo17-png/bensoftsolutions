@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Binding & Typing — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    nav {
+      background: var(--ink); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
+    }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    /* PREVIEW PANEL */
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+
+    #preview-wrap {
+      background: #f9f6f0; border: 2px solid var(--border); border-radius: 4px;
+      padding: 2rem 1.5rem; display: flex; align-items: center; justify-content: center; min-height: 400px;
+    }
+
+    #preview-svg { width: 100%; max-width: 300px; height: auto; display: block; }
+
+    .size-tag {
+      font-family: 'Space Mono', monospace; font-size: .62rem; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--mid); text-align: center; margin-top: .8rem;
+    }
+
+    .capture-btn {
+      margin-top: 1rem; width: 100%; padding: .75rem; background: var(--ink); color: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: 2px;
+      text-transform: uppercase; border: none; cursor: pointer; transition: background .2s;
+    }
+    .capture-btn:hover { background: #222; }
+
+    /* FORM */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .service-option {
+      padding: .7rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; text-align: center;
+    }
+    .service-option .opt-icon { font-size: 1.3rem; display: block; margin-bottom: .2rem; }
+    .service-option .opt-sub { font-family: 'Space Mono', monospace; font-size: .58rem; color: var(--mid); margin-top: .2rem; }
+    .service-option.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .service-option.active .opt-sub { color: #aaa; }
+
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--border);
+      background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .toggle-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .toggle-btn {
+      padding: .45rem 1rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'Space Mono', monospace; font-size: .68rem; cursor: pointer;
+      border-radius: 2px; transition: all .2s; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .toggle-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    .info-box {
+      background: var(--cream); border-left: 3px solid var(--accent);
+      padding: .65rem 1rem; font-size: .82rem; color: #555;
+      margin-bottom: .9rem; border-radius: 0 2px 2px 0;
+    }
+    .info-box strong { color: var(--ink); }
+
+    /* pricing table */
+    .price-table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .82rem; }
+    .price-table th { font-family: 'Space Mono', monospace; font-size: .62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); text-align: left; padding: .4rem .6rem; border-bottom: 2px solid var(--border); }
+    .price-table td { padding: .5rem .6rem; border-bottom: 1px solid var(--border); }
+    .price-table tr:last-child td { border-bottom: none; }
+    .price-table .price-val { font-family: 'Space Mono', monospace; font-size: .78rem; color: var(--accent); text-align: right; }
+
+    .upload-area {
+      border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem;
+      text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    .qty-stepper { display: flex; align-items: center; border: 1.5px solid var(--border); width: fit-content; border-radius: 2px; overflow: hidden; }
+    .qty-btn { width: 40px; height: 40px; background: var(--ink); color: var(--cream); border: none; font-size: 1.2rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display { width: 64px; height: 40px; text-align: center; font-family: 'Space Mono', monospace; font-size: .92rem; font-weight: 700; border: none; background: white; color: var(--ink); }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+
+    /* typing-only fields */
+    #typing-fields { display: none; }
+
+    .order-btn {
+      width: 100%; padding: 1rem; background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* MPESA MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+
+    /* SUCCESS OVERLAY */
+    .success-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.85); z-index: 300; align-items: center; justify-content: center; }
+    .success-overlay.open { display: flex; }
+    .success-card { background: white; border-top: 4px solid #27ae60; max-width: 400px; width: 90%; padding: 2.5rem; text-align: center; }
+    .success-card .tick { font-size: 3rem; margin-bottom: .5rem; }
+    .success-card h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: .5rem; }
+    .success-card p { color: var(--mid); font-size: .9rem; margin-bottom: 1.2rem; line-height: 1.6; }
+    .success-card a { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 2px; color: var(--accent); text-decoration: none; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="print-services.html">&#8592; Print Services</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Print Services · Custom Order</div>
+  <h1>Binding & Typing</h1>
+  <p>Spiral, thermal & comb binding for reports, theses and presentations — plus professional document typing, formatting and proofreading services.</p>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ── PREVIEW ── -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div id="preview-wrap">
+      <svg id="preview-svg" viewBox="0 0 280 360" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="bookShadow" x="-8%" y="-4%" width="120%" height="114%">
+            <feDropShadow dx="4" dy="6" stdDeviation="8" flood-color="#0d0d0d" flood-opacity="0.18"/>
+          </filter>
+          <linearGradient id="coverGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1a1a1a"/>
+            <stop offset="100%" stop-color="#333"/>
+          </linearGradient>
+          <linearGradient id="pageGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#e8e4dc"/>
+            <stop offset="100%" stop-color="#f5f0e8"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Stack shadow -->
+        <rect x="68" y="30" width="172" height="306" rx="3" fill="#ccc" opacity="0.25"/>
+        <rect x="64" y="26" width="172" height="306" rx="3" fill="#ddd" opacity="0.3"/>
+
+        <!-- Pages block -->
+        <rect x="60" y="20" width="174" height="306" rx="2" fill="url(#pageGrad)" filter="url(#bookShadow)"/>
+
+        <!-- Page lines inside -->
+        <g stroke="#d0cbc0" stroke-width="0.8" opacity="0.6">
+          <line x1="76" y1="60" x2="220" y2="60"/>
+          <line x1="76" y1="74" x2="220" y2="74"/>
+          <line x1="76" y1="88" x2="220" y2="88"/>
+          <line x1="76" y1="102" x2="220" y2="102"/>
+          <line x1="76" y1="116" x2="220" y2="116"/>
+          <line x1="76" y1="130" x2="220" y2="130"/>
+          <line x1="76" y1="144" x2="220" y2="144"/>
+          <line x1="76" y1="158" x2="180" y2="158"/>
+          <line x1="76" y1="230" x2="220" y2="230"/>
+          <line x1="76" y1="244" x2="220" y2="244"/>
+          <line x1="76" y1="258" x2="200" y2="258"/>
+          <line x1="76" y1="272" x2="220" y2="272"/>
+          <line x1="76" y1="286" x2="185" y2="286"/>
+        </g>
+
+        <!-- Cover (front) -->
+        <rect id="book-cover" x="60" y="20" width="174" height="32" rx="2" fill="#0d0d0d"/>
+        <!-- Cover accent bar -->
+        <rect id="cover-accent" x="60" y="20" width="174" height="5" rx="2" fill="#e8420a"/>
+        <!-- Cover title text -->
+        <text id="cover-title" x="147" y="42" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="11" fill="#f5f0e8" letter-spacing="1">DOCUMENT TITLE</text>
+
+        <!-- Binding type indicator — spiral rings (default) -->
+        <g id="binding-spiral">
+          <circle cx="60" cy="55"  r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="75"  r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="95"  r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="115" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="135" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="155" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="175" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="195" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="215" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="235" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="255" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="275" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="295" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+          <circle cx="60" cy="315" r="6" fill="#888" stroke="#555" stroke-width="1"/>
+        </g>
+
+        <!-- Comb binding (hidden by default) -->
+        <g id="binding-comb" style="display:none;">
+          <rect x="52" y="48"  width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="68"  width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="88"  width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="108" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="128" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="148" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="168" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="188" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="208" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="228" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="248" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="268" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="288" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+          <rect x="52" y="308" width="16" height="14" rx="3" fill="#555" stroke="#333" stroke-width="0.5"/>
+        </g>
+
+        <!-- Thermal binding (solid spine, hidden by default) -->
+        <g id="binding-thermal" style="display:none;">
+          <rect x="50" y="20" width="18" height="306" rx="4" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+          <rect x="51" y="20" width="4" height="306" fill="#e8420a" opacity="0.7"/>
+        </g>
+
+        <!-- Staple binding (hidden by default) -->
+        <g id="binding-staple" style="display:none;">
+          <rect x="55" y="100" width="12" height="3" rx="1" fill="#888" stroke="#555" stroke-width="0.5"/>
+          <rect x="55" y="200" width="12" height="3" rx="1" fill="#888" stroke="#555" stroke-width="0.5"/>
+        </g>
+
+        <!-- Page count badge -->
+        <rect x="188" y="290" width="46" height="24" rx="3" fill="#e8420a"/>
+        <text id="page-badge" x="211" y="306" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="11" fill="white">10 PGS</text>
+
+        <!-- Size label bottom -->
+        <text id="size-label" x="147" y="348" text-anchor="middle" font-family="'Space Mono',monospace" font-size="8" fill="#aaa" letter-spacing="1">A4 · SPIRAL BINDING</text>
+      </svg>
+    </div>
+    <div class="size-tag" id="size-tag-display">A4 &bull; Spiral Binding &bull; 10 pages</div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <!-- ── FORM ── -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: SERVICE TYPE -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">01</span><span class="step-title">Service Type</span></div>
+      <div class="step-body">
+        <div class="service-grid" id="service-grid">
+          <div class="service-option active" data-service="spiral-binding" onclick="setService(this)">
+            <span class="opt-icon">🌀</span>Spiral Binding
+            <div class="opt-sub">Plastic coil, lay-flat</div>
+          </div>
+          <div class="service-option" data-service="thermal-binding" onclick="setService(this)">
+            <span class="opt-icon">🔥</span>Thermal Binding
+            <div class="opt-sub">Hot-glue spine</div>
+          </div>
+          <div class="service-option" data-service="comb-binding" onclick="setService(this)">
+            <span class="opt-icon">📎</span>Comb Binding
+            <div class="opt-sub">Plastic rings, removable</div>
+          </div>
+          <div class="service-option" data-service="staple-binding" onclick="setService(this)">
+            <span class="opt-icon">📌</span>Staple / Saddle Stitch
+            <div class="opt-sub">Booklets up to 60 pgs</div>
+          </div>
+          <div class="service-option" data-service="document-typing" onclick="setService(this)">
+            <span class="opt-icon">⌨️</span>Document Typing
+            <div class="opt-sub">Per page typed</div>
+          </div>
+          <div class="service-option" data-service="typing-binding" onclick="setService(this)">
+            <span class="opt-icon">📋</span>Typing + Binding
+            <div class="opt-sub">Full service combo</div>
+          </div>
+        </div>
+        <input type="hidden" name="service_type" id="service-type-input" value="spiral-binding"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: PAPER SIZE -->
+    <div class="step-block" id="size-block">
+      <div class="step-header"><span class="step-num">02</span><span class="step-title">Paper Size</span></div>
+      <div class="step-body">
+        <div class="toggle-group" id="size-group">
+          <button type="button" class="toggle-btn active" data-val="A4" onclick="setToggle('size-group','size-input',this);updateDisplay()">A4</button>
+          <button type="button" class="toggle-btn" data-val="A3" onclick="setToggle('size-group','size-input',this);updateDisplay()">A3</button>
+          <button type="button" class="toggle-btn" data-val="A5" onclick="setToggle('size-group','size-input',this);updateDisplay()">A5</button>
+          <button type="button" class="toggle-btn" data-val="Legal" onclick="setToggle('size-group','size-input',this);updateDisplay()">Legal</button>
+        </div>
+        <input type="hidden" name="paper_size" id="size-input" value="A4"/>
+      </div>
+    </div>
+
+    <!-- STEP 3: COVER OPTIONS (binding only) -->
+    <div class="step-block" id="cover-block">
+      <div class="step-header"><span class="step-num">03</span><span class="step-title">Cover Options</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Front Cover</label>
+            <select name="front_cover" id="front-cover" onchange="updatePrice();updateCoverColour()">
+              <option value="clear-pvc">Clear PVC (see-through)</option>
+              <option value="white-card">White Card</option>
+              <option value="black-card">Black Card</option>
+              <option value="navy-card">Navy Blue Card</option>
+              <option value="printed-cover">Printed Full-Colour Cover (+KSh 50)</option>
+              <option value="none">No Cover</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Back Cover</label>
+            <select name="back_cover" id="back-cover" onchange="updatePrice()">
+              <option value="black-card">Black Card (standard)</option>
+              <option value="white-card">White Card</option>
+              <option value="navy-card">Navy Blue Card</option>
+              <option value="none">No Back Cover</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Document Title (printed on cover)</label>
+          <input type="text" name="doc_title" id="doc-title" placeholder="e.g. Business Plan 2025 · School Report" maxlength="40" oninput="updateCoverTitle()"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: TYPING OPTIONS (typing services only) -->
+    <div id="typing-fields">
+      <div class="step-block">
+        <div class="step-header"><span class="step-num">03</span><span class="step-title">Typing Details</span></div>
+        <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+          <div class="info-box">
+            Provide a handwritten document, scanned copy, audio recording, or paste your text below. We type, format, and print — ready to collect.
+          </div>
+          <div class="field-row">
+            <div>
+              <label class="field-label">Document Type</label>
+              <select name="doc_type" id="doc-type" onchange="updatePrice()">
+                <option value="general">General Document</option>
+                <option value="cv-resume">CV / Resume</option>
+                <option value="academic">Academic / Research Paper</option>
+                <option value="business-report">Business Report / Proposal</option>
+                <option value="minutes">Meeting Minutes</option>
+                <option value="legal">Legal Document</option>
+                <option value="church">Church Program / Booklet</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label">Font Preference</label>
+              <select name="font_pref" id="font-pref">
+                <option value="times-new-roman">Times New Roman (12pt)</option>
+                <option value="arial">Arial (11pt)</option>
+                <option value="calibri">Calibri (11pt)</option>
+                <option value="garamond">Garamond (12pt)</option>
+                <option value="advise">Let us choose (best for type)</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <label class="field-label">Line Spacing</label>
+              <select name="line_spacing" id="line-spacing">
+                <option value="single">Single Spacing</option>
+                <option value="1.5">1.5 Line Spacing</option>
+                <option value="double">Double Spacing</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label">Formatting Needed?</label>
+              <select name="formatting" id="formatting" onchange="updatePrice()">
+                <option value="basic">Basic (paragraphs only)</option>
+                <option value="standard">Standard (headings, lists)</option>
+                <option value="full">Full (tables, page numbers, ToC) +KSh 100</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Additional Instructions / Content Notes</label>
+            <textarea name="typing_notes" placeholder="Paste text here, or describe your handwritten document. Include any specific formatting requirements…" rows="4"></textarea>
+          </div>
+          <div>
+            <label class="field-label">Upload Your Document (optional)</label>
+            <div class="upload-area" onclick="document.getElementById('typing-upload').click()">
+              <input type="file" id="typing-upload" name="typing_file" accept=".pdf,.doc,.docx,.jpg,.png,.jpeg,image/*" onchange="handleUpload(event,'typing-filename')"/>
+              <div class="upload-icon">📂</div>
+              <p><strong>Click to upload</strong> handwritten scan, draft, or source file</p>
+              <p>PDF, Word, JPG, PNG</p>
+              <div class="upload-filename" id="typing-filename"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 / 5: NUMBER OF PAGES / COPIES -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num" id="pages-step-num">04</span><span class="step-title">Pages & Copies</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Number of Pages</label>
+            <input type="number" id="num-pages" name="num_pages" value="10" min="1" max="1000" oninput="updatePrice()"/>
+          </div>
+          <div>
+            <label class="field-label">Number of Copies</label>
+            <input type="number" id="qty-display" name="quantity" value="1" min="1" max="100" oninput="updatePrice()"/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Print Sides (for copying included)</label>
+          <div class="toggle-group" id="sides-group">
+            <button type="button" class="toggle-btn active" data-val="single" onclick="setToggle('sides-group','sides-input',this);updatePrice()">Single-Sided</button>
+            <button type="button" class="toggle-btn" data-val="double" onclick="setToggle('sides-group','sides-input',this);updatePrice()">Double-Sided</button>
+          </div>
+          <input type="hidden" name="print_sides" id="sides-input" value="single"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 / 6: RATES -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num" id="rates-step-num">05</span><span class="step-title">Our Rates</span></div>
+      <div class="step-body">
+        <table class="price-table">
+          <thead>
+            <tr><th>Service</th><th style="text-align:right;">Price</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Spiral Binding (A4)</td><td class="price-val">KSh 80 + KSh 3/page</td></tr>
+            <tr><td>Comb Binding (A4)</td><td class="price-val">KSh 100 + KSh 3/page</td></tr>
+            <tr><td>Thermal / Glue Binding</td><td class="price-val">KSh 150 + KSh 3/page</td></tr>
+            <tr><td>Staple / Saddle Stitch</td><td class="price-val">KSh 20 + KSh 2/page</td></tr>
+            <tr><td>Document Typing (general)</td><td class="price-val">KSh 30/page</td></tr>
+            <tr><td>CV / Resume Typing</td><td class="price-val">KSh 150 flat</td></tr>
+            <tr><td>Full Formatting (ToC, tables)</td><td class="price-val">+KSh 100</td></tr>
+            <tr><td>Printed Full-Colour Cover</td><td class="price-val">+KSh 50</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.75rem;color:var(--mid);margin-top:.6rem;">A3 and Legal sizes add 50% to binding cost. Bulk orders (10+ copies) receive a 10% discount.</p>
+      </div>
+    </div>
+
+    <!-- STEP 6 / 7: RUSH & DELIVERY -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num" id="rush-step-num">06</span><span class="step-title">Turnaround</span></div>
+      <div class="step-body">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Turnaround Time</label>
+            <select name="rush" id="rush" onchange="updatePrice()">
+              <option value="standard">Standard (same day or next day)</option>
+              <option value="rush">Urgent (within 2 hours) +30%</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Pickup / Delivery</label>
+            <select name="delivery" id="delivery">
+              <option value="pickup">Pickup from Kianyaga Shop</option>
+              <option value="deliver">Delivery (within Kianyaga)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7 / 8: PRICE SUMMARY -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num" id="price-step-num">07</span><span class="step-title">Price Summary</span></div>
+      <div class="step-body">
+        <div class="unit-price">Binding / service cost: <span id="unit-price-display">KSh 110</span></div>
+        <div class="unit-price" style="margin-top:.3rem;">× <span id="copies-display">1</span> cop(ies)</div>
+        <div class="total-price">Total: KSh <span id="total-display">110</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="110"/>
+      </div>
+    </div>
+
+    <!-- STEP 8 / 9: CUSTOMER DETAILS -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num" id="contact-step-num">08</span><span class="step-title">Your Details & Notes</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions</label>
+          <textarea name="notes" placeholder="e.g. Thesis for university — strict margin requirements. Deadline Friday. Double-sided printing. Multiple copies with different names on cover..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+  </form>
+</div>
+
+<!-- MPESA MODAL -->
+<div class="modal-overlay" id="mpesa-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('mpesa-modal').classList.remove('open')">&#10005;</button>
+    <div style="font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.2rem;">Payment</div>
+    <h2>M-Pesa Checkout</h2>
+    <div class="mpesa-sub">Complete payment to confirm your order</div>
+    <div style="font-size:.85rem;color:var(--mid);">Amount Due</div>
+    <div class="mpesa-amount">KSh <span id="modal-amount">110</span></div>
+    <ol class="mpesa-steps">
+      <li>Go to <strong>M-Pesa</strong> &rarr; <strong>Lipa na M-Pesa</strong></li>
+      <li>Select <strong>Pay Bill</strong></li>
+      <li>Business No: <span class="mpesa-number">522533</span> &nbsp;&middot;&nbsp; Account: <span class="mpesa-number">1316538</span></li>
+      <li>Enter amount: <strong>KSh <span id="modal-amount-2">110</span></strong></li>
+      <li>Enter your M-Pesa PIN and confirm</li>
+      <li>Return here and click <strong>"Confirm &amp; Submit"</strong></li>
+    </ol>
+    <button class="confirm-btn" onclick="confirmPayment()">Confirm &amp; Submit Order</button>
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <div class="tick">✅</div>
+    <h2>Order Received!</h2>
+    <p>Thank you! Your binding / typing order has been submitted. We'll call you to confirm and let you know when it's ready for pickup.</p>
+    <a href="print-services.html">&#8592; Back to Print Services</a>
+  </div>
+</div>
+
+<script>
+  /* ── STATE ── */
+  let activeService = 'spiral-binding';
+
+  /* ── PRICING TABLES ── */
+  const BINDING_BASE = {
+    'spiral-binding':  80,
+    'thermal-binding': 150,
+    'comb-binding':    100,
+    'staple-binding':  20,
+    'document-typing': 0,   // per page only
+    'typing-binding':  100, // binding base + typing
+  };
+  const PAGE_RATE = {
+    'spiral-binding':  3,
+    'thermal-binding': 3,
+    'comb-binding':    3,
+    'staple-binding':  2,
+    'document-typing': 30,
+    'typing-binding':  33,  // 30 typing + 3 binding
+  };
+  const SIZE_MULT = { 'A4': 1, 'A3': 1.5, 'A5': 0.8, 'Legal': 1.3 };
+
+  /* ── SERVICE SWITCH ── */
+  function setService(el) {
+    document.querySelectorAll('.service-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    activeService = el.dataset.service;
+    document.getElementById('service-type-input').value = activeService;
+
+    const isTyping = activeService === 'document-typing' || activeService === 'typing-binding';
+    const isBinding = activeService !== 'document-typing';
+
+    document.getElementById('typing-fields').style.display = isTyping ? 'block' : 'none';
+    document.getElementById('cover-block').style.display = isBinding ? 'block' : 'none';
+
+    // Update step numbers
+    const pagesNum = isTyping ? '05' : '04';
+    const ratesNum = isTyping ? '06' : '05';
+    const rushNum  = isTyping ? '07' : '06';
+    const priceNum = isTyping ? '08' : '07';
+    const contactNum = isTyping ? '09' : '08';
+    document.getElementById('pages-step-num').textContent  = pagesNum;
+    document.getElementById('rates-step-num').textContent  = ratesNum;
+    document.getElementById('rush-step-num').textContent   = rushNum;
+    document.getElementById('price-step-num').textContent  = priceNum;
+    document.getElementById('contact-step-num').textContent = contactNum;
+
+    updateBindingPreview();
+    updatePrice();
+  }
+
+  /* ── TOGGLE HELPER ── */
+  function setToggle(groupId, inputId, el) {
+    document.querySelectorAll('#' + groupId + ' .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(inputId).value = el.dataset.val;
+  }
+
+  /* ── BINDING VISUAL SWITCH ── */
+  function updateBindingPreview() {
+    document.getElementById('binding-spiral').style.display  = 'none';
+    document.getElementById('binding-comb').style.display    = 'none';
+    document.getElementById('binding-thermal').style.display = 'none';
+    document.getElementById('binding-staple').style.display  = 'none';
+
+    if (activeService === 'spiral-binding' || activeService === 'document-typing' || activeService === 'typing-binding') {
+      document.getElementById('binding-spiral').style.display = 'block';
+    } else if (activeService === 'comb-binding') {
+      document.getElementById('binding-comb').style.display = 'block';
+    } else if (activeService === 'thermal-binding') {
+      document.getElementById('binding-thermal').style.display = 'block';
+    } else if (activeService === 'staple-binding') {
+      document.getElementById('binding-staple').style.display = 'block';
+    }
+  }
+
+  /* ── COVER COLOUR ── */
+  function updateCoverColour() {
+    const cover = document.getElementById('front-cover').value;
+    const coverEl = document.getElementById('book-cover');
+    const accentEl = document.getElementById('cover-accent');
+    const colourMap = {
+      'clear-pvc':     '#d0e8f0',
+      'white-card':    '#f5f0e8',
+      'black-card':    '#0d0d0d',
+      'navy-card':     '#1a3a5c',
+      'printed-cover': '#e8420a',
+      'none':          '#888',
+    };
+    coverEl.setAttribute('fill', colourMap[cover] || '#0d0d0d');
+    if (cover === 'white-card' || cover === 'clear-pvc') {
+      accentEl.setAttribute('fill', '#e8420a');
+      document.getElementById('cover-title').setAttribute('fill', '#0d0d0d');
+    } else {
+      accentEl.setAttribute('fill', '#e8420a');
+      document.getElementById('cover-title').setAttribute('fill', '#f5f0e8');
+    }
+  }
+
+  /* ── COVER TITLE ── */
+  function updateCoverTitle() {
+    const title = document.getElementById('doc-title').value.trim().toUpperCase();
+    document.getElementById('cover-title').textContent = title || 'DOCUMENT TITLE';
+    updateDisplay();
+  }
+
+  /* ── SIZE / PAGE DISPLAY TAG ── */
+  function updateDisplay() {
+    const size  = document.getElementById('size-input').value;
+    const pages = parseInt(document.getElementById('num-pages').value) || 0;
+    const serviceLabels = {
+      'spiral-binding':  'Spiral Binding',
+      'thermal-binding': 'Thermal Binding',
+      'comb-binding':    'Comb Binding',
+      'staple-binding':  'Staple Stitch',
+      'document-typing': 'Document Typing',
+      'typing-binding':  'Typing + Binding',
+    };
+    document.getElementById('size-tag-display').textContent =
+      size + ' \u2022 ' + (serviceLabels[activeService] || activeService) + ' \u2022 ' + pages + ' pages';
+    document.getElementById('size-label').textContent =
+      size + ' \u00b7 ' + (serviceLabels[activeService] || '').toUpperCase();
+    document.getElementById('page-badge').textContent = pages + ' PGS';
+  }
+
+  /* ── PRICING ── */
+  function updatePrice() {
+    const pages  = Math.max(1, parseInt(document.getElementById('num-pages').value) || 1);
+    const copies = Math.max(1, parseInt(document.getElementById('qty-display').value) || 1);
+    const size   = document.getElementById('size-input').value;
+    const rush   = document.getElementById('rush').value === 'rush' ? 1.3 : 1;
+    const sizeMult = SIZE_MULT[size] || 1;
+
+    const frontCover = document.getElementById('front-cover') ? document.getElementById('front-cover').value : 'clear-pvc';
+    const coverAdd   = frontCover === 'printed-cover' ? 50 : 0;
+
+    const formatting = document.getElementById('formatting') ? document.getElementById('formatting').value : 'basic';
+    const formatAdd  = formatting === 'full' ? 100 : 0;
+
+    const base     = BINDING_BASE[activeService] || 80;
+    const perPage  = PAGE_RATE[activeService] || 3;
+    const unitCost = Math.round((base + perPage * pages) * sizeMult) + coverAdd + formatAdd;
+    const perCopy  = Math.round(unitCost * rush);
+    let total      = perCopy * copies;
+
+    // 10% bulk discount at 10+ copies
+    if (copies >= 10) total = Math.round(total * 0.9);
+
+    document.getElementById('unit-price-display').textContent = 'KSh ' + perCopy.toLocaleString();
+    document.getElementById('copies-display').textContent     = copies;
+    document.getElementById('total-display').textContent      = total.toLocaleString();
+    document.getElementById('total-hidden').value             = total;
+    document.getElementById('modal-amount').textContent       = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent     = total.toLocaleString();
+
+    updateDisplay();
+  }
+
+  /* ── UPLOAD FEEDBACK ── */
+  function handleUpload(e, labelId) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById(labelId).textContent = '\u2713 ' + file.name;
+  }
+
+  /* ── CAPTURE PREVIEW ── */
+  function capturePreview() {
+    html2canvas(document.getElementById('preview-wrap'), { backgroundColor: '#f9f6f0', scale: 2 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-binding-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  /* ── FORM SUBMIT ── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    updatePrice();
+    document.getElementById('mpesa-modal').classList.add('open');
+  }
+
+  async function confirmPayment() {
+    document.getElementById('mpesa-modal').classList.remove('open');
+    const form = document.getElementById('order-form');
+    const data = new FormData(form);
+    try {
+      await fetch('https://formspree.io/f/xrevgjve', {
+        method: 'POST', body: data, headers: { Accept: 'application/json' }
+      });
+    } catch (_) {}
+    document.getElementById('success-overlay').classList.add('open');
+  }
+
+  /* ── ADD TO CART ── */
+  function addToCart() {
+    const form = document.getElementById('order-form');
+    const formData = new FormData(form);
+
+    const service   = formData.get('service_type');
+    const size      = formData.get('paper_size');
+    const pages     = formData.get('num_pages');
+    const copies    = parseInt(formData.get('quantity')) || 1;
+    const sides     = formData.get('print_sides');
+    const rush      = formData.get('rush');
+    const delivery  = formData.get('delivery');
+
+    const serviceLabels = {
+      'spiral-binding':  'Spiral Binding',
+      'thermal-binding': 'Thermal Binding',
+      'comb-binding':    'Comb Binding',
+      'staple-binding':  'Staple / Saddle Stitch',
+      'document-typing': 'Document Typing',
+      'typing-binding':  'Typing + Binding',
+    };
+    const sidesLabels    = { 'single': 'Single-Sided', 'double': 'Double-Sided' };
+    const rushLabels     = { 'standard': 'Standard', 'rush': 'Urgent (2hrs)' };
+    const deliveryLabels = { 'pickup': 'Pickup', 'deliver': 'Delivery (Kianyaga)' };
+
+    const docTitle    = formData.get('doc_title') || '';
+    const frontCover  = formData.get('front_cover') || '';
+    const docType     = formData.get('doc_type') || '';
+    const total       = parseInt(document.getElementById('total-hidden').value) || 0;
+    const unitPrice   = copies > 0 ? Math.round(total / copies) : total;
+
+    const detailParts = [
+      pages + ' pages',
+      sidesLabels[sides] || sides,
+      rushLabels[rush] || rush,
+      deliveryLabels[delivery] || delivery,
+    ];
+    if (docTitle) detailParts.push('Title: ' + docTitle);
+    if (docType)  detailParts.push('Type: ' + docType);
+    if (formData.get('notes')) detailParts.push(formData.get('notes'));
+
+    const item = {
+      productName: serviceLabels[service] || service,
+      variant: size + ', ' + (serviceLabels[service] || service),
+      colour: frontCover ? 'Cover: ' + frontCover : 'No cover',
+      material: sidesLabels[sides] || sides,
+      details: detailParts.join(', '),
+      quantity: copies,
+      unitPrice: unitPrice,
+    };
+
+    BensoftCart.add(item);
+  }
+
+  /* ── INIT ── */
+  updateCoverColour();
+  updatePrice();
+</script>
+</body>
+</html>
