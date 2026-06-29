@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plastic ID Cards — Bensoft Prints & Branding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="cart.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #0d0d0d;
+      --accent: #e8420a;
+      --accent-dark: #c03508;
+      --mid: #888;
+      --border: #d8d0c0;
+    }
+
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    nav {
+      background: var(--ink); padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cream); text-decoration: none; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    nav a.back-link { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color .2s; }
+    nav a.back-link:hover { color: var(--accent); }
+
+    .hero { background: var(--ink); padding: 3rem 2rem 2.5rem; text-align: center; }
+    .hero-tag { font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--cream); letter-spacing: 2px; line-height: 1; }
+    .hero p { color: #aaa; font-size: .9rem; margin-top: .7rem; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+
+    .page-wrap {
+      max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
+    }
+    @media (max-width: 750px) { .page-wrap { grid-template-columns: 1fr; } }
+
+    /* ── PREVIEW PANEL ── */
+    .preview-panel { position: sticky; top: 80px; }
+    .preview-label { font-family: 'Space Mono', monospace; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: .8rem; }
+
+    .view-toggle { display: flex; gap: 0; margin-bottom: .8rem; border: 1.5px solid var(--border); width: fit-content; overflow: hidden; border-radius: 2px; }
+    .view-btn { padding: .4rem .9rem; font-family: 'Space Mono', monospace; font-size: .65rem; letter-spacing: 1px; text-transform: uppercase; border: none; background: var(--cream); color: var(--mid); cursor: pointer; transition: all .2s; }
+    .view-btn.active { background: var(--ink); color: var(--cream); }
+
+    #id-preview-wrap {
+      background: #e8e4da; border: 2px solid var(--border); border-radius: 4px;
+      padding: 2.2rem 1.5rem; display: flex; align-items: center; justify-content: center; min-height: 400px;
+    }
+
+    /* The ID card itself — CR80 is 85.6 × 54mm, so ~8.5:5.4 aspect */
+    .id-card {
+      width: 100%; max-width: 340px;
+      aspect-ratio: 85.6 / 54;
+      border-radius: 8px;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.14);
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: background 0.3s;
+    }
+
+    /* Header bar */
+    .id-header {
+      height: 28%; padding: 0 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: relative; flex-shrink: 0;
+      transition: background 0.3s;
+    }
+    .id-org-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(.55rem, 2vw, .75rem);
+      letter-spacing: .06em;
+      line-height: 1.1;
+      transition: color 0.3s;
+      max-width: 60%;
+    }
+    .id-logo-circle {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: .75rem;
+      flex-shrink: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Body */
+    .id-body {
+      flex: 1; padding: 6px 12px 6px;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .id-photo-box {
+      width: 36px; height: 44px; border-radius: 3px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; overflow: hidden;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.12);
+      transition: border-color 0.3s;
+    }
+    .id-photo-box img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .id-photo-box .photo-placeholder { font-size: 1.4rem; opacity: .5; }
+
+    .id-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .id-fullname {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(.62rem, 2.2vw, .85rem);
+      letter-spacing: .04em; line-height: 1.1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      transition: color 0.3s;
+    }
+    .id-role {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(.42rem, 1.5vw, .56rem);
+      letter-spacing: .08em; text-transform: uppercase;
+      opacity: .7; transition: color 0.3s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .id-number {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(.4rem, 1.4vw, .52rem);
+      letter-spacing: .1em; opacity: .55; margin-top: 2px;
+      transition: color 0.3s;
+    }
+
+    /* Footer bar */
+    .id-footer {
+      height: 20%; padding: 0 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.3s;
+    }
+    .id-barcode {
+      display: flex; gap: 1.5px; align-items: center; height: 16px;
+    }
+    .id-barcode span {
+      display: inline-block; height: 100%; border-radius: .5px;
+      background: currentColor; opacity: .55;
+    }
+    .id-validity {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(.38rem, 1.3vw, .5rem);
+      letter-spacing: .06em; opacity: .6; text-align: right;
+      transition: color 0.3s;
+    }
+
+    /* ── BACK SIDE ── */
+    .id-card-back {
+      width: 100%; max-width: 340px;
+      aspect-ratio: 85.6 / 54;
+      border-radius: 8px;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.28);
+      position: relative; overflow: hidden;
+      display: none; flex-direction: column;
+      transition: background 0.3s;
+    }
+    .id-back-mag-stripe {
+      width: 100%; height: 28%;
+      background: #1a1a1a;
+      display: flex; align-items: center;
+      padding: 0 12px;
+    }
+    .id-back-sig-box {
+      margin: 8px 12px;
+      height: 18px; border-radius: 2px;
+      background: rgba(255,255,255,0.85);
+      display: flex; align-items: center; padding: 0 6px;
+    }
+    .id-back-sig-label {
+      font-family: 'Space Mono', monospace; font-size: .44rem;
+      color: #555; letter-spacing: .06em; text-transform: uppercase;
+    }
+    .id-back-info {
+      padding: 4px 12px; font-family: 'Space Mono', monospace;
+      font-size: .44rem; letter-spacing: .05em; opacity: .7;
+      transition: color 0.3s;
+    }
+    .id-back-qr {
+      position: absolute; bottom: 6px; right: 8px;
+      width: 26px; height: 26px;
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 1px;
+    }
+    .id-back-qr span {
+      border-radius: .5px;
+      background: currentColor; opacity: .7;
+    }
+
+    .size-tag { font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); text-align: center; margin-top: .8rem; }
+
+    .capture-btn { margin-top: 1rem; width: 100%; padding: .75rem; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; border: none; cursor: pointer; transition: background .2s; }
+    .capture-btn:hover { background: #222; }
+
+    /* ── FORM ── */
+    .form-panel { display: flex; flex-direction: column; gap: 1.8rem; }
+    .step-block { border: 1.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-header { background: var(--ink); padding: .7rem 1.1rem; display: flex; align-items: center; gap: .7rem; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--accent); min-width: 28px; }
+    .step-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--cream); letter-spacing: 1px; }
+    .step-body { padding: 1.2rem; background: white; }
+
+    .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .type-option {
+      padding: .7rem .9rem; border: 1.5px solid var(--border); background: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer;
+      transition: all .2s; border-radius: 2px; text-align: center;
+    }
+    .type-option .opt-icon { font-size: 1.3rem; display: block; margin-bottom: .2rem; }
+    .type-option .opt-sub { font-family: 'Space Mono', monospace; font-size: .58rem; color: var(--mid); margin-top: .2rem; }
+    .type-option.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .type-option.active .opt-sub { color: #aaa; }
+
+    /* Colour swatches */
+    .colour-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
+    .colour-swatch {
+      width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+      border: 3px solid transparent; transition: border-color .15s, transform .15s;
+    }
+    .colour-swatch:hover { transform: scale(1.12); }
+    .colour-swatch.active { border-color: var(--accent) !important; }
+    .selected-colour-name { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-top: .6rem; }
+
+    label.field-label { display: block; font-family: 'Space Mono', monospace; font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: .4rem; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; padding: .65rem .85rem; border: 1.5px solid var(--border);
+      background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: .92rem;
+      color: var(--ink); border-radius: 2px; outline: none; transition: border-color .2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 70px; }
+
+    .char-counter { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--mid); text-align: right; margin-top: .3rem; }
+    .char-counter.warn { color: var(--accent); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .toggle-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .toggle-btn { padding: .45rem 1rem; border: 1.5px solid var(--border); background: var(--cream); font-family: 'Space Mono', monospace; font-size: .7rem; cursor: pointer; border-radius: 2px; transition: all .2s; letter-spacing: 1px; text-transform: uppercase; }
+    .toggle-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+    .upload-area {
+      border: 2px dashed var(--border); background: var(--cream); padding: 1.4rem;
+      text-align: center; cursor: pointer; transition: border-color .2s; border-radius: 2px;
+    }
+    .upload-area:hover { border-color: var(--accent); }
+    .upload-area input { display: none; }
+    .upload-icon { font-size: 1.8rem; margin-bottom: .4rem; }
+    .upload-area p { font-size: .85rem; color: var(--mid); }
+    .upload-area p strong { color: var(--ink); }
+    .upload-filename { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--accent); margin-top: .5rem; }
+
+    .info-box { background: var(--cream); border-left: 3px solid var(--accent); padding: .65rem 1rem; font-size: .82rem; color: #555; margin-bottom: .9rem; border-radius: 0 2px 2px 0; }
+    .info-box strong { color: var(--ink); }
+
+    /* pricing table */
+    .price-table { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .82rem; }
+    .price-table th { font-family: 'Space Mono', monospace; font-size: .62rem; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); text-align: left; padding: .4rem .6rem; border-bottom: 2px solid var(--border); }
+    .price-table td { padding: .5rem .6rem; border-bottom: 1px solid var(--border); }
+    .price-table tr:last-child td { border-bottom: none; }
+    .price-table .price-val { font-family: 'Space Mono', monospace; font-size: .78rem; color: var(--accent); text-align: right; }
+
+    .qty-stepper { display: flex; align-items: center; border: 1.5px solid var(--border); width: fit-content; border-radius: 2px; overflow: hidden; }
+    .qty-btn { width: 40px; height: 40px; background: var(--ink); color: var(--cream); border: none; font-size: 1.2rem; cursor: pointer; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--accent); }
+    #qty-display { width: 64px; height: 40px; text-align: center; font-family: 'Space Mono', monospace; font-size: .92rem; font-weight: 700; border: none; background: white; color: var(--ink); }
+    .unit-price { font-family: 'Space Mono', monospace; font-size: .72rem; color: var(--mid); margin-top: .5rem; }
+    .total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent); margin-top: .3rem; }
+    .moq-note { font-size: .78rem; color: var(--mid); margin-top: .4rem; }
+
+    .order-btn {
+      width: 100%; padding: 1rem; background: var(--accent); color: white;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 2px;
+      border: none; cursor: pointer; transition: background .2s; border-radius: 2px;
+    }
+    .order-btn:hover { background: var(--accent-dark); }
+
+    /* MPESA MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,13,13,.75); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-top: 4px solid var(--accent); max-width: 440px; width: 90%; padding: 2rem; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; margin-bottom: .3rem; }
+    .modal .mpesa-sub { font-family: 'Space Mono', monospace; font-size: .7rem; color: var(--mid); margin-bottom: 1.2rem; }
+    .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--mid); }
+    .mpesa-amount { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--accent); margin: .5rem 0 1rem; }
+    .mpesa-steps { list-style: none; counter-reset: mpesa; margin-bottom: 1.3rem; }
+    .mpesa-steps li { counter-increment: mpesa; padding: .55rem 0 .55rem 2.4rem; border-bottom: 1px solid var(--border); font-size: .88rem; position: relative; }
+    .mpesa-steps li::before { content: counter(mpesa); position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; background: var(--ink); color: var(--cream); font-family: 'Space Mono', monospace; font-size: .65rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .mpesa-number { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent); }
+    .confirm-btn { width: 100%; padding: .85rem; background: var(--accent); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 2px; border: none; cursor: pointer; transition: background .2s; border-radius: 2px; }
+    .confirm-btn:hover { background: var(--accent-dark); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Ben<span>soft</span></a>
+  <a class="back-link" href="print-services.html">&#8592; Print Services</a>
+  <a class="cart-nav-link" href="cart.html">&#128722; Cart<span class="cart-badge">0</span></a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Print Services · Custom Order</div>
+  <h1>Plastic ID Cards</h1>
+  <p>Full-colour PVC CR80 ID cards for schools, companies, events and membership programs — durable, professional, and printed same-day.</p>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ── PREVIEW PANEL ── -->
+  <div class="preview-panel">
+    <div class="preview-label">Live Preview</div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="setView('front',this)">Front</button>
+      <button class="view-btn" onclick="setView('back',this)">Back</button>
+    </div>
+    <div id="id-preview-wrap">
+
+      <!-- FRONT -->
+      <div class="id-card" id="id-front" style="background:#1a3a5c; flex-direction:column;">
+        <div class="id-header" id="id-header" style="background:rgba(0,0,0,0.25); color:#ffffff;">
+          <div class="id-org-name" id="p-org">ORGANISATION NAME</div>
+          <div class="id-logo-circle" id="p-logo-circle" style="background:#e8420a; color:#fff;">B</div>
+        </div>
+        <div class="id-body">
+          <div class="id-photo-box" id="p-photo-box">
+            <img id="p-photo-img" src="" alt=""/>
+            <span class="photo-placeholder">👤</span>
+          </div>
+          <div class="id-info">
+            <div class="id-fullname" id="p-name" style="color:#ffffff;">Full Name</div>
+            <div class="id-role" id="p-role" style="color:#ffffff;">Role / Department</div>
+            <div class="id-number" id="p-idnum" style="color:#ffffff;">ID No. — 000001</div>
+          </div>
+        </div>
+        <div class="id-footer" id="id-footer" style="background:rgba(0,0,0,0.2); color:#ffffff;">
+          <div class="id-barcode" style="color:#ffffff;">
+            <span style="width:2px;"></span><span style="width:1px;"></span><span style="width:3px;"></span>
+            <span style="width:1px;"></span><span style="width:2px;"></span><span style="width:1px;"></span>
+            <span style="width:2px;"></span><span style="width:1px;"></span><span style="width:3px;"></span>
+            <span style="width:1px;"></span><span style="width:2px;"></span><span style="width:1px;"></span>
+            <span style="width:2px;"></span><span style="width:3px;"></span><span style="width:1px;"></span>
+            <span style="width:2px;"></span><span style="width:1px;"></span>
+          </div>
+          <div class="id-validity" id="p-validity" style="color:#ffffff;">Valid Thru: 12/2026</div>
+        </div>
+      </div>
+
+      <!-- BACK (hidden) -->
+      <div class="id-card-back" id="id-back" style="background:#1a3a5c; color:#ffffff;">
+        <div class="id-back-mag-stripe">
+          <div style="width:100%;height:8px;background:repeating-linear-gradient(90deg,#444 0px,#444 2px,#333 2px,#333 4px);border-radius:1px;opacity:.8;"></div>
+        </div>
+        <div class="id-back-sig-box">
+          <div class="id-back-sig-label">Cardholder Signature</div>
+        </div>
+        <div class="id-back-info" id="p-back-info" style="color:#ffffff;">
+          If found, please return to: <span id="p-org-back">Organisation Name</span><br/>
+          <span id="p-contact-back">Contact: +254 717 620054</span>
+        </div>
+        <!-- Simple QR pattern -->
+        <div class="id-back-qr" style="color:#ffffff;">
+          <span></span><span style="opacity:0;"></span><span></span><span></span><span></span>
+          <span></span><span style="opacity:0;"></span><span style="opacity:0;"></span><span></span><span style="opacity:0;"></span>
+          <span></span><span></span><span></span><span style="opacity:0;"></span><span></span>
+          <span style="opacity:0;"></span><span></span><span style="opacity:0;"></span><span></span><span></span>
+          <span></span><span></span><span></span><span style="opacity:0;"></span><span></span>
+        </div>
+      </div>
+
+    </div>
+    <div class="size-tag" id="size-tag">CR80 Standard &bull; 85.6 &times; 54 mm &bull; PVC</div>
+    <button class="capture-btn" onclick="capturePreview()">📸 Save Preview Image</button>
+  </div>
+
+  <!-- ── FORM ── -->
+  <form id="order-form" class="form-panel" onsubmit="handleSubmit(event)">
+
+    <!-- STEP 1: CARD PURPOSE -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">01</span><span class="step-title">Card Purpose</span></div>
+      <div class="step-body">
+        <div class="type-grid" id="type-grid">
+          <div class="type-option active" data-type="staff-id" data-price="120" onclick="setType(this)">
+            <span class="opt-icon">🏢</span>Staff / Employee ID
+            <div class="opt-sub">KSh 120/card</div>
+          </div>
+          <div class="type-option" data-type="school-id" data-price="100" onclick="setType(this)">
+            <span class="opt-icon">🎓</span>School / Student ID
+            <div class="opt-sub">KSh 100/card</div>
+          </div>
+          <div class="type-option" data-type="membership" data-price="130" onclick="setType(this)">
+            <span class="opt-icon">🪪</span>Membership Card
+            <div class="opt-sub">KSh 130/card</div>
+          </div>
+          <div class="type-option" data-type="event-pass" data-price="90" onclick="setType(this)">
+            <span class="opt-icon">🎫</span>Event / Access Pass
+            <div class="opt-sub">KSh 90/card</div>
+          </div>
+          <div class="type-option" data-type="loyalty" data-price="110" onclick="setType(this)">
+            <span class="opt-icon">⭐</span>Loyalty Card
+            <div class="opt-sub">KSh 110/card</div>
+          </div>
+          <div class="type-option" data-type="visitor" data-price="80" onclick="setType(this)">
+            <span class="opt-icon">👋</span>Visitor / Contractor
+            <div class="opt-sub">KSh 80/card</div>
+          </div>
+        </div>
+        <input type="hidden" name="card_purpose" id="card-purpose-input" value="staff-id"/>
+      </div>
+    </div>
+
+    <!-- STEP 2: CARD COLOUR THEME -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">02</span><span class="step-title">Card Colour Theme</span></div>
+      <div class="step-body">
+        <div class="colour-grid" id="colour-grid"></div>
+        <div class="selected-colour-name" id="colour-name-display">Navy Blue (selected)</div>
+        <input type="hidden" name="card_colour" id="card-colour-input" value="Navy Blue"/>
+      </div>
+    </div>
+
+    <!-- STEP 3: ORGANISATION DETAILS -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">03</span><span class="step-title">Organisation Details</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Organisation / Company Name</label>
+          <input type="text" id="org-name" name="org_name" placeholder="e.g. Kianyaga Secondary School" maxlength="30" oninput="updatePreview()"/>
+          <div class="char-counter" id="org-counter">0 / 30</div>
+        </div>
+        <div>
+          <label class="field-label">Contact / Return Info (shown on back)</label>
+          <input type="text" id="org-contact" name="org_contact" placeholder="e.g. +254 712 345 678 · Kianyaga" maxlength="50" oninput="updatePreview()"/>
+        </div>
+        <div>
+          <label class="field-label">Card Validity / Expiry Date</label>
+          <input type="text" id="validity" name="validity" placeholder="e.g. 12/2026 or 2024–2025" maxlength="15" oninput="updatePreview()"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: CARDHOLDER FIELDS -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">04</span><span class="step-title">Cardholder Fields</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="info-box">
+          For <strong>single cards</strong>, fill in the name below for preview. For <strong>bulk orders</strong>, upload an Excel or list in the notes — we'll print each card individually.
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Name (for preview)</label>
+            <input type="text" id="holder-name" name="holder_name" placeholder="e.g. Wanjiku Njoroge" maxlength="22" oninput="updatePreview()"/>
+          </div>
+          <div>
+            <label class="field-label">Role / Class / Dept</label>
+            <input type="text" id="holder-role" name="holder_role" placeholder="e.g. Form 3A · Science" maxlength="22" oninput="updatePreview()"/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">ID Number Format</label>
+          <div class="toggle-group" id="idnum-group">
+            <button type="button" class="toggle-btn active" data-val="sequential" onclick="setToggle('idnum-group','idnum-input',this)">Sequential (001, 002…)</button>
+            <button type="button" class="toggle-btn" data-val="custom" onclick="setToggle('idnum-group','idnum-input',this)">Custom per card</button>
+            <button type="button" class="toggle-btn" data-val="none" onclick="setToggle('idnum-group','idnum-input',this)">No ID Number</button>
+          </div>
+          <input type="hidden" name="id_number_format" id="idnum-input" value="sequential"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: PHOTO & LOGO -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">05</span><span class="step-title">Photo & Logo</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div>
+          <label class="field-label">Include Cardholder Photo?</label>
+          <div class="toggle-group" id="photo-group">
+            <button type="button" class="toggle-btn active" data-val="yes" onclick="setToggle('photo-group','photo-input',this); updatePhotoBox(true)">Yes — with photo</button>
+            <button type="button" class="toggle-btn" data-val="no" onclick="setToggle('photo-group','photo-input',this); updatePhotoBox(false)">No — text only</button>
+          </div>
+          <input type="hidden" name="include_photo" id="photo-input" value="yes"/>
+        </div>
+        <div>
+          <label class="field-label">Upload Sample Photo (optional — for preview)</label>
+          <div class="upload-area" onclick="document.getElementById('photo-upload').click()">
+            <input type="file" id="photo-upload" name="sample_photo" accept="image/*" onchange="handlePhotoUpload(event)"/>
+            <div class="upload-icon">📷</div>
+            <p><strong>Click to upload</strong> a sample cardholder photo</p>
+            <p>JPG, PNG — passport/ID style photo, min 200×200px</p>
+            <div class="upload-filename" id="photo-filename"></div>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Upload Organisation Logo (optional)</label>
+          <div class="upload-area" onclick="document.getElementById('logo-upload').click()">
+            <input type="file" id="logo-upload" name="org_logo" accept="image/*,.pdf,.ai,.eps" onchange="handleLogoUpload(event)"/>
+            <div class="upload-icon">🏷️</div>
+            <p><strong>Click to upload</strong> your logo</p>
+            <p>PNG with transparent background preferred</p>
+            <div class="upload-filename" id="logo-filename"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: PVC MATERIAL & EXTRAS -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">06</span><span class="step-title">Material & Extras</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Card Material</label>
+            <select name="card_material" id="card-material" onchange="updatePrice()">
+              <option value="pvc-cr80">PVC CR80 Standard (0.76mm)</option>
+              <option value="pvc-cr80-thick">PVC CR80 Thick (0.9mm)</option>
+              <option value="frosted-pvc">Frosted / Matte PVC</option>
+              <option value="eco-pvc">Eco-friendly rPVC</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">Lamination</label>
+            <select name="lamination" id="lamination" onchange="updatePrice()">
+              <option value="glossy">Glossy (standard)</option>
+              <option value="matte">Matte Laminate (+KSh 15)</option>
+              <option value="none">No Lamination</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Add-on Features</label>
+          <div class="toggle-group" id="extras-group">
+            <button type="button" class="toggle-btn" data-val="magnetic-stripe" onclick="toggleExtra(this)">Mag Stripe (+KSh 40)</button>
+            <button type="button" class="toggle-btn" data-val="barcode" onclick="toggleExtra(this)">Barcode (+KSh 20)</button>
+            <button type="button" class="toggle-btn" data-val="qr-code" onclick="toggleExtra(this)">QR Code (+KSh 20)</button>
+            <button type="button" class="toggle-btn" data-val="hole-punch" onclick="toggleExtra(this)">Hole Punch (free)</button>
+            <button type="button" class="toggle-btn" data-val="slot-punch" onclick="toggleExtra(this)">Slot Punch (free)</button>
+          </div>
+          <input type="hidden" name="extras" id="extras-input" value=""/>
+        </div>
+        <div>
+          <label class="field-label">Include Lanyards?</label>
+          <select name="lanyards" id="lanyards" onchange="updatePrice()">
+            <option value="none">No Lanyards</option>
+            <option value="basic">Basic Polyester Lanyard (+KSh 80/pc)</option>
+            <option value="satin">Satin Sublimation Lanyard (+KSh 180/pc)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7: PRICING GUIDE -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">07</span><span class="step-title">Our Rates</span></div>
+      <div class="step-body">
+        <table class="price-table">
+          <thead>
+            <tr><th>Card Type</th><th style="text-align:right;">Per Card</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Staff / Employee ID</td><td class="price-val">KSh 120</td></tr>
+            <tr><td>School / Student ID</td><td class="price-val">KSh 100</td></tr>
+            <tr><td>Membership Card</td><td class="price-val">KSh 130</td></tr>
+            <tr><td>Event / Access Pass</td><td class="price-val">KSh 90</td></tr>
+            <tr><td>Loyalty Card</td><td class="price-val">KSh 110</td></tr>
+            <tr><td>Visitor / Contractor</td><td class="price-val">KSh 80</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.75rem;color:var(--mid);margin-top:.6rem;">Bulk discounts: 50+ cards −10% &middot; 100+ cards −20% &middot; 500+ cards −30%. Mag stripe, QR and barcode add-ons priced per card.</p>
+      </div>
+    </div>
+
+    <!-- STEP 8: QUANTITY -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">08</span><span class="step-title">Quantity & Price</span></div>
+      <div class="step-body">
+        <div class="qty-stepper">
+          <button type="button" class="qty-btn" onclick="changeQty(-1)">&#8722;</button>
+          <input type="number" id="qty-display" name="quantity" value="10" min="1" max="5000" readonly/>
+          <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <p class="moq-note">Minimum 1 card. Bulk pricing kicks in at 50, 100 and 500+ cards.</p>
+        <div class="unit-price">Unit price: <span id="unit-price-display">KSh 120</span></div>
+        <div class="total-price">Total: KSh <span id="total-display">1,200</span></div>
+        <input type="hidden" id="total-hidden" name="total_price" value="1200"/>
+      </div>
+    </div>
+
+    <!-- STEP 9: YOUR DETAILS -->
+    <div class="step-block">
+      <div class="step-header"><span class="step-num">09</span><span class="step-title">Your Details & Notes</span></div>
+      <div class="step-body" style="display:flex;flex-direction:column;gap:.9rem;">
+        <div class="field-row">
+          <div>
+            <label class="field-label">Full Name</label>
+            <input type="text" name="customer_name" placeholder="Your name" required/>
+          </div>
+          <div>
+            <label class="field-label">Phone Number</label>
+            <input type="text" name="phone" placeholder="07XX XXX XXX" required/>
+          </div>
+        </div>
+        <div>
+          <label class="field-label">Email (optional — we'll send proofs here)</label>
+          <input type="text" name="email" placeholder="you@email.com"/>
+        </div>
+        <div>
+          <label class="field-label">Special Instructions / Name List</label>
+          <textarea name="notes" placeholder="Paste your list of names here (Name | Role | ID No.) — or attach an Excel/CSV. Any colour codes, urgency, pickup/delivery instructions…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="order-btn" onclick="addToCart()">Add to Cart &#8594;</button>
+  </form>
+</div>
+
+<!-- MPESA MODAL -->
+<div class="modal-overlay" id="mpesa-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('mpesa-modal').classList.remove('open')">&#10005;</button>
+    <div style="font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:.2rem;">Payment</div>
+    <h2>M-Pesa Checkout</h2>
+    <div class="mpesa-sub">Complete payment to confirm your order</div>
+    <div style="font-size:.85rem;color:var(--mid);">Amount Due</div>
+    <div class="mpesa-amount">KSh <span id="modal-amount">1,200</span></div>
+    <ol class="mpesa-steps">
+      <li>Go to <strong>M-Pesa</strong> &rarr; <strong>Lipa na M-Pesa</strong></li>
+      <li>Select <strong>Pay Bill</strong></li>
+      <li>Business No: <span class="mpesa-number">522533</span> &nbsp;&middot;&nbsp; Account: <span class="mpesa-number">1316538</span></li>
+      <li>Enter amount: <strong>KSh <span id="modal-amount-2">1,200</span></strong></li>
+      <li>Enter your M-Pesa PIN and confirm</li>
+      <li>Return here and click <strong>"Place Order"</strong></li>
+    </ol>
+    <button class="confirm-btn" onclick="confirmPayment()">I've Paid — Submit Order</button>
+  </div>
+</div>
+
+<script>
+  /* ── STATE ── */
+  let qty = 10;
+  let basePrice = 120;
+  const selectedExtras = new Set();
+
+  /* ── COLOUR THEMES ── */
+  const COLOURS = [
+    { name: 'Navy Blue',    bg: '#1a3a5c', header: 'rgba(0,0,0,0.25)',  footer: 'rgba(0,0,0,0.2)',  text: '#ffffff', accent: '#e8420a' },
+    { name: 'Black',        bg: '#0d0d0d', header: 'rgba(255,255,255,0.08)', footer: 'rgba(255,255,255,0.06)', text: '#ffffff', accent: '#e8420a' },
+    { name: 'Orange-Red',   bg: '#e8420a', header: 'rgba(0,0,0,0.18)', footer: 'rgba(0,0,0,0.15)',  text: '#ffffff', accent: '#ffffff' },
+    { name: 'Forest Green', bg: '#1e4d38', header: 'rgba(0,0,0,0.2)',  footer: 'rgba(0,0,0,0.18)', text: '#ffffff', accent: '#f1c40f' },
+    { name: 'Maroon',       bg: '#6e1423', header: 'rgba(0,0,0,0.2)',  footer: 'rgba(0,0,0,0.18)', text: '#ffffff', accent: '#d4a017' },
+    { name: 'Royal Blue',   bg: '#1f4e9e', header: 'rgba(0,0,0,0.2)',  footer: 'rgba(0,0,0,0.18)', text: '#ffffff', accent: '#ffffff' },
+    { name: 'Charcoal',     bg: '#2a2a2a', header: 'rgba(255,255,255,0.1)', footer: 'rgba(255,255,255,0.07)', text: '#ffffff', accent: '#e8420a' },
+    { name: 'White',        bg: '#ffffff', header: '#1a3a5c',            footer: '#1a3a5c',           text: '#0d0d0d', accent: '#e8420a' },
+    { name: 'Purple',       bg: '#4a235a', header: 'rgba(0,0,0,0.2)',  footer: 'rgba(0,0,0,0.18)', text: '#ffffff', accent: '#f1c40f' },
+    { name: 'Teal',         bg: '#0e5959', header: 'rgba(0,0,0,0.2)',  footer: 'rgba(0,0,0,0.18)', text: '#ffffff', accent: '#ffffff' },
+  ];
+
+  let selectedColour = COLOURS[0];
+
+  const colourGrid = document.getElementById('colour-grid');
+  COLOURS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'colour-swatch' + (i === 0 ? ' active' : '');
+    sw.style.background = c.bg;
+    if (c.bg === '#ffffff') sw.style.border = '3px solid var(--border)';
+    sw.title = c.name;
+    sw.onclick = () => selectColour(c, sw);
+    colourGrid.appendChild(sw);
+  });
+
+  function selectColour(c, el) {
+    document.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    selectedColour = c;
+    document.getElementById('colour-name-display').textContent = c.name + ' (selected)';
+    document.getElementById('card-colour-input').value = c.name;
+    applyCardColours();
+  }
+
+  function applyCardColours() {
+    const c = selectedColour;
+    // Front card
+    document.getElementById('id-front').style.background = c.bg;
+    document.getElementById('id-header').style.background = c.header;
+    document.getElementById('id-header').style.color = c.text;
+    document.getElementById('id-footer').style.background = c.footer;
+    document.getElementById('id-footer').style.color = c.text;
+    document.getElementById('p-name').style.color = c.text;
+    document.getElementById('p-role').style.color = c.text;
+    document.getElementById('p-idnum').style.color = c.text;
+    document.getElementById('p-validity').style.color = c.text;
+    document.getElementById('p-logo-circle').style.background = c.accent;
+    document.getElementById('p-logo-circle').style.color = (c.accent === '#ffffff') ? c.bg : '#ffffff';
+    // Barcode bars
+    document.querySelectorAll('.id-barcode span').forEach(s => s.style.background = c.text);
+    // Back card
+    document.getElementById('id-back').style.background = c.bg;
+    document.getElementById('id-back').style.color = c.text;
+    document.getElementById('p-back-info').style.color = c.text;
+  }
+
+  /* ── CARD TYPE ── */
+  function setType(el) {
+    document.querySelectorAll('.type-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('card-purpose-input').value = el.dataset.type;
+    basePrice = parseInt(el.dataset.price);
+    updatePrice();
+  }
+
+  /* ── VIEW TOGGLE ── */
+  function setView(side, el) {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('id-front').style.display = side === 'front' ? 'flex' : 'none';
+    document.getElementById('id-back').style.display  = side === 'back'  ? 'flex' : 'none';
+  }
+
+  /* ── LIVE PREVIEW TEXT ── */
+  function updatePreview() {
+    const org      = document.getElementById('org-name').value.trim() || 'ORGANISATION NAME';
+    const contact  = document.getElementById('org-contact').value.trim() || '+254 717 620054';
+    const validity = document.getElementById('validity').value.trim() || '12/2026';
+    const name     = document.getElementById('holder-name').value.trim() || 'Full Name';
+    const role     = document.getElementById('holder-role').value.trim() || 'Role / Department';
+
+    document.getElementById('p-org').textContent     = org.toUpperCase();
+    document.getElementById('p-org-back').textContent = org;
+    document.getElementById('p-contact-back').textContent = 'Contact: ' + contact;
+    document.getElementById('p-validity').textContent = 'Valid Thru: ' + validity;
+    document.getElementById('p-name').textContent     = name;
+    document.getElementById('p-role').textContent     = role;
+
+    const initial = org.trim()[0] ? org.trim()[0].toUpperCase() : 'B';
+    document.getElementById('p-logo-circle').textContent = initial;
+
+    const orgEl = document.getElementById('org-counter');
+    const orgLen = document.getElementById('org-name').value.length;
+    orgEl.textContent = orgLen + ' / 30';
+    orgEl.className = 'char-counter' + (orgLen > 24 ? ' warn' : '');
+  }
+
+  /* ── PHOTO UPLOAD ── */
+  function handlePhotoUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    document.getElementById('photo-filename').textContent = '✓ ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = document.getElementById('p-photo-img');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+      document.querySelector('#p-photo-box .photo-placeholder').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleLogoUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    document.getElementById('logo-filename').textContent = '✓ ' + file.name;
+  }
+
+  function updatePhotoBox(show) {
+    const box = document.getElementById('p-photo-box');
+    box.style.display = show ? 'flex' : 'none';
+  }
+
+  /* ── EXTRAS TOGGLE ── */
+  function toggleExtra(el) {
+    const val = el.dataset.val;
+    if (el.classList.contains('active')) {
+      el.classList.remove('active');
+      selectedExtras.delete(val);
+    } else {
+      el.classList.add('active');
+      selectedExtras.add(val);
+    }
+    document.getElementById('extras-input').value = [...selectedExtras].join(', ');
+    updatePrice();
+  }
+
+  const EXTRA_PRICE = { 'magnetic-stripe': 40, 'barcode': 20, 'qr-code': 20, 'hole-punch': 0, 'slot-punch': 0 };
+  const LAM_ADD     = { 'glossy': 0, 'matte': 15, 'none': -10 };
+  const MAT_ADD     = { 'pvc-cr80': 0, 'pvc-cr80-thick': 20, 'frosted-pvc': 25, 'eco-pvc': 15 };
+  const LAN_ADD     = { 'none': 0, 'basic': 80, 'satin': 180 };
+
+  function bulkFactor(q) {
+    if (q >= 500) return 0.70;
+    if (q >= 100) return 0.80;
+    if (q >= 50)  return 0.90;
+    return 1;
+  }
+
+  /* ── GENERIC TOGGLE ── */
+  function setToggle(groupId, inputId, el) {
+    document.querySelectorAll('#' + groupId + ' .toggle-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(inputId).value = el.dataset.val;
+  }
+
+  function updatePrice() {
+    const lam     = LAM_ADD[document.getElementById('lamination').value] || 0;
+    const mat     = MAT_ADD[document.getElementById('card-material').value] || 0;
+    const lan     = LAN_ADD[document.getElementById('lanyards').value] || 0;
+    let extrasAdd = 0;
+    selectedExtras.forEach(ex => extrasAdd += (EXTRA_PRICE[ex] || 0));
+
+    const rawUnit  = basePrice + lam + mat + extrasAdd + lan;
+    const unit     = Math.round(rawUnit * bulkFactor(qty));
+    const total    = unit * qty;
+
+    document.getElementById('unit-price-display').textContent = 'KSh ' + unit.toLocaleString();
+    document.getElementById('total-display').textContent      = total.toLocaleString();
+    document.getElementById('total-hidden').value             = total;
+    document.getElementById('modal-amount').textContent       = total.toLocaleString();
+    document.getElementById('modal-amount-2').textContent     = total.toLocaleString();
+  }
+
+  function changeQty(d) {
+    qty = Math.max(1, qty + d);
+    document.getElementById('qty-display').value = qty;
+    updatePrice();
+  }
+
+  /* ── CAPTURE ── */
+  function capturePreview() {
+    const visible = document.getElementById('id-front').style.display !== 'none'
+      ? document.getElementById('id-front')
+      : document.getElementById('id-back');
+    html2canvas(visible, { backgroundColor: null, scale: 3 }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'bensoft-id-card-preview.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  /* ── SUBMIT ── */
+  function handleSubmit(e) { e.preventDefault(); updatePrice(); document.getElementById('mpesa-modal').classList.add('open'); }
+
+  async function confirmPayment() {
+    document.getElementById('mpesa-modal').classList.remove('open');
+    const form = document.getElementById('order-form');
+    try {
+      await fetch('https://formspree.io/f/xrevgjve', {
+        method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' }
+      });
+    } catch (_) {}
+  }
+
+  /* ── ADD TO CART ── */
+  function addToCart() {
+    const form     = document.getElementById('order-form');
+    const formData = new FormData(form);
+
+    const purpose   = formData.get('card_purpose');
+    const colour    = formData.get('card_colour');
+    const material  = formData.get('card_material');
+    const lam       = formData.get('lamination');
+    const extras    = formData.get('extras');
+    const photo     = formData.get('include_photo');
+    const lanyards  = formData.get('lanyards');
+    const idNumFmt  = formData.get('id_number_format');
+    const orgName   = formData.get('org_name');
+
+    const purposeLabels = {
+      'staff-id':  'Staff / Employee ID',
+      'school-id': 'School / Student ID',
+      'membership':'Membership Card',
+      'event-pass':'Event / Access Pass',
+      'loyalty':   'Loyalty Card',
+      'visitor':   'Visitor / Contractor',
+    };
+    const matLabels = {
+      'pvc-cr80':       'PVC CR80 Standard',
+      'pvc-cr80-thick': 'PVC CR80 Thick',
+      'frosted-pvc':    'Frosted / Matte PVC',
+      'eco-pvc':        'Eco-friendly rPVC',
+    };
+    const lamLabels  = { 'glossy': 'Glossy', 'matte': 'Matte', 'none': 'No Lamination' };
+    const lanLabels  = { 'none': 'No Lanyard', 'basic': 'Basic Polyester Lanyard', 'satin': 'Satin Lanyard' };
+
+    const unitPrice = Math.round(parseInt(document.getElementById('total-hidden').value) / qty);
+
+    const item = {
+      productName: 'Plastic ID Card',
+      variant: (purposeLabels[purpose] || purpose) + ', ' + colour,
+      colour: colour,
+      material: (matLabels[material] || material) + ', ' + (lamLabels[lam] || lam),
+      details: 'Org: ' + (orgName || 'N/A') + ', Photo: ' + (photo === 'yes' ? 'Yes' : 'No') + ', ID No: ' + idNumFmt + ', Extras: ' + (extras || 'None') + ', Lanyard: ' + (lanLabels[lanyards] || lanyards) + '. ' + (formData.get('notes') || ''),
+      quantity: qty,
+      unitPrice: unitPrice,
+    };
+
+    BensoftCart.add(item);
+  }
+
+  /* ── INIT ── */
+  applyCardColours();
+  updatePreview();
+  updatePrice();
+</script>
+
+</body>
+</html>
